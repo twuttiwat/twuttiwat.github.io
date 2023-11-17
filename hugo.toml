@@ -1,0 +1,6 @@
+baseURL = 'https://twuttiwat.github.io/'
+title = 'TW Blog'
+paginate = 5
+theme = 'PaperMod'
+publishDir = 'docs'
+languageCode = 'en-us'
