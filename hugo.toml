@@ -4,3 +4,19 @@ paginate = 5
 theme = 'PaperMod'
 publishDir = 'docs'
 languageCode = 'en-us'
+
+[params.homeInfoParams]
+  Title = 'Hi there 👋.'
+  Content = 'My name is Teerawat Wuttiwat. I am an [old software engineer](./cv.pdf "Shameless CV link")  who loves to code in F# or any functional programming languages.'
+
+[[params.socialIcons]]
+  name = "GitHub"
+  url = "https://github.com/twuttiwat"
+
+[[params.socialIcons]]
+  name = "Twitter"
+  url = "https://twitter.com/twuttiwat"  
+
+[[params.socialIcons]]
+  name = "CV"
+  url = "https://twuttiwat.com/cv.pdf"    
