@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Authentication With Json Web Token | TW Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Happy New Year 2023! I finally have time to write this post. And it&rsquo;s the post, I am eager to write the most. Of all the resource in Safe stack, I found that authentication and authorization is the less well-known one.
+Be it no more. In this post, I will show step by step how I create authentication with Jason Web Token (JWT) in Safe stack. The next post will be authorization.">
+<meta name="author" content="Teerawat Wuttiwat">
+<link rel="canonical" href="https://twuttiwat.github.io/posts/auth-with-jwt/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5cfc680b1eeaeef9efbced92d46c2a9e876b72ee14fba85846afc4cff9e6e6f8.css" integrity="sha256-XPxoCx7q7vnvvO2S1Gwqnodrcu4U&#43;6hYRq/Ez/nm5vg=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://twuttiwat.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://twuttiwat.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://twuttiwat.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://twuttiwat.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://twuttiwat.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Authentication With Json Web Token" />
+<meta property="og:description" content="Happy New Year 2023! I finally have time to write this post. And it&rsquo;s the post, I am eager to write the most. Of all the resource in Safe stack, I found that authentication and authorization is the less well-known one.
+Be it no more. In this post, I will show step by step how I create authentication with Jason Web Token (JWT) in Safe stack. The next post will be authorization." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://twuttiwat.github.io/posts/auth-with-jwt/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-01-12T21:02:25+07:00" />
+<meta property="article:modified_time" content="2023-01-12T21:02:25+07:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Authentication With Json Web Token"/>
+<meta name="twitter:description" content="Happy New Year 2023! I finally have time to write this post. And it&rsquo;s the post, I am eager to write the most. Of all the resource in Safe stack, I found that authentication and authorization is the less well-known one.
+Be it no more. In this post, I will show step by step how I create authentication with Jason Web Token (JWT) in Safe stack. The next post will be authorization."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://twuttiwat.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Authentication With Json Web Token",
+      "item": "https://twuttiwat.github.io/posts/auth-with-jwt/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Authentication With Json Web Token",
+  "name": "Authentication With Json Web Token",
+  "description": "Happy New Year 2023! I finally have time to write this post. And it\u0026rsquo;s the post, I am eager to write the most. Of all the resource in Safe stack, I found that authentication and authorization is the less well-known one.\nBe it no more. In this post, I will show step by step how I create authentication with Jason Web Token (JWT) in Safe stack. The next post will be authorization.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Happy New Year 2023! I finally have time to write this post. And it’s the post, I am eager to write the most. Of all the resource in Safe stack, I found that authentication and authorization is the less well-known one.\nBe it no more. In this post, I will show step by step how I create authentication with Jason Web Token (JWT) in Safe stack. The next post will be authorization.\nBackground To understand authentication, one needs to understand how all Component in Safe stack comes together. Safe stack consists of\nSaturn Azure Fable Elmish Saturn is MVC web framework running on Giraffe and Kestrel (Asp.net Core). So it makes sense to use all functionality provided by the framework since we have 3 of them here. I found one very simple JWT sample code in Saturn source code (GitHub). Initially, we will follow this code in our CoCoTender work\nSince I plan to show how authorization works in step-by-step fashion, it’s best to try in small step since it’s not easy (at least for me)\nOur Steps Learn how Safe Stack specifically Saturn works. Prevent all access to Saturn Create Login page and allow anyone to access it Create Authentication Api which anyone can access Allow access to other pages after user is authenticated Allow access to other Apis after user is authenticated There a lot of steps to be done. So let’s start now.\nLearn how it works There are 2 environment in Safe stack.\nDevelopment Production For production, all the request will be handled by the Web server (Saturn). But in development, things are different. Safe stack use webpack devserver as a proxy Web server. All the incoming traffic will go through the devserver before being forwarded to our Saturn code in Server.fs.\nWe can proove that by checking the Network Request in Chrome. Here is the one from our current implementation.\nChrome Network Request in the Beginning It may not be obvious. But the network tab shows us that there is no Http request to get our index.html file from Saturn. This happens because webpack devserver does that for us.\nBut…, we want to control all the request through Saturn. The first step is to force the request to go through the webpack devserver and reach the Saturn.\nSound likes some kind of space journey 🚀 to me. :)\nTo change this webpack configuration, you need to change the webpack.config.js file. You will see this line:\ndevServerProxy: { // redirect requests that start with /api/ to the server on port 5000 '/api/**': { target: 'http://localhost:' + (process.env.SERVER_PROXY_PORT || '5000'), changeOrigin: true }, The aboved snippet tells us that only the request matching ‘/api/**’ will be forwarded to Saturn. We need to forward everything instead. Here is the change\ndevServerProxy: { // redirect requests that start with /api/ to the server on port 5000 '**': { target: 'http://localhost:' + (process.env.SERVER_PROXY_PORT || '5000'), changeOrigin: true }, If you look at the Network tab in Chrome again, you will see no change. So.. changing the devserver proxy is not enough. But wait, there seems to be some changes in the network request, if you scrolldown a bit, you will see there are 404 error when requesting favicon.png. So our change is working for favicon file but not the index html file.\nChrome Network Request after Changing webserver proxy The problem comes from the assumption of webpack devserver. It assumes that it should always serves the file with name (you guessed it) index.html. All we needs to do is rename the file to app.html and change all reference to that file.\nRename from index.html to app.html Change all reference of index.html in webpack.config.js to app.html Here is the result from console output:\nConsole output after renaming index.html It’s a bit better. You can see that all traffic has been forwarded to port 5000 which is the port for Saturn. But it does not return our app.html file because the Saturn does not knows about this. It’s time for us to do a bit of coding now.\nGo to the bottom of Server.fs file. Here is the current application computation expression for our Server code.\nlet app = application { use_router webApp memory_cache use_static \"public\" use_gzip } We will focus on what matters here first. The use_router is what we want to change because the router is used as a way to routing http request in Saturn app. Currently, it points to webApp which is a HttpHandle for our Api. (HttpHandle likes it name just the object that will serve the http request) We will change the router to explicitly serve our app.html file instead.\nuse_router (htmlFile \"public/app.html\") Below log from console tells us that Saturn are trying to serve app.html file from our public directory. Since we do not provide that yet, the log will show file not found error.\nConsole showing App.html file is not found We can simply copy app.html file from Client to Server public folder. Unfortunately, that’s not enough. Webpack will transplie all F# client-side file to JS and emit to Client output folder specified in webpack.config.js (outputDir). The webpack then will serve all application client-side file (html, js and css) from this output folder.\nSince, we are going to serve everything from Server-side. We then need to change outputDir from ./src/Client/output to ./src/Server/public since we serves our new app.html from Server/public folder. This changes need to be done only in Development mode since it’s the only mode that running through webpack devserver. Setting this outputDir is not enough, we need to tell webpack that we want to write the output file to disk.\nHere are all steps needs to be done:\nChange outputDir in Development mode. First, go to webpack.config.js and add following line at the top. var isProduction = !process.argv.find(v =\u003e v.indexOf('webpack-dev-server') !== -1); Change outputDir to new Server/public when in Development mode. outputDir: isProduction ? './deploy/public' : './src/Server/public', Enable writeToDisk in devServer devMiddleware: { writeToDisk: true, }, Finally, we could bring back the index page (now app.html) now. But if you look at the log, when go to BoQ page (http://localhost:8080/#/boq), you will see 404 error code when calling getBoQItems and getFactorInfo.\nCould not call Api A little bit more, we can then bring back our app to the working state. What we have done so far is to Get “/” request to app.html first. But we haven’t do anything for our api request. All api request will be in the form of /api/TypeName/MethodName. So all we have to do is forward all request having api prefix to our webApp HttpHandler.\nHere is the change in Server.fs topRouter function:\nlet topRouter = router { get \"/\" (htmlFile \"public/app.html\") forward \"/api\" webApp } Then you will see that the api return data correctly this time. Next step is to prevent that.\nPrevent all access to Saturn We will prevent all access to our Saturn web server by forcing all request to to through JWT authentication pipeline in our topRouter.\nBut before we can use use JWT authentication, we need to config it in our application first.\nlet secret = \"\" let issuer = \"\" let app = application { use_jwt_authentication secret issuer ... } Then we will add our require authentication pipeline before all request in the router.\nlet topRouter = router { pipe_through (Auth.requireAuthentication JWT) ... } When we see the result in Chrome network tab, you will see that it return 401 code which means UnAuthorized error. This means that our Saturn knows that this request is not authenticated and return such error.\nUnauthorized Access for All Web Requests We could prevent all our application now. Next step is to allow only authenticated request.\nMake Authenticated Request We can get authenticated request by supplying all our http request with JWT (Jason Web Token). The token can be request from the server. Usually the step will be done like this:\nUser get token by supplying username and password. The server will verify that user and password is correct and send back the Token to client. From now on, the client will use the token in all Http request header. We will call this authenticated request. When the server receive the authenticated request, it will let the request pass through the pipeline. Let’s start by create function to generate token below in file Server.fs:\nlet generateToken email = let claims = [| Claim(JwtRegisteredClaimNames.Sub, email); Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) |] claims |\u003e Auth.generateJWT (secret, SecurityAlgorithms.HmacSha256) issuer (DateTime.UtcNow.AddHours(1.0)) All of this required Identity package which can be installed in Paket as follow:\ndotnet paket add System.IdentityModel.Tokens.Jwt --version 6.25.1 -p Server The function will create Claim using supplied email. Claim is like identity for user of the token. From now on, when request comes with token, the Api can get the identity (email) from the token.\nThe function aboved create JWT token with valid time of 1 hour. After one hour passed, the token will be expired. The client need to refresh the token to extend the session period. I did try that in our scratch.fsx files and it is working fine.\nNext, we need to let the client use this generate token function. Let’s create new Api for this authentication purpose\nGo to shared.fs and add new Api interface as follow:\ntype Token = Token of string type IAuthApi = { login: string*string -\u003e Async\u003cToken\u003e } Then implement the login function in Server.fs:\nlet authApi = { login = fun (email, password) -\u003e async { if (password = \"ok\") then return (generateToken email) else return (failwith \"Login Failed\") } } We just check if the password is ok before return new token. Otherwise, we just raise the error.\nNext, we just need to allow any users to use this api. Let’s call this anonymousApi.\nlet anonymousApi : HttpHandler = Remoting.createApi () |\u003e Remoting.fromValue authApi |\u003e Remoting.buildHttpHandler Then, create securedApi that will simply call our business logic Api:\nlet securedApi = Remoting.createApi () |\u003e Remoting.fromValue (cocoTenderApi (LiteDBStorage())) |\u003e Remoting.buildHttpHandler Now, merge both Api into complete Api:\nlet completeApi : HttpHandler = choose [ anonymousApi pipeline { requires_authentication (Giraffe.Auth.challenge \"JWT\") plug securedApi } ] As you can see, anyone can access anonymouse Api but only authenticated request can call secured api.\nFinally, just plug the completeApi to the Router:\nlet topRoute = router { get \"/\" (htmlFile \"public/app.html\") forward \"/api\" completeApi } We remove the line pipe_through (Auth.requireAuthentication JWT) because it has moved to the completeApi now.\nLet’s create our Login page so that user can perform login to the UI.\nGo to Pages folder in Client project and create Login.fs file.\nStart by creating Model for our Login page: We will store Email and Password in our Model before submitting to our Authentication api.\ntype Model = { Email : string Password : string } Our Msg will be just for Login purpose. We will have actual Login Msgs and Msgs related to updating login parameter as follow:\ntype Msg = | UpdateEmail of email:string | UpdatePassword of password:string | Login | LoggedIn of Result\u003cToken, string\u003e | GotError of exn We will call our authentication Api here. So we need to create api proxy on the client-side like what we did with CoCoTenderApi one.\nlet authApi = Remoting.createApi () |\u003e Remoting.withRouteBuilder Route.builder |\u003e Remoting.buildProxy\u003cIAuthApi\u003e Start with init function. We will make the Email and Password blank in the beginning.\nlet init () : Model * Cmd\u003cMsg\u003e = let model = { Email = \"\"; Password = \"\" } model, Cmd.none Then, the update function we will handle the Msg as follow:\nlet update (msg: Msg) (model: Model) : Model * Cmd\u003cMsg\u003e = let showError' = showError model match msg with | UpdateEmail email -\u003e { model with Email = email }, Cmd.none | UpdatePassword pwd -\u003e { model with Password = pwd }, Cmd.none | Login -\u003e printf \"Loggin In\" let cmd = Cmd.OfAsync.either authApi.login (model.Email, model.Password) LoggedIn GotError model, cmd | LoggedIn (Ok (Token token)) -\u003e printf $\"Token {token}\" model, cmd | LoggedIn (Error msg) -\u003e showError' msg | GotError ex -\u003e printf $\"LoggedIn Error {ex.Message}\" showError' msg model, Cmd.none The aboved code will return token when the login is success. Next is to show UI for our Login page.\nlet view' (model: Model) (dispatch: Msg -\u003e unit) = Bulma.hero [ hero.isFullHeight color.isPrimary prop.children [ Bulma.heroBody [ Bulma.container [ Bulma.column [ column.is6 column.isOffset3 prop.children [ Bulma.field.div [ Bulma.label \"Email\" Bulma.control.div [ Bulma.input.text [ prop.value model.Email prop.placeholder \"a@b.com\" prop.onChange (fun (email:string) -\u003e email |\u003e UpdateEmail |\u003e dispatch) ] ] ] Bulma.field.div [ Bulma.label \"Password\" Bulma.control.div [ Bulma.input.password [ prop.value model.Password prop.placeholder \"*****\" prop.onChange (fun (pwd:string) -\u003e pwd |\u003e UpdatePassword |\u003e dispatch) ] ] ] Bulma.field.div [ Bulma.field.isGrouped Bulma.field.isGroupedCentered prop.children [ Bulma.control.div [ Bulma.button.button [ Bulma.color.isLink prop.text \"Login\" prop.onClick (fun _ -\u003e dispatch Login) ] ] ] ] ] ] ] ] ] ] open Feliz.UseElmish let view = React.functionComponent(fun () -\u003e let (model: Model), dispatch = React.useElmish(init, update, [| |]) view' model dispatch ) We have the code for login page in place, we need to render the page in Index.fs. First, go to Router.fs to create Login page type.\ntype Page = | Login | Home | BoQ let parseUrl = function | [ ] -\u003e Login | [ \"boq\" ] -\u003e BoQ | [ \"login\" ] -\u003e Login | _ -\u003e Login As you can see, be default we will map path to Login page where there is no custom Url path specified.\nNow go to Index.fs to do actual rendering in view function:\nlet activePage = match model.CurrentPage with | Login -\u003e Pages.Login.view() | Home -\u003e Pages.Home.view() | BoQ -\u003e Pages.BoQ.view() |\u003e viewPage model dispatch Now, if you run the project and it will show the Login page. Entering user with some test email with password being ‘ok’, You will get following result:\nShow returning token in Console after successful logged in Now, it is a good time to define how to prevent client to browse to any pages. After looking at sample in Saturn repository, I decide to go with securing the route. Basically, we will create route secured which we allow only authenticate request. You just need to add 2 more blocks in the Server.fs file\n// ... After authApi definition let securedRouter = router { pipe_through (Auth.requireAuthentication JWT) } // ... Replace topRouter let topRouter = router { get \"/\" (htmlFile \"public/app.html\") forward \"/secured\" securedRouter forward \"/api\" completeApi } After finish login, the client need to redirect to secured page with returning JWT token. There are quite a few steps involved. I will list all of them here. And show the code one by one..\nAfter successfully login, keep the JWT token in local storage. Navigate to secured page I am just kidding. There’s no steps 3. To re-used JWT token in later request, we need to keep in some persistance storage. I pick local storage in Web browser since it’s all supported and there are lots of sample using it. Create the TokentStorage.fs with following code.\nmodule TokenStorage open System open Fable.Import let private storageKey = \"token\" let tryGetToken () : string option = Browser.WebStorage.localStorage.getItem(storageKey) |\u003e (function null -\u003e None | x -\u003e Some (unbox x)) |\u003e Option.bind (fun x -\u003e if String.IsNullOrWhiteSpace(x) then None else Some x) let removeToken () = Browser.WebStorage.localStorage.removeItem(storageKey) let setToken (token:string) = if String.IsNullOrWhiteSpace(token) then removeToken() else Browser.WebStorage.localStorage.setItem(storageKey, token) This module will allow us to get and set token. We will use setToken just for now. Before that don’t forget to add this TokenStorage.fs in Client.fsproj. It should be at the top right below index.html since all Page need to use it.\nNext go to Login.fs and update login flow as follow:\n| LoggedIn (Ok (Token token)) -\u003e printf $\"Token {token}\" TokenStorage.setToken token let cmd = Cmd.navigatePath( [|\"secured\"|]) model, cmd We will navigate the path to secured. if you run now the browser will show something like http://localhost.8080/#secured which is not matched with the secured we defined in Saturn. Since by default Saturn use hash navigation which we don’t want. We need to change Router as well. Go to Index.fs and change the router to use pathMode instead of the default hashMode.\nReact.router [ router.pathMode router.onUrlChanged (parseUrl \u003e\u003e UrlChanged \u003e\u003e dispatch) router.children [ activePage ] ] Now if you login again, you should see same old BoQ page waiting for us.\nGo to Secured page after Logged In Next, we will learn how to authorize each user. Such that only owner of the BoQ can work on it.\nCredit Saturn JWT example Ryan Palmer article ",
+  "wordCount" : "2753",
+  "inLanguage": "en",
+  "datePublished": "2023-01-12T21:02:25+07:00",
+  "dateModified": "2023-01-12T21:02:25+07:00",
+  "author":{
+    "@type": "Person",
+    "name": "Teerawat Wuttiwat"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://twuttiwat.github.io/posts/auth-with-jwt/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "TW Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://twuttiwat.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://twuttiwat.github.io/" accesskey="h" title="TW Blog (Alt + H)">TW Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Authentication With Json Web Token
+    </h1>
+    <div class="post-meta"><span title='2023-01-12 21:02:25 +0700 +07'>January 12, 2023</span>&nbsp;·&nbsp;Teerawat Wuttiwat
+
+</div>
+  </header> 
+  <div class="post-content"><p>Happy New Year 2023!
+I finally have time to write this post. And it&rsquo;s the post, I am eager to write the most. Of all the resource in Safe stack, I found that authentication and authorization is the less well-known one.</p>
+<p>Be it no more. In this post, I will show step by step how I create authentication with Jason Web Token (JWT) in Safe stack. The next post will be authorization.</p>
+<h1 id="background">Background<a hidden class="anchor" aria-hidden="true" href="#background">#</a></h1>
+<p>To understand authentication, one needs to understand how all Component in Safe stack comes together.
+Safe stack consists of</p>
+<ol>
+<li>Saturn</li>
+<li>Azure</li>
+<li>Fable</li>
+<li>Elmish</li>
+</ol>
+<p>Saturn is MVC web framework running on Giraffe and Kestrel (Asp.net Core).
+So it makes sense to use all functionality provided by the framework since we have 3 of them here.
+I found one very simple JWT sample code in Saturn source code (GitHub).
+Initially, we will follow this code in our CoCoTender work</p>
+<p>Since I plan to show how authorization works in step-by-step fashion, it&rsquo;s best to try in small step since it&rsquo;s not easy (at least for me)</p>
+<h2 id="our-steps">Our Steps<a hidden class="anchor" aria-hidden="true" href="#our-steps">#</a></h2>
+<ol start="0">
+<li>Learn how Safe Stack specifically Saturn works.</li>
+<li>Prevent all access to Saturn</li>
+<li>Create Login page and allow anyone to access it</li>
+<li>Create Authentication Api which anyone can access</li>
+<li>Allow access to other pages after user is authenticated</li>
+<li>Allow access to other Apis after user is authenticated</li>
+</ol>
+<p>There a lot of steps to be done. So let&rsquo;s start now.</p>
+<h2 id="learn-how-it-works">Learn how it works<a hidden class="anchor" aria-hidden="true" href="#learn-how-it-works">#</a></h2>
+<p>There are 2 environment in Safe stack.</p>
+<ol>
+<li>Development</li>
+<li>Production</li>
+</ol>
+<p>For production, all the request will be handled by the Web server (Saturn).
+But in development, things are different. Safe stack use webpack devserver as a proxy Web server.
+All the incoming traffic will go through the devserver before being forwarded to our Saturn code in Server.fs.</p>
+<p>We can proove that by checking the Network Request in Chrome. Here is the one from our current implementation.</p>
+<figure>
+    <img loading="lazy" src="images/initial-chrome-network-request.png"
+         alt="Initial Chrome Network Request" width="600"/> <figcaption>
+            Chrome Network Request in the Beginning
+        </figcaption>
+</figure>
+
+<p>It may not be obvious. But the network tab shows us that there is no Http request to get our index.html file from Saturn. This happens because webpack devserver does that for us.</p>
+<p>But&hellip;, we want to control all the request through Saturn. The first step is to force the request to go through the webpack devserver and reach the Saturn.</p>
+<p>Sound likes some kind of space journey 🚀 to me. :)</p>
+<p>To change this webpack configuration, you need to change the webpack.config.js file. You will see this line:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>    <span style="color:#a6e22e">devServerProxy</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// redirect requests that start with /api/ to the server on port 5000
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#e6db74">&#39;/api/**&#39;</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">target</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;http://localhost:&#39;</span> <span style="color:#f92672">+</span> (<span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">SERVER_PROXY_PORT</span> <span style="color:#f92672">||</span> <span style="color:#e6db74">&#39;5000&#39;</span>),
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">changeOrigin</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span></code></pre></div><p>The aboved snippet tells us that only the request matching &lsquo;/api/**&rsquo; will be forwarded to Saturn.
+We need to forward everything instead.
+Here is the change</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>    <span style="color:#a6e22e">devServerProxy</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// redirect requests that start with /api/ to the server on port 5000
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#e6db74">&#39;**&#39;</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">target</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;http://localhost:&#39;</span> <span style="color:#f92672">+</span> (<span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">SERVER_PROXY_PORT</span> <span style="color:#f92672">||</span> <span style="color:#e6db74">&#39;5000&#39;</span>),
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">changeOrigin</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span></code></pre></div><p>If you look at the Network tab in Chrome again, you will see no change. So.. changing the devserver proxy is not enough. But wait, there seems to be some changes in the network request, if you scrolldown a bit, you will see there are <em>404</em> error when requesting favicon.png.
+So our change is working for favicon file but not the index html file.</p>
+<figure>
+    <img loading="lazy" src="images/chrome-network-request-forward-all-requests.png"
+         alt="Forward All Requests Chrome Network Request" width="600"/> <figcaption>
+            Chrome Network Request after Changing webserver proxy
+        </figcaption>
+</figure>
+
+<p>The problem comes from the assumption of webpack devserver. It assumes that it should always serves the file with name (you guessed it) <strong>index.html</strong>. All we needs to do is rename the file to app.html and change all reference to that file.</p>
+<ol>
+<li>Rename from index.html to app.html</li>
+<li>Change all reference of index.html in webpack.config.js to app.html</li>
+</ol>
+<p>Here is the result from console output:</p>
+<figure>
+    <img loading="lazy" src="images/change-index-html-to-app-html.png"
+         alt="Change Index Html to App Html" width="600"/> <figcaption>
+            Console output after renaming index.html
+        </figcaption>
+</figure>
+
+<p>It&rsquo;s a bit better. You can see that all traffic has been forwarded to port 5000 which is the port for Saturn.
+But it does not return our app.html file because the Saturn does not knows about this. It&rsquo;s time for us to do a bit of coding now.</p>
+<p>Go to the bottom of Server.fs file. Here is the current application computation expression for our Server code.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> app <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    application <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        use_router webApp
+</span></span><span style="display:flex;"><span>        memory_cache
+</span></span><span style="display:flex;"><span>        use_static <span style="color:#e6db74">&#34;public&#34;</span>
+</span></span><span style="display:flex;"><span>        use_gzip
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>We will focus on what matters here first. The use_router is what we want to change because the router is used as a way to routing http request in Saturn app. Currently, it points to webApp which is a HttpHandle for our Api. (HttpHandle likes it name just the object that will serve the http request)
+We will change the router to explicitly serve our app.html file instead.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>        use_router <span style="color:#f92672">(</span>htmlFile <span style="color:#e6db74">&#34;public/app.html&#34;</span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>Below log from console tells us that Saturn are trying to serve <strong>app.html</strong> file from our public directory. Since we do not provide that yet, the log will show file not found error.</p>
+<figure>
+    <img loading="lazy" src="images/not-found-app-html.png"
+         alt="Not Found App Html" width="600"/> <figcaption>
+            Console showing App.html file is not found
+        </figcaption>
+</figure>
+
+<p>We can simply copy app.html file from Client to Server public folder. Unfortunately, that&rsquo;s not enough. Webpack will transplie all F# client-side file to JS and emit to Client output folder specified in webpack.config.js (outputDir). The webpack then will serve all application client-side file (html, js and css) from this output folder.</p>
+<p>Since, we are going to serve everything from Server-side. We then need to change outputDir from ./src/Client/output to ./src/Server/public since we serves our new app.html from Server/public folder. This changes need to be done only in Development mode since it&rsquo;s the only mode that running through webpack devserver. Setting this outputDir is not enough, we need to tell webpack that we want to write the output file to disk.</p>
+<p>Here are all steps needs to be done:</p>
+<ol>
+<li>Change outputDir in Development mode.
+First, go to webpack.config.js and add following line at the top.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">isProduction</span> <span style="color:#f92672">=</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">argv</span>.<span style="color:#a6e22e">find</span>(<span style="color:#a6e22e">v</span> =&gt; <span style="color:#a6e22e">v</span>.<span style="color:#a6e22e">indexOf</span>(<span style="color:#e6db74">&#39;webpack-dev-server&#39;</span>) <span style="color:#f92672">!==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>);
+</span></span></code></pre></div><ol start="2">
+<li>Change outputDir to new Server/public when in Development mode.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>    <span style="color:#a6e22e">outputDir</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">isProduction</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#39;./deploy/public&#39;</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;./src/Server/public&#39;</span>,   
+</span></span></code></pre></div><ol start="3">
+<li>Enable writeToDisk in devServer</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>            <span style="color:#a6e22e">devMiddleware</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">writeToDisk</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>            },
+</span></span></code></pre></div><p>Finally, we could bring back the index page (now app.html) now. But if you look at the log, when go to BoQ page (http://localhost:8080/#/boq), you will see 404 error code when calling getBoQItems and getFactorInfo.</p>
+<figure>
+    <img loading="lazy" src="images/api-404.png"
+         alt="Api 404" width="600"/> <figcaption>
+            Could not call Api
+        </figcaption>
+</figure>
+
+<p>A little bit more, we can then bring back our app to the working state. What we have done so far is to Get &ldquo;/&rdquo; request to <strong>app.html</strong> first. But we haven&rsquo;t do anything for our api request. All api request will be in the form of /api/<em>TypeName</em>/<em>MethodName</em>. So all we have to do is forward all request having <strong>api</strong> prefix to our webApp HttpHandler.</p>
+<p>Here is the change in Server.fs topRouter function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> topRouter <span style="color:#f92672">=</span> router <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    get <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">(</span>htmlFile <span style="color:#e6db74">&#34;public/app.html&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    forward <span style="color:#e6db74">&#34;/api&#34;</span> webApp
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Then you will see that the api return data correctly this time. Next step is to prevent that.</p>
+<h2 id="prevent-all-access-to-saturn">Prevent all access to Saturn<a hidden class="anchor" aria-hidden="true" href="#prevent-all-access-to-saturn">#</a></h2>
+<p>We will prevent all access to our Saturn web server by forcing all request to to through JWT authentication pipeline in our <strong>topRouter</strong>.</p>
+<p>But before we can use use JWT authentication, we need to config it in our application first.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> secret <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&lt;Your Secret&gt;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> issuer <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&lt;Your Issuer url i.e. your.domain.com&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> app <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    application <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        use_jwt_authentication secret issuer
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Then we will add our require authentication pipeline before all request in the router.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> topRouter <span style="color:#f92672">=</span> router <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    pipe_through <span style="color:#f92672">(</span>Auth.requireAuthentication JWT<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>When we see the result in Chrome network tab, you will see that it return <strong>401</strong> code which means <strong>UnAuthorized</strong> error. This means that our Saturn knows that this request is not authenticated and return such error.</p>
+<figure>
+    <img loading="lazy" src="images/prevent-all-access-saturn.png"
+         alt="Prevent All Access Saturn" width="600"/> <figcaption>
+            Unauthorized Access for All Web Requests
+        </figcaption>
+</figure>
+
+<p>We could prevent all our application now. Next step is to allow only authenticated request.</p>
+<h2 id="make-authenticated-request">Make Authenticated Request<a hidden class="anchor" aria-hidden="true" href="#make-authenticated-request">#</a></h2>
+<p>We can get authenticated request by supplying all our http request with JWT (Jason Web Token). The token can be request from the server. Usually the step will be done like this:</p>
+<ol>
+<li>User get token by supplying username and password.</li>
+<li>The server will verify that user and password is correct and send back the Token to client.</li>
+<li>From now on, the client will use the token in all Http request header. We will call this authenticated request.</li>
+<li>When the server receive the authenticated request, it will let the request pass through the pipeline.</li>
+</ol>
+<p>Let&rsquo;s start by create function to generate token below in file Server.fs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> generateToken email <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> claims <span style="color:#f92672">=</span> <span style="color:#f92672">[|</span>
+</span></span><span style="display:flex;"><span>        Claim<span style="color:#f92672">(</span>JwtRegisteredClaimNames.Sub<span style="color:#f92672">,</span> email<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        Claim<span style="color:#f92672">(</span>JwtRegisteredClaimNames.Jti<span style="color:#f92672">,</span> Guid.NewGuid()<span style="color:#f92672">.</span>ToString()<span style="color:#f92672">)</span> <span style="color:#f92672">|]</span>
+</span></span><span style="display:flex;"><span>    claims
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Auth.generateJWT <span style="color:#f92672">(</span>secret<span style="color:#f92672">,</span> SecurityAlgorithms.HmacSha256<span style="color:#f92672">)</span> issuer <span style="color:#f92672">(</span>DateTime.UtcNow.AddHours<span style="color:#f92672">(</span>1<span style="color:#f92672">.</span>0<span style="color:#f92672">))</span>
+</span></span></code></pre></div><p>All of this required Identity package which can be installed in Paket as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>dotnet paket add System.IdentityModel.Tokens.Jwt  --version 6.25.1 -p Server
+</span></span></code></pre></div><p>The function will create <strong>Claim</strong> using supplied email. Claim is like identity for user of the token. From now on, when request comes with token, the Api can get the identity (email) from the token.</p>
+<p>The function aboved create JWT token with valid time of 1 hour. After one hour passed, the token will be expired. The client need to refresh the token to extend the session period.
+I did try that in our scratch.fsx files and it is working fine.</p>
+<p>Next, we need to let the client use this generate token function. Let&rsquo;s create new Api for this authentication purpose</p>
+<p>Go to shared.fs and add new Api interface as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Token</span> <span style="color:#f92672">=</span> Token <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IAuthApi</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span> login<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">*</span><span style="color:#66d9ef">string</span> <span style="color:#f92672">-&gt;</span> Async<span style="color:#f92672">&lt;</span>Token<span style="color:#f92672">&gt;</span> <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Then implement the login function in Server.fs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> authApi <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    login <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">fun</span> <span style="color:#f92672">(</span>email<span style="color:#f92672">,</span> password<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            async <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>password <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ok&#34;</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>generateToken email<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">else</span> 
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>failwith <span style="color:#e6db74">&#34;Login Failed&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>We just check if the password is <em>ok</em> before return new token. Otherwise, we just raise the error.</p>
+<p>Next, we just need to allow any users to use this api. Let&rsquo;s call this anonymousApi.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> anonymousApi <span style="color:#f92672">:</span> HttpHandler <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Remoting.createApi ()
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.fromValue authApi
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.buildHttpHandler
+</span></span></code></pre></div><p>Then, create securedApi that will simply call our business logic Api:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> securedApi  <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Remoting.createApi ()
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.fromValue <span style="color:#f92672">(</span>cocoTenderApi <span style="color:#f92672">(</span>LiteDBStorage()<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.buildHttpHandler
+</span></span></code></pre></div><p>Now, merge both Api into complete Api:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> completeApi <span style="color:#f92672">:</span> HttpHandler <span style="color:#f92672">=</span> choose <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>    anonymousApi
+</span></span><span style="display:flex;"><span>    pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        requires_authentication <span style="color:#f92672">(</span>Giraffe.Auth.challenge <span style="color:#e6db74">&#34;JWT&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        plug securedApi
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>As you can see, anyone can access anonymouse Api but only authenticated request can call secured api.</p>
+<p>Finally, just plug the completeApi to the Router:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> topRoute <span style="color:#f92672">=</span> router <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    get <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">(</span>htmlFile <span style="color:#e6db74">&#34;public/app.html&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    forward <span style="color:#e6db74">&#34;/api&#34;</span> completeApi
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>We remove the line <strong>pipe_through (Auth.requireAuthentication JWT)</strong> because it has moved to the completeApi now.</p>
+<p>Let&rsquo;s create our Login page so that user can perform login to the UI.</p>
+<p>Go to Pages folder in Client project and create Login.fs file.</p>
+<p>Start by creating Model for our Login page:
+We will store Email and Password in our Model before submitting to our Authentication api.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Model</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span> 
+</span></span><span style="display:flex;"><span>        Email <span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        Password <span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Our Msg will be just for Login purpose. We will have actual Login Msgs and Msgs related to updating login parameter as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Msg</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdateEmail <span style="color:#66d9ef">of</span> email<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdatePassword <span style="color:#66d9ef">of</span> password<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Login
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> LoggedIn <span style="color:#66d9ef">of</span> Result<span style="color:#f92672">&lt;</span>Token<span style="color:#f92672">,</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GotError <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">exn</span>
+</span></span></code></pre></div><p>We will call our authentication Api here. So we need to create api proxy on the client-side like what we did with CoCoTenderApi one.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> authApi <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Remoting.createApi ()
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.withRouteBuilder Route.builder
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.buildProxy<span style="color:#f92672">&lt;</span>IAuthApi<span style="color:#f92672">&gt;</span>
+</span></span></code></pre></div><p>Start with init function. We will make the Email and Password blank in the beginning.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> init () <span style="color:#f92672">:</span> Model <span style="color:#f92672">*</span> Cmd<span style="color:#f92672">&lt;</span>Msg<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> model <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> Email <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">;</span> Password <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    model<span style="color:#f92672">,</span> Cmd.none
+</span></span></code></pre></div><p>Then, the update function we will handle the Msg as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> update <span style="color:#f92672">(</span>msg<span style="color:#f92672">:</span> Msg<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>model<span style="color:#f92672">:</span> Model<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> Model <span style="color:#f92672">*</span> Cmd<span style="color:#f92672">&lt;</span>Msg<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> showError<span style="color:#66d9ef">&#39;</span> <span style="color:#f92672">=</span> showError model
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> msg <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdateEmail email <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span> model <span style="color:#66d9ef">with</span> Email <span style="color:#f92672">=</span> email <span style="color:#f92672">},</span> Cmd.none
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdatePassword pwd <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span> model <span style="color:#66d9ef">with</span> Password <span style="color:#f92672">=</span> pwd <span style="color:#f92672">},</span> Cmd.none
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Login <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        printf <span style="color:#e6db74">&#34;Loggin In&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> cmd <span style="color:#f92672">=</span> Cmd.OfAsync.either authApi<span style="color:#f92672">.</span>login <span style="color:#f92672">(</span>model<span style="color:#f92672">.</span>Email<span style="color:#f92672">,</span> model<span style="color:#f92672">.</span>Password<span style="color:#f92672">)</span> LoggedIn GotError
+</span></span><span style="display:flex;"><span>        model<span style="color:#f92672">,</span> cmd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> LoggedIn <span style="color:#f92672">(</span>Ok <span style="color:#f92672">(</span>Token token<span style="color:#f92672">))</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        printf <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;Token {token}&#34;</span>
+</span></span><span style="display:flex;"><span>        model<span style="color:#f92672">,</span> cmd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> LoggedIn <span style="color:#f92672">(</span>Error msg<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> 
+</span></span><span style="display:flex;"><span>        showError&#39; msg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GotError ex <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        printf <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;LoggedIn Error {ex.Message}&#34;</span>
+</span></span><span style="display:flex;"><span>        showError&#39; msg
+</span></span><span style="display:flex;"><span>        model<span style="color:#f92672">,</span> Cmd.none
+</span></span></code></pre></div><p>The aboved code will return token when the login is success.
+Next is to show UI for our Login page.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> view<span style="color:#66d9ef">&#39;</span> <span style="color:#f92672">(</span>model<span style="color:#f92672">:</span> Model<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>dispatch<span style="color:#f92672">:</span> Msg <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">unit</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Bulma.hero <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        hero<span style="color:#f92672">.</span>isFullHeight
+</span></span><span style="display:flex;"><span>        color<span style="color:#f92672">.</span>isPrimary
+</span></span><span style="display:flex;"><span>        prop<span style="color:#f92672">.</span>children <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>            Bulma.heroBody <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                Bulma.container <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                    Bulma.column <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        column<span style="color:#f92672">.</span>is6
+</span></span><span style="display:flex;"><span>                        column<span style="color:#f92672">.</span>isOffset3
+</span></span><span style="display:flex;"><span>                        prop<span style="color:#f92672">.</span>children <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                            Bulma.field<span style="color:#f92672">.</span>div <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                                Bulma.label <span style="color:#e6db74">&#34;Email&#34;</span>
+</span></span><span style="display:flex;"><span>                                Bulma.control<span style="color:#f92672">.</span>div <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                                    Bulma.input<span style="color:#f92672">.</span>text <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                                        prop<span style="color:#f92672">.</span>value model<span style="color:#f92672">.</span>Email
+</span></span><span style="display:flex;"><span>                                        prop<span style="color:#f92672">.</span>placeholder <span style="color:#e6db74">&#34;a@b.com&#34;</span>
+</span></span><span style="display:flex;"><span>                                        prop<span style="color:#f92672">.</span>onChange <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">(</span>email<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span><span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>  email <span style="color:#f92672">|&gt;</span> UpdateEmail <span style="color:#f92672">|&gt;</span> dispatch<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                            Bulma.field<span style="color:#f92672">.</span>div <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                                Bulma.label <span style="color:#e6db74">&#34;Password&#34;</span>
+</span></span><span style="display:flex;"><span>                                Bulma.control<span style="color:#f92672">.</span>div <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                                    Bulma.input<span style="color:#f92672">.</span>password <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                                        prop<span style="color:#f92672">.</span>value model<span style="color:#f92672">.</span>Password
+</span></span><span style="display:flex;"><span>                                        prop<span style="color:#f92672">.</span>placeholder <span style="color:#e6db74">&#34;*****&#34;</span>
+</span></span><span style="display:flex;"><span>                                        prop<span style="color:#f92672">.</span>onChange <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">(</span>pwd<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span><span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>  pwd <span style="color:#f92672">|&gt;</span> UpdatePassword <span style="color:#f92672">|&gt;</span> dispatch<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                            Bulma.field<span style="color:#f92672">.</span>div <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                                Bulma.field<span style="color:#f92672">.</span>isGrouped
+</span></span><span style="display:flex;"><span>                                Bulma.field<span style="color:#f92672">.</span>isGroupedCentered
+</span></span><span style="display:flex;"><span>                                prop<span style="color:#f92672">.</span>children <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                                    Bulma.control<span style="color:#f92672">.</span>div <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                                        Bulma.button<span style="color:#f92672">.</span>button <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                                            Bulma.color<span style="color:#f92672">.</span>isLink
+</span></span><span style="display:flex;"><span>                                            prop<span style="color:#f92672">.</span>text <span style="color:#e6db74">&#34;Login&#34;</span>
+</span></span><span style="display:flex;"><span>                                            prop<span style="color:#f92672">.</span>onClick <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> dispatch Login<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                                        <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">open</span> Feliz.UseElmish
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> view <span style="color:#f92672">=</span> React.functionComponent<span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> () <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>model<span style="color:#f92672">:</span> Model<span style="color:#f92672">),</span> dispatch <span style="color:#f92672">=</span> React.useElmish<span style="color:#f92672">(</span>init<span style="color:#f92672">,</span> update<span style="color:#f92672">,</span> <span style="color:#f92672">[|</span> <span style="color:#f92672">|])</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    view&#39; model dispatch
+</span></span><span style="display:flex;"><span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>We have the code for login page in place, we need to render the page in Index.fs. First, go to Router.fs to create Login page type.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Page</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Login
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Home
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> BoQ
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> parseUrl <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#f92672">[</span> <span style="color:#f92672">]</span> <span style="color:#f92672">-&gt;</span> Login
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;boq&#34;</span> <span style="color:#f92672">]</span> <span style="color:#f92672">-&gt;</span> BoQ
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;login&#34;</span> <span style="color:#f92672">]</span> <span style="color:#f92672">-&gt;</span> Login
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> Login
+</span></span></code></pre></div><p>As you can see, be default we will map path to  Login page where there is no custom Url path specified.</p>
+<p>Now go to Index.fs to do actual rendering in view function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> activePage <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> model<span style="color:#f92672">.</span>CurrentPage <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> Login <span style="color:#f92672">-&gt;</span> Pages.Login.view()
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> Home <span style="color:#f92672">-&gt;</span> Pages.Home.view()
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> BoQ <span style="color:#f92672">-&gt;</span> Pages.BoQ.view()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|&gt;</span> viewPage model dispatch
+</span></span></code></pre></div><p>Now, if you run the project and it will show the Login page. Entering user with some test email with password being &lsquo;ok&rsquo;, You will get following result:</p>
+<figure>
+    <img loading="lazy" src="images/return-token-after-logged-in.png"
+         alt="Return Token after Logged In" width="600"/> <figcaption>
+            Show returning token in Console after successful logged in
+        </figcaption>
+</figure>
+
+<p>Now, it is a good time to define how to prevent client to browse to any pages. After looking at sample in Saturn repository, I decide to go with securing the route. Basically, we will create route <code>secured</code> which we allow only authenticate request. You just need to add 2 more blocks in the <code>Server.fs</code> file</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">// ... After authApi definition
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> securedRouter <span style="color:#f92672">=</span> router <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    pipe_through <span style="color:#f92672">(</span>Auth.requireAuthentication JWT<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ... Replace topRouter
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> topRouter <span style="color:#f92672">=</span> router <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    get <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">(</span>htmlFile <span style="color:#e6db74">&#34;public/app.html&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    forward <span style="color:#e6db74">&#34;/secured&#34;</span> securedRouter
+</span></span><span style="display:flex;"><span>    forward <span style="color:#e6db74">&#34;/api&#34;</span> completeApi
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>After finish login, the client need to redirect to secured page with returning JWT token.
+There are quite a few steps involved. I will list all of them here. And show the code one by one..</p>
+<ol>
+<li>After successfully login, keep the JWT token in local storage.</li>
+<li>Navigate to secured page</li>
+<li>I am just kidding. There&rsquo;s no steps 3.</li>
+</ol>
+<p>To re-used JWT token in later request, we need to keep in some persistance storage. I pick local storage in Web browser since it&rsquo;s all supported and there are lots of sample using it.
+Create the TokentStorage.fs with following code.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> TokenStorage
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">open</span> System
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">open</span> Fable.Import
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> private storageKey <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;token&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tryGetToken () <span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> option <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Browser.WebStorage.localStorage<span style="color:#f92672">.</span>getItem<span style="color:#f92672">(</span>storageKey<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">function</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">-&gt;</span> None <span style="color:#f92672">|</span> x <span style="color:#f92672">-&gt;</span> Some <span style="color:#f92672">(</span>unbox x<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Option.bind <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">if</span> String.IsNullOrWhiteSpace<span style="color:#f92672">(</span>x<span style="color:#f92672">)</span> <span style="color:#66d9ef">then</span> None <span style="color:#66d9ef">else</span> Some x<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> removeToken () <span style="color:#f92672">=</span> Browser.WebStorage.localStorage<span style="color:#f92672">.</span>removeItem<span style="color:#f92672">(</span>storageKey<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> setToken <span style="color:#f92672">(</span>token<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> String.IsNullOrWhiteSpace<span style="color:#f92672">(</span>token<span style="color:#f92672">)</span> <span style="color:#66d9ef">then</span> removeToken()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> Browser.WebStorage.localStorage<span style="color:#f92672">.</span>setItem<span style="color:#f92672">(</span>storageKey<span style="color:#f92672">,</span> token<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>This module will allow us to get and set token. We will use setToken just for now.
+Before that don&rsquo;t forget to add this <code>TokenStorage.fs</code> in Client.fsproj. It should be at the top right below
+<code>index.html</code> since all Page need to use it.</p>
+<p>Next go to <code>Login.fs</code> and update login flow as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> LoggedIn <span style="color:#f92672">(</span>Ok <span style="color:#f92672">(</span>Token token<span style="color:#f92672">))</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        printf <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;Token {token}&#34;</span>
+</span></span><span style="display:flex;"><span>        TokenStorage.setToken token
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> cmd <span style="color:#f92672">=</span> Cmd.navigatePath<span style="color:#f92672">(</span> <span style="color:#f92672">[|</span><span style="color:#e6db74">&#34;secured&#34;</span><span style="color:#f92672">|])</span>
+</span></span><span style="display:flex;"><span>        model<span style="color:#f92672">,</span> cmd
+</span></span></code></pre></div><p>We will navigate the path to secured. if you run now the browser will show something like <code>http://localhost.8080/#secured</code> which is not matched with the <code>secured</code> we defined in Saturn. Since by default Saturn use hash navigation which we don&rsquo;t want. We need to change Router as well. Go to <code>Index.fs</code> and change the router to use pathMode instead of the default hashMode.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    React.router <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        router<span style="color:#f92672">.</span>pathMode
+</span></span><span style="display:flex;"><span>        router<span style="color:#f92672">.</span>onUrlChanged <span style="color:#f92672">(</span>parseUrl <span style="color:#f92672">&gt;&gt;</span> UrlChanged <span style="color:#f92672">&gt;&gt;</span> dispatch<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        router<span style="color:#f92672">.</span>children <span style="color:#f92672">[</span> activePage <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>Now if you login again, you should see same old BoQ page waiting for us.</p>
+<figure>
+    <img loading="lazy" src="images/login-to-secured-page.png"
+         alt="log in to secured page" width="600"/> <figcaption>
+            Go to Secured page after Logged In
+        </figcaption>
+</figure>
+
+<p>Next, we will learn how to authorize each user. Such that only owner of the BoQ can work on it.</p>
+<h1 id="credit">Credit<a hidden class="anchor" aria-hidden="true" href="#credit">#</a></h1>
+<ol>
+<li>Saturn JWT example</li>
+<li>Ryan Palmer article</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://twuttiwat.github.io/">TW Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

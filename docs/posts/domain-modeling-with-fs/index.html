@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Domain Modeling With F# | TW Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.
+Construction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.
+No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction.">
+<meta name="author" content="Teerawat Wuttiwat">
+<link rel="canonical" href="https://twuttiwat.github.io/posts/domain-modeling-with-fs/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5cfc680b1eeaeef9efbced92d46c2a9e876b72ee14fba85846afc4cff9e6e6f8.css" integrity="sha256-XPxoCx7q7vnvvO2S1Gwqnodrcu4U&#43;6hYRq/Ez/nm5vg=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://twuttiwat.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://twuttiwat.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://twuttiwat.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://twuttiwat.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://twuttiwat.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Domain Modeling With F#" />
+<meta property="og:description" content="Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.
+Construction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.
+No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://twuttiwat.github.io/posts/domain-modeling-with-fs/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-10-26T09:28:16+07:00" />
+<meta property="article:modified_time" content="2022-10-26T09:28:16+07:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Domain Modeling With F#"/>
+<meta name="twitter:description" content="Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.
+Construction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.
+No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://twuttiwat.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Domain Modeling With F#",
+      "item": "https://twuttiwat.github.io/posts/domain-modeling-with-fs/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Domain Modeling With F#",
+  "name": "Domain Modeling With F#",
+  "description": "Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.\nConstruction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.\nNo matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.\nConstruction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.\nNo matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction. This is very important since most of the owner of the building do not build the building themselves. Instead, they need to announce the project for the contractors. Each contractor need to bid in order to win the project.\nHence, the project owner needs to know the budget estimation of the project. So that they will know if the bidding from the contractor make sense or not. The larger the project, the more important the estimation of the project is.\nPrevent pricing scheme between contractors. in which, all contractos have a deal to propose very high estimation.\nCheck the feasibility of the project. in which, the project owner will need to check if the cost involved of the project is worthwhile or not. Usually, the owner will have their limit of budget, they might need to change blueprints in order to decrease the cost to be within the project.\nPrevent wrong doing of estimator of project owner. The estimation if done correctly will be standardized and transparent such that there are very difficult for the estimator to have bias over specific material vendor.\nGetting Requirements Without further ado, let’s start getting into the project by discussin with domain experts. To make it fun, I will make it like conversation between the experts and me. Here we go.\nI usually like to start with how are the domain experts (DE) working at the moment. Usually, most of them will have Excel or paper based in placed.\nMe: Hello. Could you please explain how are you working at the moment?\nExpert: Sure, we are working in Construction Project Estimate Department. Usually, we will get input as blueprint and spec book from architureture department. We then decode the blueprint into Bill Of Quantity (BoQ) which usually is an Excel file. We sum up the cost for each BoQ Item to get the direct cost of the project. We then look up for Factor F using the direct cost. Finally, we multiply the Factor with the direct cost to get the estimated cost of the prject.\nPhew, I think to myself that quite a lot of domain jargon which I have no idea. I highlight each jargon to clarify each of them in detail.\nMe: There are many words that I do not understand yet. Could you please clarify one by one. Let’s start with blueprint. Expert: Ok, the blueprint is what the architecture draw construction in detail to give you construction sub-contractor to build. We also use the same blueprint to calculate or in our term, decoding, to Bill of Quantity (BoQ). Me: Could you show me the example of Bill of Quantity (BoQ). Let’s keep it short by referring it as BoQ then. Expert: Yes, we usually refer that way. Here is what it looks like. BoQ of the project is the list of work that need to be done to finish the project. The work is itemized as BoQ Item. Each item will contain materials, labors, and their cost. Here is how it looks like:\nNo. Work Description Quantity Unit Material Material Unit Cost Labor Labor Unit Cost Item Cost 1 Pool Tiling 10 m^2 Big Tile 100 Do Tiling 50 1500 I remind myself that this looks like Data which can be defined using F# Record Anyway, there are more to that, we should confirm about calculation of total cost:\nMe: Can I assume that the Item Cost is the summation of Material Cost and Labor Cost.\nExpert: Yes, it is just like that. To get Material Cost, you just need to multiply Quantity with Material Unit Cost. Same goes with Labor Cost. In the case of Pool Tiling above, the Material Cost = 10 * 100 = 1000 and the Labor Cost = 10 * 50 = 500. Hence, the Item Cost is 1000 + 500 = 1500.\nMe: How about the Unit? Do we have to specify Unit for Material and Labor?\nExpert: Not needed at the moment. You just need to make sure that both Unit Cost must use the same Unit per money (Thai Baht in this case). For example, the Material Unit Cost for Pool Tiling is 100 m^2 / baht and Labor Unit Cost is 50 m^2 / bath. It is very important though that conversion is needed to make sure that Unit is correct.\nHere is our first formula - Item Cost Calculation\nItemCost = Quantity * MaterialUnitCost + Quantity * LaborUnitCost I think we are ready to create our first function now. Open up your VSCode, create new fsi, names it scratch.fsx and write down following snippet:\nlet calcItemCost qty materialUnitCost laborUnitCost = qty * materialUnitCost + qty * laborUnitCost This is very naive sketch for this function. We can do better. Let think about what errors can occur in this situation.\nUser is confused between quantity and unit cost since both are float. User is confused between material and labor unit cost. User is confused between unit of quantity and unit cost since none of them are provided. We will improve the code iteratively. Start with the first item.\nUser is confused between quantity and unit cost since both are float. We can enforce this by introducing single discriminated union type to Quantity and UnitCost and requires the types of input of calcItemCost function\ntype Quantity = Quantity of float type UnitCost = UnitCost of float let calcItemCost (Quantity qty) (UnitCost materialUnitCost) (UnitCost laborUnitCost) = qty * materialUnitCost + qty * laborUnitCost User is confused between material and labor unit cost. Again, we can use type to enforce this by introducing MaterialUnitCost and LaborUnitCost types.\ntype MaterialUnitCost = Material of UnitCost type LaborUnitCost = Labor of UnitCost let calcItemCost quantity materialUnitCost laborUnitCost = match quantity, materialUnitCost, laborUnitCost with | (Quantity qty), (Material (UnitCost materialUnitCost')), (Labor (UnitCost laborUnitCost')) -\u003e qty * materialUnitCost' + qty * laborUnitCost' As you can see, I decide to use match to extract actual values of material and labor unitcost.\nUser is confused between unit of quantity and unit cost since none of them are provided. We just need to introduce Unit for both Quantity and Material and make sure that when we calculate the item cost, it will check if both of them are the same. Here is the code.\ntype Quantity = Quantity of float*string type UnitCost = { Name: string UnitCost: float Unit: string } type MaterialUnitCost = Material of UnitCost type LaborUnitCost = Labor of UnitCost let tryCalcItemCost (Quantity (qty,qtyUnit)) (Material materialUnitCost) (Labor laborUnitCost) = if qtyUnit = materialUnitCost.Unit \u0026\u0026 qtyUnit = laborUnitCost.Unit then (qty * materialUnitCost.UnitCost + qty * laborUnitCost.UnitCost) |\u003e Some else None let testCalcItemCost = let materialUnitCost = Material { Name = \"Big Tile\"; UnitCost = 100; Unit = \"m2\" } let laborUnitCost = Labor { Name = \"Do Tiling\"; UnitCost = 50; Unit = \"m2\" } tryCalcItemCost (Quantity (10, \"m2\")) materialUnitCost laborUnitCost = Some 1500 I change the name of calcItemCost to tryCalcItemCost since we are going to return Option of float as result. When the input of calculation invalid (i.e. unit is not equal), we will return None.\nUsually, when we start to have some non-trivial function, I will create test function in the fsx file. F# protect us for most error, but sometimes Unit Testing is necessary.\ntype BoQItem = { OrderNo: int Description: string Quantity: float Unit: string Material: string MaterialUnitCost: float Labor: string LaborUnitCost: float } let calcItemCost item = (item.Quantity * item.MaterialUnitCost) + (item.Quantity * item.LaborUnitCost) /// Test /// let poolItem = { OrderNo = 1 Description = \"Pool Tiling\" Quantity = 10 Unit = \"m^2\" Material = \"Big Tile\" MaterialUnitCost = 100 Labor = \"Do Tiling\" LaborUnitCost = 50 } let testCalcItemCost = (calcItemCost poolItem) = 1500 The function is done. We will go to next task, implementing BoQItem. From the way BoQItem is represented, I think it is more appropriated to implement in Record type.\ntype BoQItem = { Description : string Quantity : Quantity MaterialUnitCost : MaterialUnitCost LaborUnitCost : LaborUnitCost TotalCost : float } The new TotalCost field should always include up-to-date Item Cost. To enforce this, we need to make sure that whenever new BoQItem is created, TotalCost will be calculated and update. This can be done by make the type private to module. Here is the code:\ntype BoQItem = private { //...Same as above } module BoQItem = let tryCalcItemCost (Quantity (qty,qtyUnit)) (Material materialUnitCost) (Labor laborUnitCost) = if qtyUnit = materialUnitCost.Unit \u0026\u0026 qtyUnit = laborUnitCost.Unit then (qty * materialUnitCost.UnitCost + qty * laborUnitCost.UnitCost) |\u003e Some else None let tryCreate desc qty materialUnitCost laborUnitCost = tryCalcItemCost qty materialUnitCost laborUnitCost |\u003e Option.map (fun cost -\u003e { Description = desc Quantity = qty MaterialUnitCost = materialUnitCost LaborUnitCost = laborUnitCost TotalCost = cost } ) Users will want to update BoQItem, we should create CRUD operation on the BoQItem type.\nlet updateDesc newDesc item = { item with Description = newDesc } let tryUpdateQty newQty item = tryCalcItemCost newQty item.MaterialUnitCost item.LaborUnitCost |\u003e Option.map (fun cost -\u003e { item with Quantity = newQty TotalCost = cost }) let tryUpdateMaterialUnitCost (Material newUnitCost) item = let newMaterialUnitCost = Material newUnitCost tryCalcItemCost item.Quantity newMaterialUnitCost item.LaborUnitCost |\u003e Option.map (fun cost -\u003e { item with MaterialUnitCost = newMaterialUnitCost TotalCost = cost }) Here, we create update function for Description, Quantity, and MaterialUnitCost. Since both Quantity and MaterialUnitCost can have some invalid result (i.e. Units are not matched.), both will return Option type. Let’s create functions for testing this CRUD operations.\nlet poolItem = let qty = Quantity (10, \"m^2\") let materialUnitCost = Material { Name = \"Big Tile\"; UnitCost = 100; Unit = \"m^2\" } let laborUnitCost = Labor { Name = \"Do Tiling\"; UnitCost = 50; Unit = \"m^2\" } tryCreate \"Pool Tile\" qty materialUnitCost laborUnitCost let testUpdateDesc = poolItem |\u003e Option.map (updateDesc \"New Pool\") |\u003e Option.map (fun x -\u003e x.Description = \"New Pool\") |\u003e Option.defaultValue false let testUpdateQty = let newQty = Quantity (20,\"m^2\") poolItem |\u003e Option.bind (tryUpdateQty newQty) |\u003e Option.map (fun x -\u003e x.TotalCost = 3000) |\u003e Option.defaultValue false let testUpdateMaterialUnitCost = let newMaterialUnitCost = Material \u003c| { Name = \"Small Tile\"; UnitCost = 50; Unit = \"m^2\"} poolItem |\u003e Option.bind (tryUpdateMaterialUnitCost newMaterialUnitCost) |\u003e Option.map (fun x -\u003e x.TotalCost = 1000) |\u003e Option.defaultValue false I found that combining lots of Option related functions together makes the code hard to read. I decide to use maybe computation expression to make the code more succint.\ntype MaybeBuilder() = member this.Bind(x, f) = match x with | None -\u003e None | Some a -\u003e f a member this.Return(x) = Some x let maybe = new MaybeBuilder() let testUpdateDesc = maybe { let! poolItem' = poolItem let updatedPoolItem = updateDesc \"New Pool\" poolItem' return updatedPoolItem.Description = \"New Pool\" } |\u003e Option.defaultValue false let testUpdateQty = maybe { let! poolItem' = poolItem let newQty = Quantity (20,\"m^2\") let! updatedPoolItem = tryUpdateQty newQty poolItem' return updatedPoolItem.TotalCost = 3000 } |\u003e Option.defaultValue false let testUpdateMaterialUnitCost = maybe { let! poolItem' = poolItem let newMaterialUnitCost = Material \u003c| { Name = \"Small Tile\"; UnitCost = 50; Unit = \"m^2\"} let! updatedPoolItem = tryUpdateMaterialUnitCost newMaterialUnitCost poolItem' return updatedPoolItem.TotalCost = 1000 } |\u003e Option.defaultValue false The number of lines might be almost the same but the meaning of codes are clearer.\nI think we are halfway through the domain modeling now. I will go sip some coffee before continuing. Also, it’s a good idea to show the result of test especially the calculation one to the client.\nOk, we finish the coffee. The next thing is to calculate the Estimate Cost of the construction project. We start by showing the calculation to the expert to confirm our understanding:\nEstimateCost = DirectCost * FactorF The main calculation is very simple. We need to go from there one bye one.\nDirectCost = Summation of BoQItem Cost This one is easy. We can write the code as follow.\ntype DirectCost = DirectCost of float let calcDirectCost items = items |\u003e List.sumBy (fun a -\u003e a |\u003e value |\u003e (fun b -\u003e b.TotalCost)) |\u003e DirectCost Note that we create new simple type for DirectCost to make it different from normal float type.\nNext is FactorF, we do not know how to get this. It’s time to talk with the Expert.\nMe: We know that FactorF is important in estimating the cost but we have no idea how to get it. Could you please shed some light?\nExpert: Easy. There is a table lookup for FactorF provided by the government. All you need to do is look up using Direct Cost of your project.\nMe: Can you show me how to lookup? Expert: Sure. Here is a sample of FactorF Table.\nDirect Cost Factor F \u003c 10 1.1 10 \u003c= x \u003c= 100 1.5 \u003e 100 1.9 If your project direct cost is less than 10 then the Factor F will be 1.1 but if is greater than 100 then it will be 1.9. Things will get more complicated when the cost is between 10 and 100. We call this as in Bound. You need to get proportion of your direct cost and multiply that to range of factor f. It’s mouthful. Let’s show the expert the formula.\nBoundFactorF = DirectCostRatio * FactorFRange + LowerBoundF DirectCostRatio = (DirectCost - LowerBoundCost) /(UpperBoundCost - LowerBoundCost) FactorFRange = UpperBoundF - LowerBoundF Let’s try out the formular for DirectCost of 55.\nFactorFRange = 1.5 - 1.1 = 0.4 DirectCostRatio = (55 - 10) / (100 - 10 ) = 0.5 BoundFactorF = 0.5 * 0.4 + 1.1 = 1.3 Let’s convert this formula to f#\nlet calcBoundF lowerBound upperBound directCost = let lowerBoundCost,lowerBoundF = lowerBound let upperBoundCost,upperBoundF = upperBound let fRange = upperBoundF - lowerBoundF let costRatio = (directCost - lowerBoundCost) / (upperBoundCost - lowerBoundCost) costRatio * fRange + lowerBoundF let testCalcBoundF = (=) (calcBoundF (10.0,1.1) (100.0,1.5) 55.0) 1.3 Next, we will take care of DirectCost which exceed either minimum or maximum bound. The FactorF table is simply defined as a list of two float tuple. The firt is cost and the second is factor f. For example, the example table can de defined as follow:\nlet exampleFTable = ( (10.0, 1.1); (100.0, 1.5); (1000, 1.9) ) |\u003e FactorFTable type FactorFTable = FactorFTable of float*float list let calcFactorF (FactorFTable fTable) (DirectCost directCost) = let findBound() = let lowerBoundIndex = fTable |\u003e List.findIndexBack (fun (cost,_) -\u003e directCost \u003e cost) let upperBoundIndex = lowerBoundIndex + 1 (fTable |\u003e List.item lowerBoundIndex), (fTable |\u003e List.item upperBoundIndex) let (minCost, minF), (maxCost, maxF) = (fTable |\u003e List.head), (fTable |\u003e List.last) if directCost \u003c minCost then minF else if directCost \u003e maxCost then maxF else findBound() |\u003e calcBoundF We have all the ingredients, let combine everything to our main function etimateCost.\nlet applyFactorF loadFactorFTable (DirectCost directCost) = let factorF = calcFactorF loadFactorFTable() directCost * factorF let roundCost = function | a when a \u003c 1000.0 -\u003e a | b -\u003e b / 1000.0 |\u003e System.Math.Truncate |\u003e (*) 1000.0 let estimateCost loadFactorFTable = calcDirectCost \u003e\u003e (applyFactorF loadFactorFTable) \u003e\u003e roundCost We have introduced 3 functions here. Function applyFactorF is like the name apply FactorF to DirectCost. Function loadFactorFTable is an input to the function so we can test the applyFactorF without really using any persistence layer. For example here is the example function\nlet testFactorFTable () = ( (10.0, 1.1); (100.0, 1.5); (1000, 1.9) ) |\u003e FactorFTable The roundCost function is just function to strip the number after thousand digit. The last function estimate cost use combination to combine all small functions together.\nWe have finish ourt first use case\n1. Estimate construction cost All the code can be clone from https://github.com/twuttiwat/CoCoTender using tag v0.1.1\nOr you can use following command\ngit clone -b v0.1.1 https://github.com/twuttiwat/CoCoTender.git Next, we will growing this use case from this simple fsharp script to full-blown webapp. Stay Tune!\n",
+  "wordCount" : "2706",
+  "inLanguage": "en",
+  "datePublished": "2022-10-26T09:28:16+07:00",
+  "dateModified": "2022-10-26T09:28:16+07:00",
+  "author":{
+    "@type": "Person",
+    "name": "Teerawat Wuttiwat"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://twuttiwat.github.io/posts/domain-modeling-with-fs/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "TW Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://twuttiwat.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://twuttiwat.github.io/" accesskey="h" title="TW Blog (Alt + H)">TW Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Domain Modeling With F#
+    </h1>
+    <div class="post-meta"><span title='2022-10-26 09:28:16 +0700 +07'>October 26, 2022</span>&nbsp;·&nbsp;Teerawat Wuttiwat
+
+</div>
+  </header> 
+  <div class="post-content"><p>Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.</p>
+<h2 id="construction-cost-estimation-project">Construction Cost Estimation Project<a hidden class="anchor" aria-hidden="true" href="#construction-cost-estimation-project">#</a></h2>
+<p>All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.</p>
+<p>No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction.
+This is very important since most of the owner of the building do not build the building themselves. Instead, they need to announce the project for the contractors. Each contractor need to bid in order to win the project.</p>
+<p>Hence, the project owner needs to know the budget estimation of the project. So that they will know if the bidding from the contractor make sense or not.
+The larger the project, the more important the estimation of the project is.</p>
+<ol>
+<li>
+<p>Prevent pricing scheme between contractors. in which, all contractos have a deal to propose very high estimation.</p>
+</li>
+<li>
+<p>Check the feasibility of the project. in which, the project owner will need to check if the cost involved of the project is worthwhile or not. Usually, the owner will have their limit of budget, they might need to change blueprints in order to decrease the cost to be within the project.</p>
+</li>
+<li>
+<p>Prevent wrong doing of estimator of project owner. The estimation if done correctly will be standardized and transparent such that there are very difficult for the estimator to have bias over specific material vendor.</p>
+</li>
+</ol>
+<h2 id="getting-requirements">Getting Requirements<a hidden class="anchor" aria-hidden="true" href="#getting-requirements">#</a></h2>
+<p>Without further ado, let&rsquo;s start getting into the project by discussin with domain experts. To make it fun, I will make it like conversation between the experts and me.
+Here we go.</p>
+<p>I usually like to start with how are the domain experts (DE) working at the moment. Usually, most of them will have Excel or paper based in placed.</p>
+<p><strong>Me</strong>: Hello. Could you please explain how are you working at the moment?<br>
+<strong>Expert</strong>: Sure, we are working in Construction Project Estimate Department. Usually, we will get input as <strong>blueprint</strong> and <strong>spec book</strong> from architureture department. We then <strong>decode</strong> the blueprint into <strong>Bill Of Quantity (BoQ)</strong> which usually is an Excel file. We sum up the <strong>cost for each BoQ Item</strong> to get the <strong>direct cost</strong> of the project. We then look up for <strong>Factor F</strong> using the direct cost. Finally, we multiply the Factor with the direct cost to get the <strong>estimated cost of the prject</strong>.</p>
+<p>Phew, I think to myself that quite a lot of domain jargon which I have no idea. I highlight each jargon to clarify each of them in detail.</p>
+<p><strong>Me</strong>: There are many words that I do not understand yet. Could you please clarify one by one. Let&rsquo;s start with <strong>blueprint</strong>.
+<strong>Expert</strong>: Ok, the <strong>blueprint</strong> is what the architecture draw construction in detail to give you construction sub-contractor to build. We also use the same blueprint to calculate or in our term, decoding, to Bill of Quantity (BoQ).
+<strong>Me</strong>: Could you show me the example of <strong>Bill of Quantity (BoQ)</strong>. Let&rsquo;s keep it short by referring it as BoQ then.
+Expert: Yes, we usually refer that way. Here is what it looks like. <strong>BoQ</strong> of the project is the list of work that need to be done to finish the project. The work is itemized as <strong>BoQ Item</strong>. Each item will contain <strong>materials</strong>, <strong>labors</strong>, and their <strong>cost</strong>. Here is how it looks like:</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>Work Description</th>
+<th>Quantity</th>
+<th>Unit</th>
+<th>Material</th>
+<th>Material Unit Cost</th>
+<th>Labor</th>
+<th>Labor Unit Cost</th>
+<th>Item Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pool Tiling</td>
+<td>10</td>
+<td>m^2</td>
+<td>Big Tile</td>
+<td>100</td>
+<td>Do Tiling</td>
+<td>50</td>
+<td>1500</td>
+</tr>
+</tbody>
+</table>
+<p>I remind myself that this looks like <em>Data</em> which can be defined using F# <em>Record</em>
+Anyway, there are more to that, we should confirm about calculation of total cost:</p>
+<p><strong>Me</strong>: Can I assume that the <strong>Item Cost</strong> is the summation of Material Cost and Labor Cost.</p>
+<p><strong>Expert</strong>: Yes, it is just like that. To get <strong>Material Cost</strong>, you just need to multiply <strong>Quantity</strong> with <strong>Material Unit Cost</strong>. Same goes with Labor Cost. In the case of Pool Tiling above, the Material Cost = 10 * 100 = 1000 and the Labor Cost = 10 * 50 = 500. Hence, the <strong>Item Cost</strong> is 1000 + 500 = 1500.</p>
+<p><strong>Me</strong>: How about the <strong>Unit</strong>? Do we have to specify <strong>Unit</strong> for Material and Labor?</p>
+<p><strong>Expert</strong>: Not needed at the moment. You just need to make sure that both Unit Cost must use the same <strong>Unit</strong> per money (Thai Baht in this case). For example, the Material Unit Cost for Pool Tiling is 100 m^2 / baht and Labor Unit Cost is 50 m^2 / bath. It is very important though that conversion is needed to make sure that <strong>Unit</strong> is correct.</p>
+<p>Here is our first formula - <strong>Item Cost Calculation</strong></p>
+<pre><code>ItemCost = Quantity * MaterialUnitCost + Quantity * LaborUnitCost
+</code></pre>
+<p>I think we are ready to create our first function now. Open up your VSCode, create new fsi, names it scratch.fsx and write down following snippet:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calcItemCost qty materialUnitCost laborUnitCost <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  qty <span style="color:#f92672">*</span> materialUnitCost <span style="color:#f92672">+</span> qty <span style="color:#f92672">*</span> laborUnitCost
+</span></span></code></pre></div><p>This is very naive sketch for this function. We can do better. Let think about what errors can occur in this situation.</p>
+<ol>
+<li>User is confused between quantity and unit cost since both are float.</li>
+<li>User is confused between material and labor unit cost.</li>
+<li>User is confused between unit of quantity and unit cost since none of them are provided.</li>
+</ol>
+<p>We will improve the code iteratively. Start with the first item.</p>
+<ol>
+<li>User is confused between quantity and unit cost since both are float.</li>
+</ol>
+<p>We can enforce this by introducing single discriminated union type to Quantity and UnitCost and requires the types of input of calcItemCost function</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Quantity</span> <span style="color:#f92672">=</span> Quantity <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UnitCost</span> <span style="color:#f92672">=</span> UnitCost <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calcItemCost <span style="color:#f92672">(</span>Quantity qty<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>UnitCost materialUnitCost<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>UnitCost laborUnitCost<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>  
+</span></span><span style="display:flex;"><span>  qty <span style="color:#f92672">*</span> materialUnitCost <span style="color:#f92672">+</span> qty <span style="color:#f92672">*</span> laborUnitCost
+</span></span></code></pre></div><ol start="2">
+<li>User is confused between material and labor unit cost.</li>
+</ol>
+<p>Again, we can use type to enforce this by introducing MaterialUnitCost and LaborUnitCost types.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MaterialUnitCost</span> <span style="color:#f92672">=</span> Material <span style="color:#66d9ef">of</span> UnitCost
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">LaborUnitCost</span> <span style="color:#f92672">=</span> Labor <span style="color:#66d9ef">of</span> UnitCost
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calcItemCost quantity materialUnitCost laborUnitCost <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">match</span> quantity<span style="color:#f92672">,</span> materialUnitCost<span style="color:#f92672">,</span> laborUnitCost <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#f92672">(</span>Quantity qty<span style="color:#f92672">),</span> <span style="color:#f92672">(</span>Material <span style="color:#f92672">(</span>UnitCost materialUnitCost&#39;<span style="color:#f92672">)),</span> <span style="color:#f92672">(</span>Labor <span style="color:#f92672">(</span>UnitCost laborUnitCost&#39;<span style="color:#f92672">))</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>    qty <span style="color:#f92672">*</span> materialUnitCost&#39; <span style="color:#f92672">+</span> qty <span style="color:#f92672">*</span> laborUnitCost&#39;
+</span></span></code></pre></div><p>As you can see, I decide to use match to extract actual values of material and labor unitcost.</p>
+<ol start="3">
+<li>User is confused between unit of quantity and unit cost since none of them are provided.</li>
+</ol>
+<p>We just need to introduce Unit for both Quantity and Material and make sure that when we calculate the item cost, it will check if both of them are the same. Here is the code.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Quantity</span> <span style="color:#f92672">=</span> Quantity <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">float</span><span style="color:#f92672">*</span><span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UnitCost</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Name<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    UnitCost<span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>    Unit<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MaterialUnitCost</span> <span style="color:#f92672">=</span> Material <span style="color:#66d9ef">of</span> UnitCost
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">LaborUnitCost</span> <span style="color:#f92672">=</span> Labor <span style="color:#66d9ef">of</span> UnitCost
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tryCalcItemCost <span style="color:#f92672">(</span>Quantity <span style="color:#f92672">(</span>qty<span style="color:#f92672">,</span>qtyUnit<span style="color:#f92672">))</span> <span style="color:#f92672">(</span>Material materialUnitCost<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>Labor laborUnitCost<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> qtyUnit <span style="color:#f92672">=</span> materialUnitCost<span style="color:#f92672">.</span>Unit <span style="color:#f92672">&amp;&amp;</span> qtyUnit <span style="color:#f92672">=</span> laborUnitCost<span style="color:#f92672">.</span>Unit <span style="color:#66d9ef">then</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>qty <span style="color:#f92672">*</span> materialUnitCost<span style="color:#f92672">.</span>UnitCost <span style="color:#f92672">+</span> qty <span style="color:#f92672">*</span> laborUnitCost<span style="color:#f92672">.</span>UnitCost<span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> Some
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    None
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> testCalcItemCost <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> materialUnitCost <span style="color:#f92672">=</span> Material <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Big Tile&#34;</span><span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> 100<span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m2&#34;</span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> laborUnitCost <span style="color:#f92672">=</span> Labor <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Do Tiling&#34;</span><span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> 50<span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m2&#34;</span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  tryCalcItemCost <span style="color:#f92672">(</span>Quantity <span style="color:#f92672">(</span>10<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;m2&#34;</span><span style="color:#f92672">))</span> materialUnitCost laborUnitCost <span style="color:#f92672">=</span> Some 1500 
+</span></span></code></pre></div><p>I change the name of calcItemCost to tryCalcItemCost since we are going to return Option of float as result. When the input of calculation invalid (i.e. unit is not equal), we will return None.</p>
+<p>Usually, when we start to have some non-trivial function, I will create test function in the fsx file. F# protect us for most error, but sometimes Unit Testing is necessary.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">BoQItem</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    OrderNo<span style="color:#f92672">:</span> int
+</span></span><span style="display:flex;"><span>    Description<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Quantity<span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>    Unit<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Material<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    MaterialUnitCost<span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>    Labor<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    LaborUnitCost<span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>        
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calcItemCost item <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">(</span>item<span style="color:#f92672">.</span>Quantity <span style="color:#f92672">*</span> item<span style="color:#f92672">.</span>MaterialUnitCost<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> <span style="color:#f92672">(</span>item<span style="color:#f92672">.</span>Quantity <span style="color:#f92672">*</span> item<span style="color:#f92672">.</span>LaborUnitCost<span style="color:#f92672">)</span>  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">/// Test 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">/// 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"></span><span style="color:#66d9ef">let</span> poolItem <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">{</span> 
+</span></span><span style="display:flex;"><span>    OrderNo <span style="color:#f92672">=</span> 1
+</span></span><span style="display:flex;"><span>    Description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Pool Tiling&#34;</span>
+</span></span><span style="display:flex;"><span>    Quantity <span style="color:#f92672">=</span> 10
+</span></span><span style="display:flex;"><span>    Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m^2&#34;</span>
+</span></span><span style="display:flex;"><span>    Material <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Big Tile&#34;</span>
+</span></span><span style="display:flex;"><span>    MaterialUnitCost <span style="color:#f92672">=</span> 100
+</span></span><span style="display:flex;"><span>    Labor <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Do Tiling&#34;</span>
+</span></span><span style="display:flex;"><span>    LaborUnitCost <span style="color:#f92672">=</span> 50
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> testCalcItemCost <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>calcItemCost poolItem<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 1500
+</span></span></code></pre></div><p>The function is done. We will go to next task, implementing <strong>BoQItem</strong>. From the way BoQItem is represented, I think it is more appropriated to implement in Record type.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">BoQItem</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Description <span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Quantity <span style="color:#f92672">:</span> Quantity
+</span></span><span style="display:flex;"><span>    MaterialUnitCost <span style="color:#f92672">:</span> MaterialUnitCost
+</span></span><span style="display:flex;"><span>    LaborUnitCost <span style="color:#f92672">:</span> LaborUnitCost
+</span></span><span style="display:flex;"><span>    TotalCost <span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>The new TotalCost field should always include up-to-date <strong>Item Cost</strong>. To enforce this, we need to make sure that whenever new BoQItem is created, TotalCost will be calculated and update. This can be done by make the type private to module. Here is the code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">BoQItem</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">private</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//...Same as above
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">module</span> BoQItem <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> tryCalcItemCost <span style="color:#f92672">(</span>Quantity <span style="color:#f92672">(</span>qty<span style="color:#f92672">,</span>qtyUnit<span style="color:#f92672">))</span> <span style="color:#f92672">(</span>Material materialUnitCost<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>Labor laborUnitCost<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> qtyUnit <span style="color:#f92672">=</span> materialUnitCost<span style="color:#f92672">.</span>Unit <span style="color:#f92672">&amp;&amp;</span> qtyUnit <span style="color:#f92672">=</span> laborUnitCost<span style="color:#f92672">.</span>Unit <span style="color:#66d9ef">then</span> 
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">(</span>qty <span style="color:#f92672">*</span> materialUnitCost<span style="color:#f92672">.</span>UnitCost <span style="color:#f92672">+</span> qty <span style="color:#f92672">*</span> laborUnitCost<span style="color:#f92672">.</span>UnitCost<span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> Some
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>      None
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> tryCreate desc qty materialUnitCost laborUnitCost <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    tryCalcItemCost qty materialUnitCost laborUnitCost
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Option.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cost <span style="color:#f92672">-&gt;</span> 
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Description <span style="color:#f92672">=</span> desc
+</span></span><span style="display:flex;"><span>        Quantity <span style="color:#f92672">=</span> qty
+</span></span><span style="display:flex;"><span>        MaterialUnitCost <span style="color:#f92672">=</span> materialUnitCost
+</span></span><span style="display:flex;"><span>        LaborUnitCost <span style="color:#f92672">=</span> laborUnitCost
+</span></span><span style="display:flex;"><span>        TotalCost <span style="color:#f92672">=</span> cost
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">)</span> 
+</span></span></code></pre></div><p>Users will want to update BoQItem, we should create CRUD operation on the BoQItem type.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> updateDesc newDesc item <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> item <span style="color:#66d9ef">with</span> Description <span style="color:#f92672">=</span> newDesc <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> tryUpdateQty newQty item <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    tryCalcItemCost newQty item<span style="color:#f92672">.</span>MaterialUnitCost item<span style="color:#f92672">.</span>LaborUnitCost
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Option.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cost <span style="color:#f92672">-&gt;</span> 
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        item <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>          Quantity <span style="color:#f92672">=</span> newQty
+</span></span><span style="display:flex;"><span>          TotalCost <span style="color:#f92672">=</span> cost
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> tryUpdateMaterialUnitCost <span style="color:#f92672">(</span>Material newUnitCost<span style="color:#f92672">)</span> item <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> newMaterialUnitCost <span style="color:#f92672">=</span> Material newUnitCost
+</span></span><span style="display:flex;"><span>    tryCalcItemCost item<span style="color:#f92672">.</span>Quantity newMaterialUnitCost item<span style="color:#f92672">.</span>LaborUnitCost
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Option.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> cost <span style="color:#f92672">-&gt;</span> 
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        item <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>          MaterialUnitCost <span style="color:#f92672">=</span> newMaterialUnitCost
+</span></span><span style="display:flex;"><span>          TotalCost <span style="color:#f92672">=</span> cost
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">})</span>
+</span></span></code></pre></div><p>Here, we create update function for Description, Quantity, and MaterialUnitCost. Since both Quantity and MaterialUnitCost can have some invalid result (i.e. Units are not matched.), both will return Option type.
+Let&rsquo;s create functions for testing this CRUD operations.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> poolItem <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> qty <span style="color:#f92672">=</span> Quantity <span style="color:#f92672">(</span>10<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> materialUnitCost <span style="color:#f92672">=</span> Material <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Big Tile&#34;</span><span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> 100<span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m^2&#34;</span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> laborUnitCost <span style="color:#f92672">=</span> Labor <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Do Tiling&#34;</span><span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> 50<span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m^2&#34;</span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  tryCreate <span style="color:#e6db74">&#34;Pool Tile&#34;</span>  qty materialUnitCost laborUnitCost
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> testUpdateDesc <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  poolItem 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.map <span style="color:#f92672">(</span>updateDesc <span style="color:#e6db74">&#34;New Pool&#34;</span><span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>Description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;New Pool&#34;</span><span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.defaultValue <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> testUpdateQty <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> newQty <span style="color:#f92672">=</span> Quantity <span style="color:#f92672">(</span>20<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  poolItem 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.bind <span style="color:#f92672">(</span>tryUpdateQty  newQty<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>TotalCost <span style="color:#f92672">=</span> 3000<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.defaultValue <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> testUpdateMaterialUnitCost <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> newMaterialUnitCost <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    Material <span style="color:#f92672">&lt;|</span> <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Small Tile&#34;</span><span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> 50<span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  poolItem 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.bind <span style="color:#f92672">(</span>tryUpdateMaterialUnitCost  newMaterialUnitCost<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>TotalCost <span style="color:#f92672">=</span> 1000<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.defaultValue <span style="color:#66d9ef">false</span>
+</span></span></code></pre></div><p>I found that combining lots of Option related functions together makes the code hard to read. I decide to use <strong>maybe</strong> computation expression to make the code more succint.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MaybeBuilder</span>() <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">member</span> this.<span style="color:#a6e22e">Bind</span><span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> f<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> x <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> None <span style="color:#f92672">-&gt;</span> None
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> Some a <span style="color:#f92672">-&gt;</span> f a
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">member</span> this.<span style="color:#a6e22e">Return</span><span style="color:#f92672">(</span>x<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Some x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> maybe <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MaybeBuilder()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> testUpdateDesc <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  maybe <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let!</span> poolItem<span style="color:#66d9ef">&#39;</span> <span style="color:#f92672">=</span> poolItem
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> updatedPoolItem <span style="color:#f92672">=</span> updateDesc <span style="color:#e6db74">&#34;New Pool&#34;</span> poolItem&#39;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> updatedPoolItem<span style="color:#f92672">.</span>Description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;New Pool&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.defaultValue <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> testUpdateQty <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  maybe <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let!</span> poolItem<span style="color:#66d9ef">&#39;</span> <span style="color:#f92672">=</span> poolItem
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> newQty <span style="color:#f92672">=</span> Quantity <span style="color:#f92672">(</span>20<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let!</span> updatedPoolItem <span style="color:#f92672">=</span> tryUpdateQty newQty poolItem&#39;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> updatedPoolItem<span style="color:#f92672">.</span>TotalCost <span style="color:#f92672">=</span> 3000
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.defaultValue <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> testUpdateMaterialUnitCost <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  maybe <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let!</span> poolItem<span style="color:#66d9ef">&#39;</span> <span style="color:#f92672">=</span> poolItem
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> newMaterialUnitCost <span style="color:#f92672">=</span> Material <span style="color:#f92672">&lt;|</span> <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Small Tile&#34;</span><span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> 50<span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let!</span> updatedPoolItem <span style="color:#f92672">=</span> tryUpdateMaterialUnitCost newMaterialUnitCost poolItem&#39;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> updatedPoolItem<span style="color:#f92672">.</span>TotalCost <span style="color:#f92672">=</span> 1000
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> Option.defaultValue <span style="color:#66d9ef">false</span>
+</span></span></code></pre></div><p>The number of lines might be almost the same but the meaning of codes are clearer.</p>
+<p>I think we are halfway through the domain modeling now. I will go sip some coffee before continuing. Also, it&rsquo;s a good idea to show the result of test especially the calculation one to the client.</p>
+<p>Ok, we finish the coffee. The next thing is to calculate the <strong>Estimate Cost</strong> of the construction project.
+We start by showing the calculation to the expert to confirm our understanding:</p>
+<pre><code>EstimateCost = DirectCost * FactorF
+</code></pre>
+<p>The main calculation is very simple. We need to go from there one bye one.</p>
+<pre><code>DirectCost = Summation of BoQItem Cost
+</code></pre>
+<p>This one is easy. We can write the code as follow.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DirectCost</span> <span style="color:#f92672">=</span> DirectCost <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calcDirectCost items <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  items 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> List.sumBy <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> a <span style="color:#f92672">-&gt;</span> a <span style="color:#f92672">|&gt;</span> value <span style="color:#f92672">|&gt;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> b <span style="color:#f92672">-&gt;</span> b<span style="color:#f92672">.</span>TotalCost<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> DirectCost
+</span></span></code></pre></div><p>Note that we create new simple type for DirectCost to make it different from normal float type.</p>
+<p>Next is <strong>FactorF</strong>, we do not know how to get this. It&rsquo;s time to talk with the Expert.</p>
+<p><strong>Me</strong>: We know that <strong>FactorF</strong> is important in estimating the cost but we have no idea how to get it. Could you please shed some light?</p>
+<p><strong>Expert</strong>: Easy. There is a table lookup for <strong>FactorF</strong> provided by the government. All you need to do is <strong>look up</strong> using <strong>Direct Cost</strong> of your project.</p>
+<p><strong>Me</strong>:  Can you show me how to lookup?
+<strong>Expert</strong>: Sure. Here is a sample of <strong>FactorF Table</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Direct Cost</th>
+<th>Factor F</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 10</td>
+<td>1.1</td>
+</tr>
+<tr>
+<td>10 &lt;= x &lt;= 100</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td>&gt; 100</td>
+<td>1.9</td>
+</tr>
+</tbody>
+</table>
+<p>If your project direct cost is less than 10 then the Factor F will be 1.1 but if is greater than 100 then it will be 1.9.
+Things will get more complicated when the cost is between 10 and 100. We call this as in <strong>Bound</strong>. You need to get proportion of your direct cost and multiply that to range of factor f. It&rsquo;s mouthful. Let&rsquo;s show the expert the formula.</p>
+<pre><code>BoundFactorF = DirectCostRatio * FactorFRange + LowerBoundF
+DirectCostRatio = (DirectCost - LowerBoundCost) /(UpperBoundCost - LowerBoundCost) 
+FactorFRange = UpperBoundF - LowerBoundF
+</code></pre>
+<p>Let&rsquo;s try out the formular for DirectCost of 55.</p>
+<pre><code>FactorFRange = 1.5 - 1.1 = 0.4
+DirectCostRatio = (55 - 10) / (100 - 10 ) = 0.5
+BoundFactorF = 0.5 * 0.4 + 1.1 = 1.3
+</code></pre>
+<p>Let&rsquo;s convert this formula to f#</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calcBoundF lowerBound upperBound directCost <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> lowerBoundCost<span style="color:#f92672">,</span>lowerBoundF <span style="color:#f92672">=</span> lowerBound
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> upperBoundCost<span style="color:#f92672">,</span>upperBoundF <span style="color:#f92672">=</span> upperBound
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> fRange <span style="color:#f92672">=</span> upperBoundF <span style="color:#f92672">-</span> lowerBoundF
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> costRatio <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>directCost <span style="color:#f92672">-</span> lowerBoundCost<span style="color:#f92672">)</span> <span style="color:#f92672">/</span> <span style="color:#f92672">(</span>upperBoundCost <span style="color:#f92672">-</span> lowerBoundCost<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  costRatio <span style="color:#f92672">*</span> fRange <span style="color:#f92672">+</span> lowerBoundF
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> testCalcBoundF <span style="color:#f92672">=</span> <span style="color:#f92672">(=)</span> <span style="color:#f92672">(</span>calcBoundF <span style="color:#f92672">(</span>10<span style="color:#f92672">.</span>0<span style="color:#f92672">,</span>1<span style="color:#f92672">.</span>1<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>100<span style="color:#f92672">.</span>0<span style="color:#f92672">,</span>1<span style="color:#f92672">.</span>5<span style="color:#f92672">)</span> 55<span style="color:#f92672">.</span>0<span style="color:#f92672">)</span> 1<span style="color:#f92672">.</span>3 
+</span></span></code></pre></div><p>Next, we will take care of DirectCost which exceed either minimum or maximum bound. The FactorF table is simply defined as a list of two float tuple. The firt is cost and the second is factor f. For example, the example table can de defined as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> exampleFTable <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">(</span> <span style="color:#f92672">(</span>10<span style="color:#f92672">.</span>0<span style="color:#f92672">,</span> 1<span style="color:#f92672">.</span>1<span style="color:#f92672">);</span> <span style="color:#f92672">(</span>100<span style="color:#f92672">.</span>0<span style="color:#f92672">,</span> 1<span style="color:#f92672">.</span>5<span style="color:#f92672">);</span> <span style="color:#f92672">(</span>1000<span style="color:#f92672">,</span> 1<span style="color:#f92672">.</span>9<span style="color:#f92672">)</span> <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> FactorFTable
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FactorFTable</span> <span style="color:#f92672">=</span> FactorFTable <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">float</span><span style="color:#f92672">*</span><span style="color:#66d9ef">float</span> <span style="color:#66d9ef">list</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> calcFactorF <span style="color:#f92672">(</span>FactorFTable fTable<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>DirectCost directCost<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> findBound() <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> lowerBoundIndex <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>      fTable 
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|&gt;</span> List.findIndexBack <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">(</span>cost<span style="color:#f92672">,_)</span> <span style="color:#f92672">-&gt;</span> directCost <span style="color:#f92672">&gt;</span> cost<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> upperBoundIndex <span style="color:#f92672">=</span> lowerBoundIndex <span style="color:#f92672">+</span> 1
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>fTable <span style="color:#f92672">|&gt;</span> List.item lowerBoundIndex<span style="color:#f92672">),</span> <span style="color:#f92672">(</span>fTable <span style="color:#f92672">|&gt;</span> List.item upperBoundIndex<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>minCost<span style="color:#f92672">,</span> minF<span style="color:#f92672">),</span> <span style="color:#f92672">(</span>maxCost<span style="color:#f92672">,</span> maxF<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>fTable <span style="color:#f92672">|&gt;</span> List.head<span style="color:#f92672">),</span> <span style="color:#f92672">(</span>fTable <span style="color:#f92672">|&gt;</span> List.last<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> directCost <span style="color:#f92672">&lt;</span> minCost <span style="color:#66d9ef">then</span> minF
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> directCost <span style="color:#f92672">&gt;</span> maxCost <span style="color:#66d9ef">then</span> maxF
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">else</span> 
+</span></span><span style="display:flex;"><span>    findBound()
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> calcBoundF
+</span></span></code></pre></div><p>We have all the ingredients, let combine everything to our main function <strong>etimateCost</strong>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> applyFactorF loadFactorFTable <span style="color:#f92672">(</span>DirectCost directCost<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> factorF <span style="color:#f92672">=</span> calcFactorF loadFactorFTable()
+</span></span><span style="display:flex;"><span>  directCost <span style="color:#f92672">*</span> factorF
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> roundCost <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> a <span style="color:#66d9ef">when</span> a <span style="color:#f92672">&lt;</span> 1000<span style="color:#f92672">.</span>0 <span style="color:#f92672">-&gt;</span> a 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> b <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>    b <span style="color:#f92672">/</span> 1000<span style="color:#f92672">.</span>0
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> System.Math.Truncate
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> <span style="color:#f92672">(*)</span> 1000<span style="color:#f92672">.</span>0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> estimateCost loadFactorFTable <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  calcDirectCost <span style="color:#f92672">&gt;&gt;</span> <span style="color:#f92672">(</span>applyFactorF loadFactorFTable<span style="color:#f92672">)</span> <span style="color:#f92672">&gt;&gt;</span> roundCost
+</span></span></code></pre></div><p>We have introduced 3 functions here. Function applyFactorF is like the name apply FactorF to DirectCost. Function loadFactorFTable is an input to the function so we can test the applyFactorF without really using any persistence layer. For example here is the example function</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> testFactorFTable () <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">(</span> <span style="color:#f92672">(</span>10<span style="color:#f92672">.</span>0<span style="color:#f92672">,</span> 1<span style="color:#f92672">.</span>1<span style="color:#f92672">);</span> <span style="color:#f92672">(</span>100<span style="color:#f92672">.</span>0<span style="color:#f92672">,</span> 1<span style="color:#f92672">.</span>5<span style="color:#f92672">);</span> <span style="color:#f92672">(</span>1000<span style="color:#f92672">,</span> 1<span style="color:#f92672">.</span>9<span style="color:#f92672">)</span> <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|&gt;</span> FactorFTable
+</span></span></code></pre></div><p>The roundCost function is just function to strip the number after thousand digit. The last function estimate cost use combination to combine all small functions together.</p>
+<p>We have finish ourt first use case</p>
+<pre><code>1. Estimate construction cost
+</code></pre>
+<p>All the code can be clone from <a href="https://github.com/twuttiwat/CoCoTender">https://github.com/twuttiwat/CoCoTender</a> using tag v0.1.1</p>
+<p>Or you can use following command</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone -b v0.1.1 https://github.com/twuttiwat/CoCoTender.git
+</span></span></code></pre></div><p>Next, we will growing this use case from this simple fsharp script to full-blown webapp. Stay Tune!</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://twuttiwat.github.io/">TW Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

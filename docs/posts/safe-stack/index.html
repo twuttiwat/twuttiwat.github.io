@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>From Domain to Web with Safe Stack | TW Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Hi there. Welcome back to my F# web app development series. Just to recap for new people, we are going to create construction cost tender estimation (CoCoTender) using f#. If you are interested in the domain, you can read the past posts in the series. For this post, we wil emphasize how to connect the domain to web app using safe stack. So there is no need to understand the whole domain concept.">
+<meta name="author" content="Teerawat Wuttiwat">
+<link rel="canonical" href="https://twuttiwat.github.io/posts/safe-stack/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5cfc680b1eeaeef9efbced92d46c2a9e876b72ee14fba85846afc4cff9e6e6f8.css" integrity="sha256-XPxoCx7q7vnvvO2S1Gwqnodrcu4U&#43;6hYRq/Ez/nm5vg=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://twuttiwat.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://twuttiwat.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://twuttiwat.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://twuttiwat.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://twuttiwat.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="From Domain to Web with Safe Stack" />
+<meta property="og:description" content="Hi there. Welcome back to my F# web app development series. Just to recap for new people, we are going to create construction cost tender estimation (CoCoTender) using f#. If you are interested in the domain, you can read the past posts in the series. For this post, we wil emphasize how to connect the domain to web app using safe stack. So there is no need to understand the whole domain concept." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://twuttiwat.github.io/posts/safe-stack/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-12-05T09:21:13+07:00" />
+<meta property="article:modified_time" content="2022-12-05T09:21:13+07:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="From Domain to Web with Safe Stack"/>
+<meta name="twitter:description" content="Hi there. Welcome back to my F# web app development series. Just to recap for new people, we are going to create construction cost tender estimation (CoCoTender) using f#. If you are interested in the domain, you can read the past posts in the series. For this post, we wil emphasize how to connect the domain to web app using safe stack. So there is no need to understand the whole domain concept."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://twuttiwat.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "From Domain to Web with Safe Stack",
+      "item": "https://twuttiwat.github.io/posts/safe-stack/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "From Domain to Web with Safe Stack",
+  "name": "From Domain to Web with Safe Stack",
+  "description": "Hi there. Welcome back to my F# web app development series. Just to recap for new people, we are going to create construction cost tender estimation (CoCoTender) using f#. If you are interested in the domain, you can read the past posts in the series. For this post, we wil emphasize how to connect the domain to web app using safe stack. So there is no need to understand the whole domain concept.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Hi there. Welcome back to my F# web app development series. Just to recap for new people, we are going to create construction cost tender estimation (CoCoTender) using f#. If you are interested in the domain, you can read the past posts in the series. For this post, we wil emphasize how to connect the domain to web app using safe stack. So there is no need to understand the whole domain concept.\nLet’s kick off the process by cloning git repository I prepare for this post.\ngit clone --branch begin-safe-stack https://github.com/twuttiwat/CoCoTender.git cd CoCoTender dotnet run Opening web browser at http://localhost:8080, you should see following default Todo app.\nDefault Todo App If you see this, then we are good to go now.\nUse Cases One way to model the api is to list all of uses cases and implement each api function one by one. Here is the list of our use cases:\nList BoQ Items Add New BoQ Item Update BoQ Item Delete BoQ Item Calculate All Cost Show FactorF Table There are previous posts mention domain modeling in the past. But for short, the ultimate goal for this CoCoTender app is to calculate the tender cost of the project. The cost will depends on list of construction task (i.e. BoQItem). Our application should provide user interface to do CRUD operation on list of BoQItems and let the app calculate the cost and present that to client.\nLet’s start with our first use case\nList BoQ Items One advantage of working with Safe Stack is the ablility to share code between server and client. The Shared module will include interface of the Api and Dto (Data Transfer Object).\nI like to start on Shared module then Server and finally at the Client. I found that checking error on Server is much simpler than on the client.\nGo to the bottom of the Shared.fs and declare following Dto and Api for our app.\ntype BoQItemDto = { Id : Guid Description: string Quantity: float Unit: string Material: string MaterialUnitCost: float Labor: string LaborUnitCost: float TotalCost: float } module BoQItemDto = let create itemId description quantity unit material materialUnitCost labor laborUnitCost totalCost = { Id = itemId Description = description Quantity = quantity Unit = unit Material = material MaterialUnitCost = materialUnitCost Labor = labor LaborUnitCost = laborUnitCost TotalCost = totalCost } type ICoCoTenderApi = { getBoQItems: unit -\u003e Async\u003cResult\u003cBoQItemDto list,string\u003e\u003e } Next, go to Server.fs. We will implement the getBoQItems function. As you can see from the signature of getBoQItems function, we will send back AsyncResult as output of the function. I think it’s a good idea to rely on the Result, so we can be explicit about the error.\nTo make it easier to work with AsyncResult type, it’s better to use FsErrorToolkit.ErrorHandling computation expression. I will remove a lot of matching expression when we try to extract the result from Result type.\nPress ctrl-` and type following command\ndotnet add package FsToolkit.ErrorHandling We also need to use function from our Domain library as well. So add reference to that library.\ndotnet add reference ../CoCoTenderDomain The default Todo app use ResizeArray as a way to store data. We will use the same approach at the moment and will change it that to some kind of database in the future.\nadd following line in module Storage\nmodule Storage = let boqItems = ResizeArray\u003cBoQItem\u003e() let addBoQItem (boqItem: BoQItem) = boqItems.Add boqItem Ok () do let qty = Quantity (10.0, \"m^2\") let material = Material { Name = \"Pool Tile\"; Unit = \"m^2\"; UnitCost = 100.0 } let labor = Labor { Name = \"Do Tiling\"; Unit = \"m^2\"; UnitCost = 50.0 } let defaultItem = BoQItem.tryCreate (Guid.NewGuid()) \"Pool Tile\" qty material labor match defaultItem with | Ok defaultItem' -\u003e addBoQItem defaultItem' |\u003e ignore | _ -\u003e () Note there are some issues with Library.fs in CoCoTender.Domain project. You can download the file and replace it in your project.\nWe need function to convert between Dto and Domain type. I tried to create Dto in Shared module but could not make it worked. So I decide to create the Dto conversion module in Server project instead. Just paste following code before the webApp line\nmodule Dto = let toBoQItemDto (domain:BoQItem) = let domainVal = domain |\u003e BoQItem.value let (Quantity (qty, qtyUnit)) = domainVal.Quantity let (Material material) = domainVal.MaterialUnitCost let (Labor labor) = domainVal.LaborUnitCost BoQItemDto.create domainVal.Id domainVal.Description qty qtyUnit material.Name material.UnitCost labor.Name labor.UnitCost domainVal.TotalCost let toBoQItemDomain (dto:BoQItemDto) = let qty = Quantity (dto.Quantity, dto.Unit) let material = Material { Name = dto.Material; Unit = dto.Unit; UnitCost = dto.MaterialUnitCost } let labor = Labor { Name = dto.Labor; Unit = dto.Unit; UnitCost = dto.LaborUnitCost } BoQItem.tryCreate dto.Id dto.Description qty material labor Finally, declare cocoTenderApi before webApp line\nlet cocoTenderApi = { getBoQItems = fun () -\u003e asyncResult { return Storage.boqItems |\u003e List.ofSeq |\u003e List.map Dto.toBoQItemDto } } and change webApp to use this new cocoTenderApi\nlet webApp = Remoting.createApi () |\u003e Remoting.withRouteBuilder Route.builder |\u003e Remoting.fromValue cocoTenderApi |\u003e Remoting.buildHttpHandler You can test if the server api work correctly by calling api directly in Chrome. Change the url to http://localhost:8080/api/ICoCoTenderApi/getBoQItems. The result should be as follow:\nGetBoQItem Response We have finished the Server part. Next task is to render our BoQItems on the client side. Since user like to use Excel style interface, I decide to use Feliz.AgGrid component for this. We need to install it first. Go to Client project folder and install using femto.\nfemto install Feliz.AgGrid Open Index.fs, and start by modifying our Model type. Safe stack use Elmish for client-side programming. The only single source of state is from Model, the only place that can change the Model is from update function. The view will render the output using the states in the Model as an input.\nBack to our Model, we need to maintain list of BoQItems to render it on the AgGrid. So define the model as follow:\ntype Model = { BoQItems: BoQItemDto list } There will be 2 types of Msg to update the Model: GetBoQItems and GotBoQItems. The first one is for requesting list of BoQ Items and the second one is for receiving the list.\ntype Msg = | GetBoQItems | GotBoQItems of Result\u003cBoQItemDto list, string\u003e Replace todosApi with our cocoTenderApi\nlet cocoTenderApi = Remoting.createApi () |\u003e Remoting.withRouteBuilder Route.builder |\u003e Remoting.buildProxy\u003cICoCoTenderApi\u003e Initialize the Model in init fuction such that the item list will be empty at first, then the GetBoQItems will be dispatch to request list of items from the Server.\nlet init () : Model * Cmd\u003cMsg\u003e = let model = { BoQItems = [] } let cmd = Cmd.ofMsg GetBoQItems model, cmd Next implement the update function to get and receive boq items.\nlet update (msg: Msg) (model: Model) : Model * Cmd\u003cMsg\u003e = match msg with | GetBoQItems -\u003e let cmd = Cmd.OfAsync.perform cocoTenderApi.getBoQItems () GotBoQItems model, cmd | GotBoQItems (Ok items) -\u003e { model with BoQItems = items}, Cmd.none | GotBoQItems (Error msg) -\u003e failwith msg Since GotBoQItems response will be of type Result, then it’s good idea to match the result at the first level.\nNow the fun part begins. We will show the list of items using Feliz.AgGrid. I love to see the output as soon as possible, having the Hot Module Reload in Safe stack really helps in this.\nFirst replace function containerBox with the new one with AgGrid.\nlet containerBox (model: Model) (dispatch: Msg -\u003e unit) = Html.div [ prop.className ThemeClass.Balham prop.children [ AgGrid.grid [ AgGrid.rowData (model.BoQItems |\u003e Array.ofList) AgGrid.defaultColDef [ ColumnDef.resizable true ] AgGrid.domLayout AutoHeight AgGrid.onGridReady (fun x -\u003e x.AutoSizeAllColumns()) AgGrid.singleClickEdit true AgGrid.enableCellTextSelection true AgGrid.ensureDomOrder true AgGrid.columnDefs [ ColumnDef.create\u003cstring\u003e [ ColumnDef.headerName \"Description\" ColumnDef.valueGetter (fun x -\u003e x.Description) ] ColumnDef.create\u003cfloat\u003e [ ColumnDef.headerName \"Quantity\" ColumnDef.valueGetter (fun x -\u003e x.Quantity) ColumnDef.width 75 ] ColumnDef.create\u003cstring\u003e [ ColumnDef.headerName \"Unit\" ColumnDef.valueGetter (fun x -\u003e x.Unit) ColumnDef.width 50 ] ColumnDef.create\u003cstring\u003e [ ColumnDef.headerName \"Material\" ColumnDef.valueGetter (fun x -\u003e x.Material) ColumnDef.width 150 ] ColumnDef.create\u003cfloat\u003e [ ColumnDef.headerName \"M. UnitCost\" ColumnDef.valueGetter (fun x -\u003e x.MaterialUnitCost) ColumnDef.width 75 ] ColumnDef.create\u003cstring\u003e [ ColumnDef.headerName \"Labor\" ColumnDef.valueGetter (fun x -\u003e x.Labor) ColumnDef.width 150 ] ColumnDef.create\u003cfloat\u003e [ ColumnDef.headerName \"L. UnitCost\" ColumnDef.valueGetter (fun x -\u003e x.LaborUnitCost) ColumnDef.width 75 ] ColumnDef.create\u003cfloat\u003e [ ColumnDef.headerName \"Total Cost\" ColumnDef.valueGetter (fun x -\u003e x.TotalCost) ColumnDef.width 75 ] ] ] ] ] The grid width will be too small. We will remove Bulma.column from Bulma.heroBody to let the container box expand to full width.\nBulma.heroBody [ Bulma.container [ Bulma.title [ text.hasTextCentered prop.text \"CoCoTender\" ] containerBox model dispatch ] ] Here is the result of listing boq items:\nList BoQItems Add New BoQ Item That’s quite a lot of steps we do for the first use case. For the second one, the steps will almost be the same.\nFirst we add new function to the Api in Shared.fs\naddBoQItem: BoQItemDto -\u003e Async\u003cResult\u003cBoQItemDto,string\u003e\u003e Second, we implement the function in Server.fs\naddBoQItem = fun boqItemDto -\u003e asyncResult { let! boqItem = boqItemDto |\u003e Dto.toBoQItemDomain do! Storage.addBoQItem boqItem let boqItemDto' = boqItem |\u003e Dto.toBoQItemDto return boqItemDto' } Third, we implement Add functionality in the Client.\nAdd 2 more discriminated union for Msg\n| AddBoQItem | AddedBoQItem of Result\u003cBoQItemDto,string\u003e Add 3 more cases for update function\n| AddBoQItem -\u003e let cmd = Cmd.OfAsync.perform cocoTenderApi.addBoQItem (defaultNewItem()) AddedBoQItem model, cmd | AddedBoQItem (Ok boqItem) -\u003e { model with BoQItems = model.BoQItems @ [ boqItem ] }, Cmd.none | AddedBoQItem (Error msg) -\u003e failwith msg See that we have new function defaultNewItem to create default new item. Just define the function before the update function\nlet defaultNewItem () = BoQItemDto.create (Guid.NewGuid()) \"New Item\" 0.0 \"m\" \"Material 1\" 0.0 \"Labor 1\" 0.0 0.0 Add button before Ag.Grid\nBulma.button.button [ color.isPrimary prop.onClick (fun _ -\u003e dispatch AddBoQItem) prop.text \"Add\" ] AgGrid [ ... ] Here is the result after clicking the Add button. The new boq item will be create locally, send to the server, store there and send back to client.\nAdd BoQItem Update and Delete BoQ Item I think we are ready to do 2 use cases at once now. Go to Shared.fs and add update and delete function.\nupdateBoQItem: BoQItemDto -\u003e Async\u003cResult\u003cBoQItemDto,string\u003e\u003e deleteBoQItem: Guid -\u003e Async\u003cResult\u003cunit,string\u003e\u003e Implement these 2 functions in Server.fs. First, add 2 more functions to update and delete BoQItem from our Storage.\nlet updateBoQItem boqItem = let index = boqItems.FindIndex( fun x -\u003e x = boqItem) boqItems[index] \u003c- boqItem Ok () let deleteBoQItem itemId = let index = boqItems.FindIndex( fun x -\u003e x |\u003e BoQItem.value |\u003e fun y -\u003e y.Id = itemId) boqItems.RemoveAt(index) Ok () Next, implement Api function:\nupdateBoQItem = fun boqItemDto -\u003e asyncResult { let! boqItem = boqItemDto |\u003e Dto.toBoQItemDomain let! boqItem = boqItem |\u003e BoQItem.tryUpdate do! Storage.updateBoQItem boqItem let boqItemDto' = boqItem |\u003e Dto.toBoQItemDto return boqItemDto' } deleteBoQItem = fun itemId -\u003e asyncResult { return! Storage.deleteBoQItem itemId } Next, is the View part in the client. We are going to do following things:\nLet user edit column such as Description and UnitCost. After user edit the column, we will call update Api on the server. There will be delete button at the end of each row. Clicking that button will call delete Api on the server. The client then will load items from the server. Start off by let the user edit the Description column.\nColumnDef.create\u003cstring\u003e [ ColumnDef.headerName \"Description\" ColumnDef.valueGetter (fun x -\u003e x.Description) ColumnDef.editable (fun _ _ -\u003e true) ] Then dispatch the UpdateBoQItem message after the updated Description has been set in the grid. Add following line before editable\nColumnDef.valueSetter (fun newValue _ row -\u003e { row with Description = newValue } |\u003e UpdateBoQItem |\u003e dispatch) We don’t have UpdateBoQItem yet. We will add this message and its response counterpart in the Msg type.\n| UpdateBoQItem of BoQItemDto | UpdatedBoQItem of Result\u003cBoQItemDto,string\u003e and implement these 2 new cases in the update function\n| UpdateBoQItem (boqItem: BoQItemDto) -\u003e let cmd = Cmd.OfAsync.perform cocoTenderApi.updateBoQItem boqItem UpdatedBoQItem model, cmd | UpdatedBoQItem (Ok updatedItem) -\u003e let updatedItems = model.BoQItems |\u003e List.map (fun x -\u003e if x.Id = updatedItem.Id then updatedItem else x) { model with BoQItems = updatedItems}, Cmd.none | UpdatedBoQItem (Error msg) -\u003e failwith msg Just change all the ColumnDef to be editable and dispatch the Update msg in valueSetter function. If you change the value and tab out, you will see that row is changes. Refresh the browser will show the change value since the data is persist on the Server.\nBut if you enter blank value in the Description column, nothing will happen. Safe-stack usually will show the error in either in Terminal for Server code or Browser Console for Client Code. Checking the client code.\nNo Description Error in Console This occurs because we do use failWith when Error is captured in UpdatedBoQItem case. We are going to show this error to the user instead using Elmish.Toastr.\ncd src/Client femto install Elmish.Toastr cd ../.. npm install jquery Now create function showError and replace all failWith with the function:\nlet showError model msg = printfn $\"Error occurred : {msg}\" model, Toastr.message msg |\u003e Toastr.error In update function:\n| UpdatedBoQItem (Error msg) -\u003e showError model msg Now when we try to update blank Description, the error should shown in Toast like below:\nNo Description Error with Toastr Next, add delete button in Grid. Add new ColumnDef at the end:\nColumnDef.create\u003cGuid\u003e [ ColumnDef.valueGetter (fun x -\u003e x.Id) ColumnDef.cellRendererFramework (fun itemId _ -\u003e Html.button [ prop.text \"🗑️\" prop.onClick (fun _ -\u003e dispatch (DeleteBoQItem itemId)) ] ) ] Add 2 more Msg for Delete and implement the case in update function as follow:\nMsg type\n| DeleteBoQItem of itemId:Guid update function\n| DeleteBoQItem itemId -\u003e let cmd = Cmd.OfAsync.perform cocoTenderApi.deleteBoQItem itemId (fun _ -\u003e GetBoQItems) model, cmd See that after finish delete, we will dispatch GetBoQItems to reload the items from Server.\nClicking on Delete button should delete and refresh the grid.\nCalculate All Cost We would like to show user the latest cost of the Project. There are 3 cost that user are interested. They are DirectCost, FactorF, and EstimateCost. The calculation for this costs has already been implemented in the Domain. So all you have to do is just call the domain from the Api and return the result back to client.\nSince we want the uesr to see the cost after each update. So we decide to return the AllCost to the user whenever there is changes for BoQItem.\nModify the Api in Shared module to return AllCost as follow:\ntype AllCost = { DirectCost : float FactorF : float EstimateCost : float } type ICoCoTenderApi = { getBoQItems: unit -\u003e Async\u003cResult\u003cBoQItemDto list*AllCost,string\u003e\u003e addBoQItem: BoQItemDto -\u003e Async\u003cResult\u003cBoQItemDto*AllCost,string\u003e\u003e updateBoQItem: BoQItemDto -\u003e Async\u003cResult\u003cBoQItemDto*AllCost,string\u003e\u003e deleteBoQItem: Guid -\u003e Async\u003cResult\u003cunit,string\u003e\u003e } Go to Server.fs. First, we will implement getAllCost function so that we can reuse in all Api functions. Put the function before definition of cocoTenderApi.\nopen Project let getAllCost () = result { let! (DirectCost directCost, FactorF factorF, EstimateCost estimateCost) = Project.tryGetAllCost Storage.loadFactorFTable (Storage.boqItems |\u003e List.ofSeq) return { DirectCost = directCost FactorF = factorF EstimateCost = estimateCost } } We need to load factor f from the Storage. Implement following function in the Storage module.\nlet loadFactorFTable () = FactorFTable [(10,1.1); (100,1.5); (1000, 1.9)] Modify the Api to return allCost as follow:\ngetBoQItems = fun () -\u003e asyncResult { let boqItems = Storage.boqItems |\u003e List.ofSeq let! allCost = getAllCost() return (boqItems |\u003e List.map Dto.toBoQItemDto), allCost } addBoQItem = fun boqItemDto -\u003e asyncResult { let! boqItem = boqItemDto |\u003e Dto.toBoQItemDomain do! Storage.addBoQItem boqItem let boqItemDto' = boqItem |\u003e Dto.toBoQItemDto let! allCost = getAllCost() return boqItemDto', allCost } updateBoQItem = fun boqItemDto -\u003e asyncResult { let! boqItem = boqItemDto |\u003e Dto.toBoQItemDomain let! boqItem = boqItem |\u003e BoQItem.tryUpdate do! Storage.updateBoQItem boqItem let boqItemDto' = boqItem |\u003e Dto.toBoQItemDto let! allCost = getAllCost() return boqItemDto', allCost } Go back to Client.fs. We need to maintain AllCost received from the server. So we need to modify the Model as follow:\ntype Model = { BoQItems: BoQItemDto list AllCost: AllCost } Change the init to initialize AllCost\nlet model = { BoQItems = [] AllCost = {DirectCost = 0.0; FactorF = 0.0; EstimateCost = 0.0} } Change the Msg to accept AllCost from response from the Server:\n| GotBoQItems of Result\u003cBoQItemDto list*AllCost,string\u003e | AddedBoQItem of Result\u003cBoQItemDto*AllCost,string\u003e | UpdatedBoQItem of Result\u003cBoQItemDto*AllCost,string\u003e Modify the response cases in update as follow:\n| GotBoQItems (Ok (items,allCost)) -\u003e { model with BoQItems = items; AllCost = allCost }, Cmd.none | AddedBoQItem (Ok (boqItem, allCost)) -\u003e { model with BoQItems = model.BoQItems @ [ boqItem ]; AllCost = allCost }, Cmd.none | UpdatedBoQItem (Ok (updatedItem,allCost)) -\u003e let updatedItems = model.BoQItems |\u003e List.map (fun x -\u003e if x.Id = updatedItem.Id then updatedItem else x) { model with BoQItems = updatedItems; AllCost = allCost }, Cmd.none We will show code below the Grid. At following Bulma Level under grid inside containerBox function:\nBulma.level [ prop.style [ style.paddingRight 300 style.fontSize 14 style.fontWeight.bold ] color.hasBackgroundLight prop.children [ Bulma.levelLeft [] Bulma.levelRight [ Bulma.levelItem (Bulma.label $\"Direct Cost\") Bulma.levelItem (Bulma.label $\"{model.AllCost.DirectCost}\") Bulma.levelItem (Bulma.label $\"Estimate Cost\") Bulma.levelItem (Bulma.label $\"{model.AllCost.EstimateCost}\") ] ] ] The all cost should be shown as follow:\nShow All Cost Show FactorF Table Finally, we are at the last use case for this post. The user should be able to see FactorF table used for the calculation. We have factor f returned from the Server but we need to somehow show the table and highlight which factor f range we are using.\nFirst, add new function in Api shared module to get FactorFInfo\ntype FactorFInfo = (string*float) list type ICoCoTenderApi { ... getFactorFInfo: unit-\u003eAsync\u003cResult\u003cFactorFInfo,string\u003e\u003e } Next implement it in the Server.fs.\ngetFactorFInfo = fun () -\u003e asyncResult { return Project.getFactorFInfo Storage.loadFactorFTable } For the user interface, we will use Bulma.QuickView. We need to install it first.\nfemto install Feliz.Bulma.QuickView The QuickView requires custom css style. We need to import that when we bundle client-side fsharp to js file. The client pipeline is done through webpack.\nGo to webpack.config.js and add cssEntry in CONFIG object after fsharpEntry.\ncssEntry: './src/Client/style.scss', Next go to entry property in Module.export. We need to bundle css entry when we build the project.\nentry: isProduction ? { app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.cssEntry)] } : env.test ? { app: resolve(config.fsharpEntry) } : { app: resolve(CONFIG.fsharpEntry), style: resolve(CONFIG.cssEntry) }, Next create the file style.scss inside src/Client folder and put below code to import quickview css\n@import '~bulma-quickview/dist/css/bulma-quickview.min.css'; Go to Index.fs and add 2 more item in the Model type\ntype Model = { ... ShowFactorFView: bool FactorFInfo: FactorFInfo } The first one is the flag indicating that the FactorF quickview should be shown or not. The second one is just the factor f table we got from the Server.\nTwo more Msgs are added:\n| ToggleFactorFView | GotFactorFInfo of Result\u003cFactorFInfo,string\u003e The first message will be used when we toggle the factorf view to open or close. The second one will be when we receive the table.\nChange the init function so that we will send 2 request in the beginning. First request will load the boq items, The second one will load factor f table.\nlet init () : Model * Cmd\u003cMsg\u003e = let model = { BoQItems = [] AllCost = {DirectCost = 0.0; FactorF = 0.0; EstimateCost = 0.0} ShowFactorFView = false FactorFInfo = [] } let cmdGetBoQItems = Cmd.OfAsync.perform cocoTenderApi.getBoQItems () GotBoQItems let cmdGetFactorFInfo = Cmd.OfAsync.perform cocoTenderApi.getFactorFInfo () GotFactorFInfo model, Cmd.batch [ cmdGetBoQItems; cmdGetFactorFInfo ] Add 2 more cases in the update function\n| GotFactorFInfo (Ok info) -\u003e { model with FactorFInfo = info }, Cmd.none | GotFactorFInfo (Error msg) -\u003e showError' msg | ToggleFactorFView -\u003e { model with ShowFactorFView = model.ShowFactorFView |\u003e not }, Cmd.none In the view, we will toggle the view through button. Add new level item next to EstimateCost.\nBulma.levelItem ( Bulma.button.button [ prop.text \"Show Factor F\" prop.onClick (fun _ -\u003e ToggleFactorFView |\u003e dispatch) ] ) Last but not least, create the factorFView function\nlet factorFView (model: Model) dispatch = printfn \"Info %A Factor F %A\" model.FactorFInfo model.AllCost.FactorF let lowerBoundIndex = model.FactorFInfo |\u003e List.tryFindIndexBack (fun x -\u003e x |\u003e snd |\u003e (\u003e=) model.AllCost.FactorF) printfn \"LowerBoundIndex %A\" lowerBoundIndex let factorFTr i (condition: string,factorF) = let isSelected = match lowerBoundIndex with | Some index -\u003e i = index || i = (index + 1) | _ -\u003e false Html.tr [ if isSelected then yield prop.className \"is-selected\" yield prop.children [Html.td condition; Html.td (factorF |\u003e string)] ] QuickView.quickview [ if model.ShowFactorFView then yield quickview.isActive yield prop.children [ QuickView.header [ Html.div [ prop.style [ style.color.black ] prop.text \"Factor F\" ] Bulma.delete [ prop.onClick (fun _ -\u003e ToggleFactorFView |\u003e dispatch) ] ] QuickView.body [ QuickView.block [ Bulma.table [ Html.thead [ Html.tr [ Html.th \"Direct Cost Condition\"; Html.th \"Factor F\" ] ] Html.tbody (model.FactorFInfo |\u003e List.mapi factorFTr) ] ] ] ] ] And place the function below the containerBox in main view function\nBulma.heroBody [ Bulma.container [ Bulma.title [ text.hasTextCentered prop.text \"CoCoTender\" ] containerBox model dispatch factorFView model dispatch ] ] The result should be as follow:\nShow Factor F The final code could be clone from tag 0.3.0\ngit clone -b v0.3.0 https://github.com/twuttiwat/CoCoTender If you come this far, thank you so much for reading this lenghtly post with a lot of code. I am still not good at F# yet but I am still enjoy writing in the language everyday. I would like to thank Compositional-It who develop this Safe-stack framework. I really like it. Also I have a lot of questions in F# in the beginning. People in the F# community (slack) is very helpful. I would like to thank Zaid Ajai,Shmew, and AngelMunoz who answer my question relentlessly.\nLast but not least, thanks Sergey Tihon to let me participate in F# Advent of Code this year.\n",
+  "wordCount" : "3585",
+  "inLanguage": "en",
+  "datePublished": "2022-12-05T09:21:13+07:00",
+  "dateModified": "2022-12-05T09:21:13+07:00",
+  "author":{
+    "@type": "Person",
+    "name": "Teerawat Wuttiwat"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://twuttiwat.github.io/posts/safe-stack/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "TW Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://twuttiwat.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://twuttiwat.github.io/" accesskey="h" title="TW Blog (Alt + H)">TW Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      From Domain to Web with Safe Stack
+    </h1>
+    <div class="post-meta"><span title='2022-12-05 09:21:13 +0700 +07'>December 5, 2022</span>&nbsp;·&nbsp;Teerawat Wuttiwat
+
+</div>
+  </header> 
+  <div class="post-content"><p>Hi there. Welcome back to my F# web app development series. Just to recap for new people, we are going to create construction cost tender estimation (CoCoTender) using f#. If you are interested in the domain, you can read the <a href="../domain-modeling-with-fs/">past</a> <a href="../unit-testing-console">posts</a> in the series.
+For this post, we wil emphasize how to connect the domain to web app using safe stack. So there is no need to understand the whole domain concept.</p>
+<p>Let&rsquo;s kick off the process by cloning git repository I prepare for this post.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone --branch begin-safe-stack https://github.com/twuttiwat/CoCoTender.git
+</span></span><span style="display:flex;"><span>cd CoCoTender
+</span></span><span style="display:flex;"><span>dotnet run
+</span></span></code></pre></div><p>Opening web browser at http://localhost:8080, you should see following default Todo app.</p>
+<figure>
+    <img loading="lazy" src="images/default-todo-app.jpg"
+         alt="Default Todo App" width="600"/> <figcaption>
+            Default Todo App
+        </figcaption>
+</figure>
+
+<p>If you see this, then we are good to go now.</p>
+<h1 id="use-cases">Use Cases<a hidden class="anchor" aria-hidden="true" href="#use-cases">#</a></h1>
+<p>One way to model the api is to list all of uses cases and implement each api function one by one. Here is the list of our use cases:</p>
+<ol>
+<li>List BoQ Items</li>
+<li>Add New BoQ Item</li>
+<li>Update BoQ Item</li>
+<li>Delete BoQ Item</li>
+<li>Calculate All Cost</li>
+<li>Show FactorF Table</li>
+</ol>
+<p>There are previous posts mention domain modeling in the past. But for short, the ultimate goal for this CoCoTender app is to calculate the  tender cost of the project. The cost will depends on list of construction task (i.e. BoQItem). Our application should provide user interface to do CRUD operation on list of BoQItems and let the app calculate the cost and present that to client.</p>
+<p>Let&rsquo;s start with our first use case</p>
+<h2 id="list-boq-items">List BoQ Items<a hidden class="anchor" aria-hidden="true" href="#list-boq-items">#</a></h2>
+<p>One advantage of working with <strong>Safe Stack</strong> is the ablility to share code between server and client. The <strong>Shared</strong> module will include interface of the Api and Dto (Data Transfer Object).</p>
+<p>I like to start on Shared module then Server and finally at the Client. I found that checking error on Server is much simpler than on the client.</p>
+<p>Go to the bottom of the Shared.fs and declare following Dto and Api for our app.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">BoQItemDto</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Id <span style="color:#f92672">:</span> Guid
+</span></span><span style="display:flex;"><span>        Description<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        Quantity<span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>        Unit<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        Material<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        MaterialUnitCost<span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>        Labor<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        LaborUnitCost<span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>        TotalCost<span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">module</span> BoQItemDto <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> create itemId description quantity <span style="color:#66d9ef">unit</span> material materialUnitCost labor laborUnitCost totalCost <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            Id <span style="color:#f92672">=</span> itemId
+</span></span><span style="display:flex;"><span>            Description <span style="color:#f92672">=</span> description
+</span></span><span style="display:flex;"><span>            Quantity <span style="color:#f92672">=</span> quantity
+</span></span><span style="display:flex;"><span>            Unit <span style="color:#f92672">=</span> <span style="color:#66d9ef">unit</span>
+</span></span><span style="display:flex;"><span>            Material <span style="color:#f92672">=</span> material
+</span></span><span style="display:flex;"><span>            MaterialUnitCost <span style="color:#f92672">=</span> materialUnitCost
+</span></span><span style="display:flex;"><span>            Labor <span style="color:#f92672">=</span> labor
+</span></span><span style="display:flex;"><span>            LaborUnitCost <span style="color:#f92672">=</span> laborUnitCost
+</span></span><span style="display:flex;"><span>            TotalCost <span style="color:#f92672">=</span> totalCost
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ICoCoTenderApi</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span> getBoQItems<span style="color:#f92672">:</span> <span style="color:#66d9ef">unit</span> <span style="color:#f92672">-&gt;</span> Async<span style="color:#f92672">&lt;</span>Result<span style="color:#f92672">&lt;</span>BoQItemDto <span style="color:#66d9ef">list</span><span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;</span> <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Next, go to Server.fs. We will implement the getBoQItems function.
+As you can see from the signature of getBoQItems function, we will send back AsyncResult as output of the function. I think it&rsquo;s a good idea to rely on the Result, so we can be explicit about the error.</p>
+<p>To make it easier to work with AsyncResult type, it&rsquo;s better to use FsErrorToolkit.ErrorHandling computation expression. I will remove a lot of matching expression when we try to extract the result from Result type.</p>
+<p>Press ctrl-` and type following command</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>dotnet add package FsToolkit.ErrorHandling
+</span></span></code></pre></div><p>We also need to use function from our Domain library as well. So add reference to that library.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>dotnet add reference ../CoCoTenderDomain
+</span></span></code></pre></div><p>The default Todo app use ResizeArray as a way to store data. We will use the same approach at the moment and will change it that to some kind of database in the future.</p>
+<p>add following line in module Storage</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> Storage <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> boqItems <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span>BoQItem<span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> addBoQItem <span style="color:#f92672">(</span>boqItem<span style="color:#f92672">:</span> BoQItem<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        boqItems<span style="color:#f92672">.</span>Add boqItem
+</span></span><span style="display:flex;"><span>        Ok ()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> qty <span style="color:#f92672">=</span> Quantity <span style="color:#f92672">(</span>10<span style="color:#f92672">.</span>0<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> material <span style="color:#f92672">=</span> Material <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Pool Tile&#34;</span><span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> 100<span style="color:#f92672">.</span>0 <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> labor <span style="color:#f92672">=</span> Labor <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Do Tiling&#34;</span><span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> 50<span style="color:#f92672">.</span>0 <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> defaultItem <span style="color:#f92672">=</span> BoQItem.tryCreate <span style="color:#f92672">(</span>Guid.NewGuid()<span style="color:#f92672">)</span> <span style="color:#e6db74">&#34;Pool Tile&#34;</span> qty material labor
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> defaultItem <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> Ok defaultItem&#39; <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            addBoQItem defaultItem&#39; <span style="color:#f92672">|&gt;</span> ignore
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> ()
+</span></span></code></pre></div><p><strong>Note</strong> there are some issues with Library.fs in CoCoTender.Domain project. You can download the file and replace it in your project.</p>
+<p>We need function to convert between Dto and Domain type. I tried to create Dto in Shared module but could not make it worked. So I decide to create the Dto conversion module in Server project instead.
+Just paste following code before the webApp line</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> Dto <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> toBoQItemDto <span style="color:#f92672">(</span>domain<span style="color:#f92672">:</span>BoQItem<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> domainVal <span style="color:#f92672">=</span>  domain <span style="color:#f92672">|&gt;</span> BoQItem.value
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>Quantity <span style="color:#f92672">(</span>qty<span style="color:#f92672">,</span> qtyUnit<span style="color:#f92672">))</span> <span style="color:#f92672">=</span> domainVal<span style="color:#f92672">.</span>Quantity
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>Material material<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> domainVal<span style="color:#f92672">.</span>MaterialUnitCost
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#f92672">(</span>Labor labor<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> domainVal<span style="color:#f92672">.</span>LaborUnitCost
+</span></span><span style="display:flex;"><span>        BoQItemDto.create domainVal<span style="color:#f92672">.</span>Id domainVal<span style="color:#f92672">.</span>Description qty qtyUnit
+</span></span><span style="display:flex;"><span>                            material<span style="color:#f92672">.</span>Name material<span style="color:#f92672">.</span>UnitCost labor<span style="color:#f92672">.</span>Name labor<span style="color:#f92672">.</span>UnitCost
+</span></span><span style="display:flex;"><span>                            domainVal<span style="color:#f92672">.</span>TotalCost
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> toBoQItemDomain <span style="color:#f92672">(</span>dto<span style="color:#f92672">:</span>BoQItemDto<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> qty <span style="color:#f92672">=</span> Quantity <span style="color:#f92672">(</span>dto<span style="color:#f92672">.</span>Quantity<span style="color:#f92672">,</span> dto<span style="color:#f92672">.</span>Unit<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> material <span style="color:#f92672">=</span> Material <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> dto<span style="color:#f92672">.</span>Material<span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> dto<span style="color:#f92672">.</span>Unit<span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> dto<span style="color:#f92672">.</span>MaterialUnitCost <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> labor <span style="color:#f92672">=</span> Labor <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> dto<span style="color:#f92672">.</span>Labor<span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> dto<span style="color:#f92672">.</span>Unit<span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> dto<span style="color:#f92672">.</span>LaborUnitCost <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        BoQItem.tryCreate dto<span style="color:#f92672">.</span>Id dto<span style="color:#f92672">.</span>Description qty material labor
+</span></span></code></pre></div><p>Finally, declare cocoTenderApi before webApp line</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> cocoTenderApi <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        getBoQItems <span style="color:#f92672">=</span> <span style="color:#66d9ef">fun</span> () <span style="color:#f92672">-&gt;</span> asyncResult <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> Storage.boqItems <span style="color:#f92672">|&gt;</span> List.ofSeq <span style="color:#f92672">|&gt;</span> List.map Dto.toBoQItemDto
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>and change webApp to use this new cocoTenderApi</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> webApp <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Remoting.createApi ()
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.withRouteBuilder Route.builder
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.fromValue cocoTenderApi
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.buildHttpHandler
+</span></span></code></pre></div><p>You can test if the server api work correctly by calling api directly in Chrome. Change the url to http://localhost:8080/api/ICoCoTenderApi/getBoQItems. The result should be as follow:</p>
+<figure>
+    <img loading="lazy" src="images/get-boq-items-response.jpg"
+         alt="Response from GetBoQItems Api" width="600"/> <figcaption>
+            GetBoQItem Response
+        </figcaption>
+</figure>
+
+<p>We have finished the Server part. Next task is to render our BoQItems on the client side. Since user like to use Excel style interface, I decide to use Feliz.AgGrid component for this. We need to install it first. Go to Client project folder and install using femto.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>femto install Feliz.AgGrid
+</span></span></code></pre></div><p>Open Index.fs, and start by modifying our Model type. Safe stack use Elmish for client-side programming. The only single source of state is from Model, the only place that can change the Model is from update function. The view will render the output using the states in the Model as an input.</p>
+<p>Back to our Model, we need to maintain list of BoQItems to render it on the AgGrid. So define the model as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Model</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> BoQItems<span style="color:#f92672">:</span> BoQItemDto <span style="color:#66d9ef">list</span> <span style="color:#f92672">}</span> 
+</span></span></code></pre></div><p>There will be 2 types of Msg to update the Model: GetBoQItems and GotBoQItems. The first one is for requesting list of BoQ Items and the second one is for receiving the list.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Msg</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GetBoQItems
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GotBoQItems <span style="color:#66d9ef">of</span> Result<span style="color:#f92672">&lt;</span>BoQItemDto <span style="color:#66d9ef">list</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span></code></pre></div><p>Replace todosApi with our cocoTenderApi</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> cocoTenderApi <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Remoting.createApi ()
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.withRouteBuilder Route.builder
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.buildProxy<span style="color:#f92672">&lt;</span>ICoCoTenderApi<span style="color:#f92672">&gt;</span>
+</span></span></code></pre></div><p>Initialize the Model in init fuction such that the item list will be empty at first, then the GetBoQItems will be dispatch to request list of items from the Server.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> init () <span style="color:#f92672">:</span> Model <span style="color:#f92672">*</span> Cmd<span style="color:#f92672">&lt;</span>Msg<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> model <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> BoQItems <span style="color:#f92672">=</span> [] <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cmd <span style="color:#f92672">=</span> Cmd.ofMsg GetBoQItems
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    model<span style="color:#f92672">,</span> cmd
+</span></span></code></pre></div><p>Next implement the update function to get and receive boq items.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> update <span style="color:#f92672">(</span>msg<span style="color:#f92672">:</span> Msg<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>model<span style="color:#f92672">:</span> Model<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> Model <span style="color:#f92672">*</span> Cmd<span style="color:#f92672">&lt;</span>Msg<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> msg <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GetBoQItems <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> cmd <span style="color:#f92672">=</span> Cmd.OfAsync.perform cocoTenderApi<span style="color:#f92672">.</span>getBoQItems () GotBoQItems
+</span></span><span style="display:flex;"><span>        model<span style="color:#f92672">,</span> cmd
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GotBoQItems <span style="color:#f92672">(</span>Ok items<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span> model <span style="color:#66d9ef">with</span> BoQItems <span style="color:#f92672">=</span> items<span style="color:#f92672">},</span> Cmd.none
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GotBoQItems <span style="color:#f92672">(</span>Error msg<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> failwith msg
+</span></span></code></pre></div><p>Since GotBoQItems response will be of type Result, then it&rsquo;s good idea to match the result at the first level.</p>
+<p>Now the fun part begins. We will show the list of items using Feliz.AgGrid. I love to see the output as soon as possible, having the Hot Module Reload in Safe stack really helps in this.</p>
+<p>First replace function containerBox with the new one with AgGrid.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> containerBox <span style="color:#f92672">(</span>model<span style="color:#f92672">:</span> Model<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>dispatch<span style="color:#f92672">:</span> Msg <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">unit</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Html.div <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        prop<span style="color:#f92672">.</span>className ThemeClass.Balham
+</span></span><span style="display:flex;"><span>        prop<span style="color:#f92672">.</span>children <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>            AgGrid.grid <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                AgGrid.rowData <span style="color:#f92672">(</span>model<span style="color:#f92672">.</span>BoQItems <span style="color:#f92672">|&gt;</span> Array.ofList<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                AgGrid.defaultColDef <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                    ColumnDef.resizable <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                AgGrid.domLayout AutoHeight
+</span></span><span style="display:flex;"><span>                AgGrid.onGridReady <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>AutoSizeAllColumns()<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                AgGrid.singleClickEdit <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                AgGrid.enableCellTextSelection <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                AgGrid.ensureDomOrder <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                AgGrid.columnDefs <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                    ColumnDef.create<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.headerName <span style="color:#e6db74">&#34;Description&#34;</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.valueGetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>Description<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    ColumnDef.create<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">float</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.headerName <span style="color:#e6db74">&#34;Quantity&#34;</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.valueGetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>Quantity<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.width 75
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    ColumnDef.create<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.headerName <span style="color:#e6db74">&#34;Unit&#34;</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.valueGetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>Unit<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.width 50
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    ColumnDef.create<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.headerName <span style="color:#e6db74">&#34;Material&#34;</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.valueGetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>Material<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.width 150
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    ColumnDef.create<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">float</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.headerName <span style="color:#e6db74">&#34;M. UnitCost&#34;</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.valueGetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>MaterialUnitCost<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.width 75
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    ColumnDef.create<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.headerName <span style="color:#e6db74">&#34;Labor&#34;</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.valueGetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>Labor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.width 150
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    ColumnDef.create<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">float</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.headerName <span style="color:#e6db74">&#34;L. UnitCost&#34;</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.valueGetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>LaborUnitCost<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.width 75
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    ColumnDef.create<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">float</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.headerName <span style="color:#e6db74">&#34;Total Cost&#34;</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.valueGetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>TotalCost<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                        ColumnDef.width 75
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>The grid width will be too small. We will remove Bulma.column from Bulma.heroBody to let the container box expand to full width.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>            Bulma.heroBody <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                Bulma.container <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                    Bulma.title <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        text<span style="color:#f92672">.</span>hasTextCentered
+</span></span><span style="display:flex;"><span>                        prop<span style="color:#f92672">.</span>text <span style="color:#e6db74">&#34;CoCoTender&#34;</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    containerBox model dispatch
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>Here is the result of listing boq items:</p>
+<figure>
+    <img loading="lazy" src="images/list-boq-items.jpg"
+         alt="List BoQItems" width="600"/> <figcaption>
+            List BoQItems
+        </figcaption>
+</figure>
+
+<h2 id="add-new-boq-item">Add New BoQ Item<a hidden class="anchor" aria-hidden="true" href="#add-new-boq-item">#</a></h2>
+<p>That&rsquo;s quite a lot of steps we do for the first use case. For the second one, the steps will almost be the same.</p>
+<p>First we add new function to the Api in Shared.fs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    addBoQItem<span style="color:#f92672">:</span> BoQItemDto <span style="color:#f92672">-&gt;</span> Async<span style="color:#f92672">&lt;</span>Result<span style="color:#f92672">&lt;</span>BoQItemDto<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;</span>
+</span></span></code></pre></div><p>Second, we implement the function in Server.fs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>        addBoQItem <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">fun</span> boqItemDto <span style="color:#f92672">-&gt;</span> asyncResult <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let!</span> boqItem <span style="color:#f92672">=</span>  boqItemDto <span style="color:#f92672">|&gt;</span> Dto.toBoQItemDomain
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">do</span><span style="color:#f92672">!</span> Storage.addBoQItem boqItem
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> boqItemDto<span style="color:#66d9ef">&#39;</span> <span style="color:#f92672">=</span> boqItem <span style="color:#f92672">|&gt;</span> Dto.toBoQItemDto
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> boqItemDto&#39;
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Third, we implement Add functionality in the Client.</p>
+<p>Add 2 more discriminated union for Msg</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> AddBoQItem
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> AddedBoQItem <span style="color:#66d9ef">of</span> Result<span style="color:#f92672">&lt;</span>BoQItemDto<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>        
+</span></span></code></pre></div><p>Add 3 more cases for update function</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> AddBoQItem <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> cmd <span style="color:#f92672">=</span> Cmd.OfAsync.perform cocoTenderApi<span style="color:#f92672">.</span>addBoQItem <span style="color:#f92672">(</span>defaultNewItem()<span style="color:#f92672">)</span> AddedBoQItem
+</span></span><span style="display:flex;"><span>        model<span style="color:#f92672">,</span> cmd
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> AddedBoQItem <span style="color:#f92672">(</span>Ok boqItem<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">{</span> model <span style="color:#66d9ef">with</span> BoQItems <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>BoQItems <span style="color:#f92672">@</span> <span style="color:#f92672">[</span> boqItem <span style="color:#f92672">]</span> <span style="color:#f92672">},</span> Cmd.none
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> AddedBoQItem <span style="color:#f92672">(</span>Error msg<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> failwith msg
+</span></span></code></pre></div><p>See that we have new function defaultNewItem to create default new item. Just define the function before the update function</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> defaultNewItem () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    BoQItemDto.create <span style="color:#f92672">(</span>Guid.NewGuid()<span style="color:#f92672">)</span> <span style="color:#e6db74">&#34;New Item&#34;</span> 0<span style="color:#f92672">.</span>0 <span style="color:#e6db74">&#34;m&#34;</span> <span style="color:#e6db74">&#34;Material 1&#34;</span>
+</span></span><span style="display:flex;"><span>        0<span style="color:#f92672">.</span>0 <span style="color:#e6db74">&#34;Labor 1&#34;</span> 0<span style="color:#f92672">.</span>0 0<span style="color:#f92672">.</span>0
+</span></span></code></pre></div><p>Add button before Ag.Grid</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>            Bulma.button<span style="color:#f92672">.</span>button <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                color<span style="color:#f92672">.</span>isPrimary
+</span></span><span style="display:flex;"><span>                prop<span style="color:#f92672">.</span>onClick <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> dispatch AddBoQItem<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                prop<span style="color:#f92672">.</span>text <span style="color:#e6db74">&#34;Add&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            AgGrid <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>Here is the result after clicking the Add button. The new boq item will be create locally, send to the server, store there and send back to client.</p>
+<figure>
+    <img loading="lazy" src="images/add-boq-item.jpg"
+         alt="Add BoQItem" width="600"/> <figcaption>
+            Add BoQItem
+        </figcaption>
+</figure>
+
+<h2 id="update-and-delete-boq-item">Update and Delete BoQ Item<a hidden class="anchor" aria-hidden="true" href="#update-and-delete-boq-item">#</a></h2>
+<p>I think we are ready to do 2 use cases at once now.
+Go to Shared.fs and add update and delete function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    updateBoQItem<span style="color:#f92672">:</span> BoQItemDto <span style="color:#f92672">-&gt;</span> Async<span style="color:#f92672">&lt;</span>Result<span style="color:#f92672">&lt;</span>BoQItemDto<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>    deleteBoQItem<span style="color:#f92672">:</span> Guid <span style="color:#f92672">-&gt;</span> Async<span style="color:#f92672">&lt;</span>Result<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">unit</span><span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;</span>   
+</span></span></code></pre></div><p>Implement these 2 functions in Server.fs. First, add 2 more functions to update and delete BoQItem from our Storage.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> updateBoQItem boqItem <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> index <span style="color:#f92672">=</span> boqItems<span style="color:#f92672">.</span>FindIndex<span style="color:#f92672">(</span> <span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x <span style="color:#f92672">=</span> boqItem<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        boqItems<span style="color:#f92672">[</span>index<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;-</span> boqItem
+</span></span><span style="display:flex;"><span>        Ok ()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> deleteBoQItem itemId <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> index <span style="color:#f92672">=</span> boqItems<span style="color:#f92672">.</span>FindIndex<span style="color:#f92672">(</span> <span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x <span style="color:#f92672">|&gt;</span> BoQItem.value <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> y <span style="color:#f92672">-&gt;</span> y<span style="color:#f92672">.</span>Id <span style="color:#f92672">=</span> itemId<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        boqItems<span style="color:#f92672">.</span>RemoveAt<span style="color:#f92672">(</span>index<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        Ok ()
+</span></span></code></pre></div><p>Next, implement Api function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>        updateBoQItem <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">fun</span> boqItemDto <span style="color:#f92672">-&gt;</span> asyncResult <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let!</span> boqItem <span style="color:#f92672">=</span>  boqItemDto <span style="color:#f92672">|&gt;</span> Dto.toBoQItemDomain
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let!</span> boqItem <span style="color:#f92672">=</span>  boqItem <span style="color:#f92672">|&gt;</span> BoQItem.tryUpdate
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">do</span><span style="color:#f92672">!</span> Storage.updateBoQItem boqItem
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> boqItemDto<span style="color:#66d9ef">&#39;</span> <span style="color:#f92672">=</span> boqItem <span style="color:#f92672">|&gt;</span> Dto.toBoQItemDto
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> boqItemDto&#39;
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        deleteBoQItem <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">fun</span> itemId <span style="color:#f92672">-&gt;</span> asyncResult <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span><span style="color:#f92672">!</span> Storage.deleteBoQItem itemId
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Next, is the View part in the client. We are going to do following things:</p>
+<ol>
+<li>Let user edit column such as Description and UnitCost.</li>
+<li>After user edit the column, we will call update Api on the server.</li>
+<li>There will be delete button at the end of each row. Clicking that button will call delete Api on the server. The client then will load items from the server.</li>
+</ol>
+<p>Start off by let the user edit the Description column.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    ColumnDef.create<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        ColumnDef.headerName <span style="color:#e6db74">&#34;Description&#34;</span>
+</span></span><span style="display:flex;"><span>        ColumnDef.valueGetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>Description<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        ColumnDef.editable <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">_</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>Then dispatch the UpdateBoQItem message after the updated Description has been set in the grid. Add following line before editable</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>        ColumnDef.valueSetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> newValue <span style="color:#f92672">_</span> row  <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span> row <span style="color:#66d9ef">with</span> Description <span style="color:#f92672">=</span> newValue <span style="color:#f92672">}</span> <span style="color:#f92672">|&gt;</span> UpdateBoQItem <span style="color:#f92672">|&gt;</span> dispatch<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>We don&rsquo;t have UpdateBoQItem yet. We will add this message and its response counterpart in the Msg type.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdateBoQItem <span style="color:#66d9ef">of</span> BoQItemDto
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdatedBoQItem <span style="color:#66d9ef">of</span> Result<span style="color:#f92672">&lt;</span>BoQItemDto<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span></code></pre></div><p>and implement these 2 new cases in the update function</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdateBoQItem <span style="color:#f92672">(</span>boqItem<span style="color:#f92672">:</span> BoQItemDto<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> cmd <span style="color:#f92672">=</span> Cmd.OfAsync.perform cocoTenderApi<span style="color:#f92672">.</span>updateBoQItem boqItem   UpdatedBoQItem
+</span></span><span style="display:flex;"><span>        model<span style="color:#f92672">,</span> cmd
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdatedBoQItem <span style="color:#f92672">(</span>Ok updatedItem<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> updatedItems <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>BoQItems <span style="color:#f92672">|&gt;</span> List.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">if</span> x<span style="color:#f92672">.</span>Id <span style="color:#f92672">=</span> updatedItem<span style="color:#f92672">.</span>Id <span style="color:#66d9ef">then</span> updatedItem <span style="color:#66d9ef">else</span> x<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span> model <span style="color:#66d9ef">with</span> BoQItems <span style="color:#f92672">=</span> updatedItems<span style="color:#f92672">},</span> Cmd.none
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdatedBoQItem <span style="color:#f92672">(</span>Error msg<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> failwith msg
+</span></span></code></pre></div><p>Just change all the ColumnDef to be editable and dispatch the Update msg in valueSetter function. If you change the value and tab out, you will see that row is changes. Refresh the browser will show the change value since the data is persist on the Server.</p>
+<p>But if you enter blank value in the Description column, nothing will happen. Safe-stack usually will show the error in either in Terminal for Server code or Browser Console for Client Code. Checking the client code.</p>
+<figure>
+    <img loading="lazy" src="images/no-description-error.jpg"
+         alt="No Description Error" width="600"/> <figcaption>
+            No Description Error in Console
+        </figcaption>
+</figure>
+
+<p>This occurs because we do use failWith when Error is captured in UpdatedBoQItem case. We are going to show this error to the user instead using Elmish.Toastr.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd src/Client
+</span></span><span style="display:flex;"><span>femto install Elmish.Toastr
+</span></span><span style="display:flex;"><span>cd ../..
+</span></span><span style="display:flex;"><span>npm install jquery
+</span></span></code></pre></div><p>Now create function showError and replace all failWith with the function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> showError model msg <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    printfn <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;Error occurred : {msg}&#34;</span>
+</span></span><span style="display:flex;"><span>    model<span style="color:#f92672">,</span> Toastr.message msg <span style="color:#f92672">|&gt;</span> Toastr.error
+</span></span></code></pre></div><p>In update function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdatedBoQItem <span style="color:#f92672">(</span>Error msg<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> showError model msg
+</span></span></code></pre></div><p>Now when we try to update blank Description, the error should shown in Toast like below:</p>
+<figure>
+    <img loading="lazy" src="images/no-description-error-toastr.jpg"
+         alt="No Description Error Toastr" width="600"/> <figcaption>
+            No Description Error with Toastr
+        </figcaption>
+</figure>
+
+<p>Next, add delete button in Grid. Add new ColumnDef at the end:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    ColumnDef.create<span style="color:#f92672">&lt;</span>Guid<span style="color:#f92672">&gt;</span> <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        ColumnDef.valueGetter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>Id<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        ColumnDef.cellRendererFramework <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> itemId <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            Html.button <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                prop<span style="color:#f92672">.</span>text <span style="color:#e6db74">&#34;🗑️&#34;</span>
+</span></span><span style="display:flex;"><span>                prop<span style="color:#f92672">.</span>onClick <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> dispatch <span style="color:#f92672">(</span>DeleteBoQItem itemId<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>Add 2 more Msg for Delete and implement the case in update function as follow:</p>
+<p>Msg type</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> DeleteBoQItem <span style="color:#66d9ef">of</span> itemId<span style="color:#f92672">:</span>Guid
+</span></span></code></pre></div><p>update function</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> DeleteBoQItem itemId <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> cmd <span style="color:#f92672">=</span> Cmd.OfAsync.perform cocoTenderApi<span style="color:#f92672">.</span>deleteBoQItem itemId <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> GetBoQItems<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        model<span style="color:#f92672">,</span> cmd
+</span></span></code></pre></div><p>See that after finish delete, we will dispatch GetBoQItems to reload the items from Server.</p>
+<p>Clicking on Delete button should delete and refresh the grid.</p>
+<h2 id="calculate-all-cost">Calculate All Cost<a hidden class="anchor" aria-hidden="true" href="#calculate-all-cost">#</a></h2>
+<p>We would like to show user the latest cost of the Project. There are 3 cost that user are interested. They are DirectCost, FactorF, and EstimateCost. The calculation for this costs has already been implemented in the Domain. So all you have to do is just call the domain from the Api and return the result back to client.</p>
+<p>Since we want the uesr to see the cost after each update. So we decide to return the AllCost to the user whenever there is changes for BoQItem.</p>
+<p>Modify the Api in Shared module to return AllCost as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">AllCost</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        DirectCost <span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>        FactorF <span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>        EstimateCost <span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ICoCoTenderApi</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    getBoQItems<span style="color:#f92672">:</span> <span style="color:#66d9ef">unit</span> <span style="color:#f92672">-&gt;</span> Async<span style="color:#f92672">&lt;</span>Result<span style="color:#f92672">&lt;</span>BoQItemDto <span style="color:#66d9ef">list</span><span style="color:#f92672">*</span>AllCost<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>    addBoQItem<span style="color:#f92672">:</span> BoQItemDto <span style="color:#f92672">-&gt;</span> Async<span style="color:#f92672">&lt;</span>Result<span style="color:#f92672">&lt;</span>BoQItemDto<span style="color:#f92672">*</span>AllCost<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>    updateBoQItem<span style="color:#f92672">:</span> BoQItemDto <span style="color:#f92672">-&gt;</span> Async<span style="color:#f92672">&lt;</span>Result<span style="color:#f92672">&lt;</span>BoQItemDto<span style="color:#f92672">*</span>AllCost<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>    deleteBoQItem<span style="color:#f92672">:</span> Guid <span style="color:#f92672">-&gt;</span> Async<span style="color:#f92672">&lt;</span>Result<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">unit</span><span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>    
+</span></span></code></pre></div><p>Go to Server.fs. First, we will implement getAllCost function so that we can reuse in all Api functions. Put the function before definition of cocoTenderApi.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">open</span> Project
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> getAllCost () <span style="color:#f92672">=</span> result <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span><span style="color:#f92672">!</span> <span style="color:#f92672">(</span>DirectCost directCost<span style="color:#f92672">,</span> FactorF factorF<span style="color:#f92672">,</span> EstimateCost estimateCost<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        Project.tryGetAllCost Storage.loadFactorFTable <span style="color:#f92672">(</span>Storage.boqItems <span style="color:#f92672">|&gt;</span> List.ofSeq<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            DirectCost <span style="color:#f92672">=</span> directCost
+</span></span><span style="display:flex;"><span>            FactorF <span style="color:#f92672">=</span> factorF
+</span></span><span style="display:flex;"><span>            EstimateCost <span style="color:#f92672">=</span> estimateCost
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>We need to load factor f from the Storage. Implement following function in the Storage module.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> loadFactorFTable () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        FactorFTable <span style="color:#f92672">[(</span>10<span style="color:#f92672">,</span>1<span style="color:#f92672">.</span>1<span style="color:#f92672">);</span> <span style="color:#f92672">(</span>100<span style="color:#f92672">,</span>1<span style="color:#f92672">.</span>5<span style="color:#f92672">);</span> <span style="color:#f92672">(</span>1000<span style="color:#f92672">,</span> 1<span style="color:#f92672">.</span>9<span style="color:#f92672">)]</span>
+</span></span></code></pre></div><p>Modify the Api to return allCost as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    getBoQItems <span style="color:#f92672">=</span> <span style="color:#66d9ef">fun</span> () <span style="color:#f92672">-&gt;</span> asyncResult <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> boqItems <span style="color:#f92672">=</span> Storage.boqItems <span style="color:#f92672">|&gt;</span> List.ofSeq
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let!</span> allCost <span style="color:#f92672">=</span> getAllCost()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>boqItems <span style="color:#f92672">|&gt;</span> List.map Dto.toBoQItemDto<span style="color:#f92672">),</span> allCost
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    addBoQItem <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">fun</span> boqItemDto <span style="color:#f92672">-&gt;</span> asyncResult <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let!</span> boqItem <span style="color:#f92672">=</span>  boqItemDto <span style="color:#f92672">|&gt;</span> Dto.toBoQItemDomain
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">do</span><span style="color:#f92672">!</span> Storage.addBoQItem boqItem
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> boqItemDto<span style="color:#66d9ef">&#39;</span> <span style="color:#f92672">=</span> boqItem <span style="color:#f92672">|&gt;</span> Dto.toBoQItemDto
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let!</span> allCost <span style="color:#f92672">=</span> getAllCost()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> boqItemDto&#39;<span style="color:#f92672">,</span> allCost
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    updateBoQItem <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">fun</span> boqItemDto <span style="color:#f92672">-&gt;</span> asyncResult <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let!</span> boqItem <span style="color:#f92672">=</span>  boqItemDto <span style="color:#f92672">|&gt;</span> Dto.toBoQItemDomain
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let!</span> boqItem <span style="color:#f92672">=</span>  boqItem <span style="color:#f92672">|&gt;</span> BoQItem.tryUpdate
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">do</span><span style="color:#f92672">!</span> Storage.updateBoQItem boqItem
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> boqItemDto<span style="color:#66d9ef">&#39;</span> <span style="color:#f92672">=</span> boqItem <span style="color:#f92672">|&gt;</span> Dto.toBoQItemDto
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let!</span> allCost <span style="color:#f92672">=</span> getAllCost()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> boqItemDto&#39;<span style="color:#f92672">,</span> allCost
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Go back to Client.fs. We need to maintain AllCost received from the server. So we need to modify the Model as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Model</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        BoQItems<span style="color:#f92672">:</span> BoQItemDto <span style="color:#66d9ef">list</span>
+</span></span><span style="display:flex;"><span>        AllCost<span style="color:#f92672">:</span> AllCost
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Change the init to initialize AllCost</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> model <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            BoQItems <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>            AllCost <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>DirectCost <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0<span style="color:#f92672">;</span> FactorF <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0<span style="color:#f92672">;</span> EstimateCost <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Change the Msg to accept AllCost from response from the Server:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GotBoQItems <span style="color:#66d9ef">of</span> Result<span style="color:#f92672">&lt;</span>BoQItemDto <span style="color:#66d9ef">list</span><span style="color:#f92672">*</span>AllCost<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> AddedBoQItem <span style="color:#66d9ef">of</span> Result<span style="color:#f92672">&lt;</span>BoQItemDto<span style="color:#f92672">*</span>AllCost<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdatedBoQItem <span style="color:#66d9ef">of</span> Result<span style="color:#f92672">&lt;</span>BoQItemDto<span style="color:#f92672">*</span>AllCost<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span></code></pre></div><p>Modify the response cases in update as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GotBoQItems <span style="color:#f92672">(</span>Ok <span style="color:#f92672">(</span>items<span style="color:#f92672">,</span>allCost<span style="color:#f92672">))</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span> model <span style="color:#66d9ef">with</span> BoQItems <span style="color:#f92672">=</span> items<span style="color:#f92672">;</span> AllCost <span style="color:#f92672">=</span> allCost <span style="color:#f92672">},</span> Cmd.none
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> AddedBoQItem <span style="color:#f92672">(</span>Ok <span style="color:#f92672">(</span>boqItem<span style="color:#f92672">,</span> allCost<span style="color:#f92672">))</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">{</span> model <span style="color:#66d9ef">with</span> BoQItems <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>BoQItems <span style="color:#f92672">@</span> <span style="color:#f92672">[</span> boqItem <span style="color:#f92672">];</span> AllCost <span style="color:#f92672">=</span> allCost <span style="color:#f92672">},</span> Cmd.none        
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> UpdatedBoQItem <span style="color:#f92672">(</span>Ok <span style="color:#f92672">(</span>updatedItem<span style="color:#f92672">,</span>allCost<span style="color:#f92672">))</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> updatedItems <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>BoQItems <span style="color:#f92672">|&gt;</span> List.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">if</span> x<span style="color:#f92672">.</span>Id <span style="color:#f92672">=</span> updatedItem<span style="color:#f92672">.</span>Id <span style="color:#66d9ef">then</span> updatedItem <span style="color:#66d9ef">else</span> x<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span> model <span style="color:#66d9ef">with</span> BoQItems <span style="color:#f92672">=</span> updatedItems<span style="color:#f92672">;</span> AllCost <span style="color:#f92672">=</span> allCost <span style="color:#f92672">},</span> Cmd.none
+</span></span></code></pre></div><p>We will show code below the Grid. At following Bulma Level under grid inside containerBox function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>            Bulma.level <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                prop<span style="color:#f92672">.</span>style <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                    style<span style="color:#f92672">.</span>paddingRight 300
+</span></span><span style="display:flex;"><span>                    style<span style="color:#f92672">.</span>fontSize 14
+</span></span><span style="display:flex;"><span>                    style<span style="color:#f92672">.</span>fontWeight<span style="color:#f92672">.</span>bold
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                color<span style="color:#f92672">.</span>hasBackgroundLight
+</span></span><span style="display:flex;"><span>                prop<span style="color:#f92672">.</span>children <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                    Bulma.levelLeft []
+</span></span><span style="display:flex;"><span>                    Bulma.levelRight <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        Bulma.levelItem <span style="color:#f92672">(</span>Bulma.label <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;Direct Cost&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                        Bulma.levelItem <span style="color:#f92672">(</span>Bulma.label <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;{model.AllCost.DirectCost}&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                        Bulma.levelItem <span style="color:#f92672">(</span>Bulma.label <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;Estimate Cost&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                        Bulma.levelItem <span style="color:#f92672">(</span>Bulma.label <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;{model.AllCost.EstimateCost}&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>The all cost should be shown as follow:</p>
+<figure>
+    <img loading="lazy" src="images/show-all-cost.jpg"
+         alt="Show All Cost" width="600"/> <figcaption>
+            Show All Cost
+        </figcaption>
+</figure>
+
+<h2 id="show-factorf-table">Show FactorF Table<a hidden class="anchor" aria-hidden="true" href="#show-factorf-table">#</a></h2>
+<p>Finally, we are at the last use case for this post. The user should be able to see FactorF table used for the calculation. We have factor f returned from the Server but we need to somehow show the table and highlight which factor f range we are using.</p>
+<p>First, add new function in Api shared module to get FactorFInfo</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FactorFInfo</span> <span style="color:#f92672">=</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">string</span><span style="color:#f92672">*</span><span style="color:#66d9ef">float</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">list</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ICoCoTenderApi</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>    getFactorFInfo<span style="color:#f92672">:</span> <span style="color:#66d9ef">unit</span><span style="color:#f92672">-&gt;</span>Async<span style="color:#f92672">&lt;</span>Result<span style="color:#f92672">&lt;</span>FactorFInfo<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Next implement it in the Server.fs.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    getFactorFInfo <span style="color:#f92672">=</span> <span style="color:#66d9ef">fun</span> () <span style="color:#f92672">-&gt;</span> asyncResult <span style="color:#f92672">{</span> <span style="color:#66d9ef">return</span> Project.getFactorFInfo Storage.loadFactorFTable <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>For the user interface, we will use Bulma.QuickView.
+We need to install it first.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>femto install Feliz.Bulma.QuickView
+</span></span></code></pre></div><p>The QuickView requires custom css style. We need to import that when we bundle client-side fsharp to js file. The client pipeline is done through webpack.</p>
+<p>Go to webpack.config.js and add cssEntry in CONFIG object after fsharpEntry.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>    <span style="color:#a6e22e">cssEntry</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;./src/Client/style.scss&#39;</span>,
+</span></span></code></pre></div><p>Next go to entry property in Module.export. We need to bundle css entry when we build the project.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>        <span style="color:#a6e22e">entry</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">isProduction</span> <span style="color:#f92672">?</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">app</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">CONFIG</span>.<span style="color:#a6e22e">fsharpEntry</span>), <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">CONFIG</span>.<span style="color:#a6e22e">cssEntry</span>)]
+</span></span><span style="display:flex;"><span>        } <span style="color:#f92672">:</span> <span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">test</span> <span style="color:#f92672">?</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">app</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">fsharpEntry</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">:</span>   {
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">app</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">CONFIG</span>.<span style="color:#a6e22e">fsharpEntry</span>),
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">style</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">resolve</span>(<span style="color:#a6e22e">CONFIG</span>.<span style="color:#a6e22e">cssEntry</span>)
+</span></span><span style="display:flex;"><span>                },
+</span></span></code></pre></div><p>Next create the file style.scss inside src/Client folder and put below code to import quickview css</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scss" data-lang="scss"><span style="display:flex;"><span><span style="color:#66d9ef">@import</span> <span style="color:#e6db74">&#39;~bulma-quickview/dist/css/bulma-quickview.min.css&#39;</span>;
+</span></span></code></pre></div><p>Go to Index.fs and add 2 more item in the Model type</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Model</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>        ShowFactorFView<span style="color:#f92672">:</span> <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span>        FactorFInfo<span style="color:#f92672">:</span> FactorFInfo
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>The first one is the flag indicating that the FactorF quickview should be shown or not. The second one is just the factor f table we got from the Server.</p>
+<p>Two more Msgs are added:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> ToggleFactorFView
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GotFactorFInfo <span style="color:#66d9ef">of</span> Result<span style="color:#f92672">&lt;</span>FactorFInfo<span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span></code></pre></div><p>The first message will be used when we toggle the factorf view to open or close. The second one will be when we receive the table.</p>
+<p>Change the init function so that we will send 2 request in the beginning. First request will load the boq items, The second one will load factor f table.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> init () <span style="color:#f92672">:</span> Model <span style="color:#f92672">*</span> Cmd<span style="color:#f92672">&lt;</span>Msg<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> model <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            BoQItems <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>            AllCost <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>DirectCost <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0<span style="color:#f92672">;</span> FactorF <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0<span style="color:#f92672">;</span> EstimateCost <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            ShowFactorFView <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>            FactorFInfo <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cmdGetBoQItems <span style="color:#f92672">=</span> Cmd.OfAsync.perform cocoTenderApi<span style="color:#f92672">.</span>getBoQItems () GotBoQItems
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cmdGetFactorFInfo <span style="color:#f92672">=</span> Cmd.OfAsync.perform cocoTenderApi<span style="color:#f92672">.</span>getFactorFInfo () GotFactorFInfo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    model<span style="color:#f92672">,</span> Cmd.batch <span style="color:#f92672">[</span> cmdGetBoQItems<span style="color:#f92672">;</span> cmdGetFactorFInfo <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>Add 2 more cases in the update function</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GotFactorFInfo <span style="color:#f92672">(</span>Ok info<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span> model <span style="color:#66d9ef">with</span> FactorFInfo <span style="color:#f92672">=</span> info <span style="color:#f92672">},</span> Cmd.none
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> GotFactorFInfo <span style="color:#f92672">(</span>Error msg<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> showError&#39; msg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> ToggleFactorFView <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span> model <span style="color:#66d9ef">with</span> ShowFactorFView <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>ShowFactorFView <span style="color:#f92672">|&gt;</span> <span style="color:#f92672">not</span> <span style="color:#f92672">},</span> Cmd.none
+</span></span></code></pre></div><p>In the view, we will toggle the view through button. Add new level item next to EstimateCost.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    Bulma.levelItem <span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>        Bulma.button<span style="color:#f92672">.</span>button <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>            prop<span style="color:#f92672">.</span>text <span style="color:#e6db74">&#34;Show Factor F&#34;</span>
+</span></span><span style="display:flex;"><span>            prop<span style="color:#f92672">.</span>onClick <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> ToggleFactorFView <span style="color:#f92672">|&gt;</span> dispatch<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>Last but not least, create the factorFView function</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> factorFView <span style="color:#f92672">(</span>model<span style="color:#f92672">:</span> Model<span style="color:#f92672">)</span> dispatch <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    printfn <span style="color:#e6db74">&#34;Info %A Factor F %A&#34;</span> model<span style="color:#f92672">.</span>FactorFInfo model<span style="color:#f92672">.</span>AllCost<span style="color:#f92672">.</span>FactorF
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> lowerBoundIndex <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>FactorFInfo <span style="color:#f92672">|&gt;</span> List.tryFindIndexBack <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x <span style="color:#f92672">|&gt;</span> snd <span style="color:#f92672">|&gt;</span> <span style="color:#f92672">(&gt;=)</span> model<span style="color:#f92672">.</span>AllCost<span style="color:#f92672">.</span>FactorF<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    printfn <span style="color:#e6db74">&#34;LowerBoundIndex %A&#34;</span> lowerBoundIndex
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> factorFTr i <span style="color:#f92672">(</span>condition<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">,</span>factorF<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> isSelected <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">match</span> lowerBoundIndex <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|</span> Some index <span style="color:#f92672">-&gt;</span> i <span style="color:#f92672">=</span> index <span style="color:#f92672">||</span> i <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>index <span style="color:#f92672">+</span> 1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        Html.tr <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> isSelected <span style="color:#66d9ef">then</span> <span style="color:#66d9ef">yield</span> prop<span style="color:#f92672">.</span>className <span style="color:#e6db74">&#34;is-selected&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">yield</span> prop<span style="color:#f92672">.</span>children <span style="color:#f92672">[</span>Html.td condition<span style="color:#f92672">;</span> Html.td <span style="color:#f92672">(</span>factorF <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">)]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    QuickView.quickview <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> model<span style="color:#f92672">.</span>ShowFactorFView <span style="color:#66d9ef">then</span> <span style="color:#66d9ef">yield</span> quickview<span style="color:#f92672">.</span>isActive
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">yield</span> prop<span style="color:#f92672">.</span>children <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>            QuickView.header <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                Html.div <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                    prop<span style="color:#f92672">.</span>style <span style="color:#f92672">[</span> style<span style="color:#f92672">.</span>color<span style="color:#f92672">.</span>black <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    prop<span style="color:#f92672">.</span>text <span style="color:#e6db74">&#34;Factor F&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                Bulma.delete <span style="color:#f92672">[</span> prop<span style="color:#f92672">.</span>onClick <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> ToggleFactorFView <span style="color:#f92672">|&gt;</span> dispatch<span style="color:#f92672">)</span> <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            QuickView.body <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                QuickView.block <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                    Bulma.table <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        Html.thead <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                            Html.tr <span style="color:#f92672">[</span> Html.th <span style="color:#e6db74">&#34;Direct Cost Condition&#34;</span><span style="color:#f92672">;</span> Html.th <span style="color:#e6db74">&#34;Factor F&#34;</span> <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                        Html.tbody <span style="color:#f92672">(</span>model<span style="color:#f92672">.</span>FactorFInfo <span style="color:#f92672">|&gt;</span> List.mapi factorFTr<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>And place the function below the containerBox in main view function</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>            Bulma.heroBody <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                Bulma.container <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                    Bulma.title <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                        text<span style="color:#f92672">.</span>hasTextCentered
+</span></span><span style="display:flex;"><span>                        prop<span style="color:#f92672">.</span>text <span style="color:#e6db74">&#34;CoCoTender&#34;</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>                    containerBox model dispatch
+</span></span><span style="display:flex;"><span>                    factorFView model dispatch
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>The result should be as follow:</p>
+<figure>
+    <img loading="lazy" src="images/show-factor-f.jpg"
+         alt="Show Factor F" width="600"/> <figcaption>
+            Show Factor F
+        </figcaption>
+</figure>
+
+<p>The final code could be clone from tag 0.3.0</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone -b v0.3.0 https://github.com/twuttiwat/CoCoTender 
+</span></span></code></pre></div><p>If you come this far, thank you so much for reading this lenghtly post with a lot of code. I am still not good at F# yet but I am still enjoy writing in the language everyday. I would like to thank Compositional-It who develop this Safe-stack framework. I really like it.
+Also I have a lot of questions in F# in the beginning. People in the F# community (slack) is very helpful. I would like to thank Zaid Ajai,Shmew, and AngelMunoz who answer my question relentlessly.</p>
+<p>Last but not least, thanks Sergey Tihon to let me participate in F# Advent of Code this year.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://twuttiwat.github.io/">TW Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

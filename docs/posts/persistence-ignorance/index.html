@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Persistence (Almost) Ignorance | TW Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Old School Persistance Style Welcome back to my building webapp with f# series. Last week, I was kinda exausted from writing and capturing the screenshot for the safe stack post. So this week, we will do something simple. We will not add any new functionality. We will do following things.
+Extract Persistence Layer Implement new NoSQL storage Create Storage class library Why Persistance Ignorance? If you know about Domain Driven Design already, you could skip this section.">
+<meta name="author" content="Teerawat Wuttiwat">
+<link rel="canonical" href="https://twuttiwat.github.io/posts/persistence-ignorance/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5cfc680b1eeaeef9efbced92d46c2a9e876b72ee14fba85846afc4cff9e6e6f8.css" integrity="sha256-XPxoCx7q7vnvvO2S1Gwqnodrcu4U&#43;6hYRq/Ez/nm5vg=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://twuttiwat.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://twuttiwat.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://twuttiwat.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://twuttiwat.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://twuttiwat.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Persistence (Almost) Ignorance" />
+<meta property="og:description" content="Old School Persistance Style Welcome back to my building webapp with f# series. Last week, I was kinda exausted from writing and capturing the screenshot for the safe stack post. So this week, we will do something simple. We will not add any new functionality. We will do following things.
+Extract Persistence Layer Implement new NoSQL storage Create Storage class library Why Persistance Ignorance? If you know about Domain Driven Design already, you could skip this section." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://twuttiwat.github.io/posts/persistence-ignorance/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-12-11T22:40:29+07:00" />
+<meta property="article:modified_time" content="2022-12-11T22:40:29+07:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Persistence (Almost) Ignorance"/>
+<meta name="twitter:description" content="Old School Persistance Style Welcome back to my building webapp with f# series. Last week, I was kinda exausted from writing and capturing the screenshot for the safe stack post. So this week, we will do something simple. We will not add any new functionality. We will do following things.
+Extract Persistence Layer Implement new NoSQL storage Create Storage class library Why Persistance Ignorance? If you know about Domain Driven Design already, you could skip this section."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://twuttiwat.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Persistence (Almost) Ignorance",
+      "item": "https://twuttiwat.github.io/posts/persistence-ignorance/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Persistence (Almost) Ignorance",
+  "name": "Persistence (Almost) Ignorance",
+  "description": "Old School Persistance Style Welcome back to my building webapp with f# series. Last week, I was kinda exausted from writing and capturing the screenshot for the safe stack post. So this week, we will do something simple. We will not add any new functionality. We will do following things.\nExtract Persistence Layer Implement new NoSQL storage Create Storage class library Why Persistance Ignorance? If you know about Domain Driven Design already, you could skip this section.",
+  "keywords": [
+    
+  ],
+  "articleBody": " Old School Persistance Style Welcome back to my building webapp with f# series. Last week, I was kinda exausted from writing and capturing the screenshot for the safe stack post. So this week, we will do something simple. We will not add any new functionality. We will do following things.\nExtract Persistence Layer Implement new NoSQL storage Create Storage class library Why Persistance Ignorance? If you know about Domain Driven Design already, you could skip this section. But if you don’t, please keep along. The concept of this is that the persistence storage should not interwind with the Core Domain logic. You should be able to switch and change persistence technology as you see fit in which you’ll see in this post.\nYou will also found that sometimes there are no golden rule to achive all the thing. So sometimes, change of core domain logic is needed. But we’ll try our best to change as little as possible.\nExtract Persistence Api If you look at the existing code, you will find that we are using the Storage module for load and restore BoQ items. You will find that the Api function sometimes read data directly from the Storage resize array. This will be a problem for coupling, the Api layer should not know how the implementation is done.\nWe should give the api layer, the Interface and let the functions cal that storage Interface. Let’s start by creating IStorageApi\ntype IStorageApi = abstract member getBoQItems : unit -\u003e Result\u003cBoQItem list,string\u003e abstract member addBoQItem : boqItem:BoQItem -\u003e Result\u003cunit, string\u003e abstract member updateBoQItem : boqItem:BoQItem -\u003e Result\u003cunit, string\u003e abstract member deleteBoQItem : itemId:Guid -\u003e Result\u003cUnit, string\u003e abstract member loadFactorFTable : unit -\u003e FactorFTable Next, we will create new Class ResizeArray which will implement this interface\ntype ResizeArrayStorage() = let boqItems = ResizeArray\u003cBoQItem\u003e() do let qty = Quantity (10.0, \"m^2\") let material = Material { Name = \"Pool Tile\"; Unit = \"m^2\"; UnitCost = 100.0 } let labor = Labor { Name = \"Do Tiling\"; Unit = \"m^2\"; UnitCost = 50.0 } let defaultItem = BoQItem.tryCreate (Guid.NewGuid()) \"Pool Tile\" qty material labor match defaultItem with | Ok defaultItem' -\u003e boqItems.Add defaultItem' |\u003e ignore | _ -\u003e () interface IStorageApi with member _.getBoQItems() = boqItems |\u003e List.ofSeq |\u003e Ok member _.addBoQItem(boqItem) = boqItems.Add boqItem Ok () member _.updateBoQItem(boqItem) = let index = boqItems.FindIndex( fun x -\u003e x = boqItem) boqItems[index] \u003c- boqItem Ok () member _.deleteBoQItem(itemId) = let index = boqItems.FindIndex( fun x -\u003e x |\u003e BoQItem.value |\u003e fun y -\u003e y.Id = itemId) boqItems.RemoveAt(index) Ok () member _.loadFactorFTable() = FactorFTable [(10,1.1); (100,1.5); (1000, 1.9)] I decide to go with class and interface instead of using record of function like ICoCoTenderApi. Since it’s likely there will be intialization for each storage type. Having that done in the class constructor should simplify the caller code.\nNow, we have our ResizeStorage ready. Let’s use it in our cocoTenderApi definition.\nlet cocoTenderApi (storage:IStorageApi) = { ... } We just supply the storage api to the application api. The cocoTenderApi implementation will not know what is underlying storage. It will just use the given storage api.\nReplace all the storage related function to use this new api such as.\nlet! boqItems = storage.getBoQItems() Now we need to create the actual storage class and send to the api implementation. Go to webApp definition\nlet webApp = Remoting.createApi () |\u003e Remoting.withRouteBuilder Route.builder |\u003e Remoting.fromValue (cocoTenderApi (ResizeArrayStorage())) |\u003e Remoting.buildHttpHandler Check the result. The web application should run as usual.\nImplement new NoSQL storage Initially, I plan to use SQL database but the safe stack documentation suggests LiteSharpDB as a simpler solution. When I think about it, the CoCoTender application does not need integrity that much. Since all we need is just saving list of BoQ items ins and outs of the storage. So No SQL database is suffice for our application at the moment. And it’s my first time using no sql database as well so I think it should be fun.\nWhen working with new library, I like to play with it in script file first. We will try to implement all StorageApi operation in script file then move it to actual project when it works.\nGo to scripts/scratch.fsx.\nStart by importing the library we need. See that we also reference to our CoCoTender.Domain library.\n#r \"nuget:LiteDB.FSharp\" #r \"nuget:FsToolkit.ErrorHandling\" #r @\"C:\\projs\\CoCoTender\\src\\CoCoTender.Domain\\bin\\Debug\\net6.0\\CoCoTender.Domain.dll\" Next, create database file in the script folder.\nlet database = let mapper = FSharpBsonMapper() let connStr = $\"Filename={__SOURCE_DIRECTORY__}\\\\CoCoTender.db;mode=Exclusive\" new LiteDatabase (connStr, mapper) Then, implement all database operations. Coming from the SQL database, I found that the No SQL one is more like a magic. I mean if you follow all persistent requirement then suddenly all serialization id done for you. No need for schema. This maybe a good or bad thing though; depends on the application a hand.\nHere is the implementation. First, we will list all the boq items.\nlet boqitems = database.GetCollection\u003cBoQItem\u003e \"boqitems\" boqItems.FindAll () |\u003e List.ofSeq Next is the insert operation.\nboqitems.Insert boqItem This is super easy but ,like I said before, everything comes with a prices. First the Record type must have Id or id properties with value either int or Guid. Luckily, we already have that Id in our BoQItem. so this is not a problem.\nBut there is one requirement that we cannot ignore(pun intended). The record could not be private or else LiteDB will not be able to serialize the type.\nThis is bad since we are breaking the domain. I don’t like this but at the cost of doing serialization code by myself. I think I am going to ignore that and go with the requirement.\nHere is the change from\ntype private BoQItem = { to\n[\u003cCLIMutable\u003e] type private BoQItem = { Adding CLIMutable is also required for the LiteDB as well. Too much mumble, let’s do with update and delete\nlet id = BsonValue(Guid(\"...\")) let boqItem = boqitems.FindById(id) // Find item by id let boqItem = { boqItem with Description = \"Foo\" } boqitems.Update(boqItem) // Update boqitems.Delete(\"...\") // Delete We also has issue with FactorF type since the type is just tuple of float which is not directly support by LiteDB. We fix the issue by creating intermediate type for FactorF called FactorFRec\ntype FactorFRec = { Id: int DirectCost: float FactorF: float } And changes the load factor f to map from FactorFRect to tuple\nlet factorFs = database.GetCollection\u003cFactorFRec\u003e \"boqitems\" factorFs.Insert { Id = 1; DirectCost = 10.0; FactorF = 1.1 } |\u003e ignore factorFs.FindAll() |\u003e List.ofSeq |\u003e List.map (fun x -\u003e x.DirectCost,x.FactorF) I am happy with how to work with the library. Now, I will move the code to Server code now. It’s quite simple. We just need to implement function for IStorageApi with the code we try in the script.\ntype LiteDBStorage () = let database = let mapper = FSharpBsonMapper() let connStr = $\"Filename=CoCoTender.db;mode=Exclusive\" new LiteDatabase (connStr, mapper) let boqItems = database.GetCollection\u003cBoQItem\u003e \"boqItems\" let factorFs = database.GetCollection\u003cFactorFRec\u003e \"factorFs\" do if factorFs.Count() = 0 then factorFs.Insert { Id = 1; DirectCost = 10.0; FactorF = 1.1 } |\u003e ignore factorFs.Insert { Id = 2; DirectCost = 100.0; FactorF = 1.5 } |\u003e ignore factorFs.Insert { Id = 3; DirectCost = 1000.0; FactorF = 1.9 } |\u003e ignore interface IStorageApi with member _.getBoQItems () = boqItems.FindAll() |\u003e List.ofSeq |\u003e Ok member _.addBoQItem(boqItem) = boqItems.Insert boqItem |\u003e ignore Ok () member _.updateBoQItem(boqItem) = if boqItems.Update boqItem then Ok () else Error \"LiteDbStorage:Could not update boq item\" member _.deleteBoQItem(itemId) = if boqItems.Delete itemId then Ok () else Error \"LiteDbStorage:Could not delete boq item\" member _.loadFactorFTable () = factorFs.FindAll() |\u003e List.ofSeq |\u003e List.map (fun x -\u003e x.DirectCost,x.FactorF) |\u003e FactorFTable Also, change the webApp initialization to use LiteDBStorage class.\n|\u003e Remoting.fromValue (cocoTenderApi (LiteDBStorage())) Now, checking the running application. Everything should work as expected.\nWe are at the last step now. When I see a lot of storage api scattered around in the Server code, I feel unconfortable. I think this code should belong into other place. The Api layer should be just orchestration between different component.\nLet’s extract the storage code to dedicated class library.\ncd src dotnet new classlib -lang F# -o CoCoTender.Storage dotnet add reference ../CoCoTender.Domain cd .. dotnet paket add LiteSharpDB.FSharp -p CoCoTender.Storage dotnet paket add FsToolkit.ErrorHandling -p CoCoTender.Storage dotnet sln add src/CoCoTender.Storage We will organize the code such that\nCommon type such as IStorageApi interface will be in CoCoTender.Storage namespace Each type of storage will have it’s own file and module. For example for LiteDB, we will create LiteDB.fs file with module CoCoTender.Storage.LiteDB. I think you can do that by yourself. Don’t forget that all the new file should be include in the CoCoTender.Storage.fsproj with correct order. Common.fs should be at the top.\nNow, we just need to add reference to Storage library in the Server file and open the module\ncd src/Server dotnet add reference ../CoCoTender.Storage That’s it for the simple persistence layer. You can get all the finished code by cloning tag v0.4.0.\ngit clone -b v0.4.0 https://github.com/twuttiwat/CoCoTender Good luck and see you at another post.\n",
+  "wordCount" : "1502",
+  "inLanguage": "en",
+  "datePublished": "2022-12-11T22:40:29+07:00",
+  "dateModified": "2022-12-11T22:40:29+07:00",
+  "author":{
+    "@type": "Person",
+    "name": "Teerawat Wuttiwat"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://twuttiwat.github.io/posts/persistence-ignorance/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "TW Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://twuttiwat.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://twuttiwat.github.io/" accesskey="h" title="TW Blog (Alt + H)">TW Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Persistence (Almost) Ignorance
+    </h1>
+    <div class="post-meta"><span title='2022-12-11 22:40:29 +0700 +07'>December 11, 2022</span>&nbsp;·&nbsp;Teerawat Wuttiwat
+
+</div>
+  </header> 
+  <div class="post-content"><figure>
+    <img loading="lazy" src="images/floppy-disks.png"
+         alt="Floppy Disks Image" width="600"/> <figcaption>
+            Old School Persistance Style
+        </figcaption>
+</figure>
+
+<p>Welcome back to my <a href="../intro-fs-webapp-series/">building webapp with f# series</a>.
+Last week, I was kinda exausted from writing and capturing the screenshot for the safe stack post.
+So this week, we will do something simple. We will not add any new functionality. We will do following things.</p>
+<ol>
+<li>Extract Persistence Layer</li>
+<li>Implement new NoSQL storage</li>
+<li>Create Storage class library</li>
+</ol>
+<h1 id="why-persistance-ignorance">Why Persistance Ignorance?<a hidden class="anchor" aria-hidden="true" href="#why-persistance-ignorance">#</a></h1>
+<p>If you know about Domain Driven Design already, you could skip this section. But if you don&rsquo;t, please keep along.
+The concept of this is that the persistence storage should not interwind with the Core Domain logic.
+You should be able to switch and change persistence technology as you see fit in which you&rsquo;ll see in this post.</p>
+<p>You will also found that sometimes there are no golden rule to achive all the thing. So sometimes, change of core domain logic is needed. But we&rsquo;ll try our best to change as little as possible.</p>
+<h2 id="extract-persistence-api">Extract Persistence Api<a hidden class="anchor" aria-hidden="true" href="#extract-persistence-api">#</a></h2>
+<p>If you look at the existing code, you will find that we are using the Storage module for load and restore BoQ items. You will find that the Api function sometimes read data directly from the Storage resize array. This will be a problem for coupling, the Api layer should not know how the implementation is done.</p>
+<p>We should give the api layer, the Interface and let the functions cal that storage Interface.
+Let&rsquo;s start by creating IStorageApi</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IStorageApi</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">member</span> getBoQItems <span style="color:#f92672">:</span> <span style="color:#66d9ef">unit</span> <span style="color:#f92672">-&gt;</span> Result<span style="color:#f92672">&lt;</span>BoQItem <span style="color:#66d9ef">list</span><span style="color:#f92672">,</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">member</span> addBoQItem <span style="color:#f92672">:</span> boqItem<span style="color:#f92672">:</span>BoQItem <span style="color:#f92672">-&gt;</span> Result<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">unit</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">member</span> updateBoQItem <span style="color:#f92672">:</span> boqItem<span style="color:#f92672">:</span>BoQItem <span style="color:#f92672">-&gt;</span> Result<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">unit</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">member</span> deleteBoQItem <span style="color:#f92672">:</span> itemId<span style="color:#f92672">:</span>Guid <span style="color:#f92672">-&gt;</span> Result<span style="color:#f92672">&lt;</span>Unit<span style="color:#f92672">,</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">member</span> loadFactorFTable <span style="color:#f92672">:</span> <span style="color:#66d9ef">unit</span> <span style="color:#f92672">-&gt;</span> FactorFTable
+</span></span></code></pre></div><p>Next, we will create new Class ResizeArray which will implement this interface</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ResizeArrayStorage</span>() <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> boqItems <span style="color:#f92672">=</span> ResizeArray<span style="color:#f92672">&lt;</span>BoQItem<span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> qty <span style="color:#f92672">=</span> Quantity <span style="color:#f92672">(</span>10<span style="color:#f92672">.</span>0<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> material <span style="color:#f92672">=</span> Material <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Pool Tile&#34;</span><span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> 100<span style="color:#f92672">.</span>0 <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> labor <span style="color:#f92672">=</span> Labor <span style="color:#f92672">{</span> Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Do Tiling&#34;</span><span style="color:#f92672">;</span> Unit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;m^2&#34;</span><span style="color:#f92672">;</span> UnitCost <span style="color:#f92672">=</span> 50<span style="color:#f92672">.</span>0 <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> defaultItem <span style="color:#f92672">=</span> BoQItem.tryCreate <span style="color:#f92672">(</span>Guid.NewGuid()<span style="color:#f92672">)</span> <span style="color:#e6db74">&#34;Pool Tile&#34;</span> qty material labor
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">match</span> defaultItem <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> Ok defaultItem&#39; <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            boqItems<span style="color:#f92672">.</span>Add defaultItem&#39; <span style="color:#f92672">|&gt;</span> ignore
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> ()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">interface</span> IStorageApi <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">getBoQItems</span>() <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            boqItems <span style="color:#f92672">|&gt;</span> List.ofSeq <span style="color:#f92672">|&gt;</span> Ok
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">addBoQItem</span><span style="color:#f92672">(</span>boqItem<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            boqItems<span style="color:#f92672">.</span>Add boqItem
+</span></span><span style="display:flex;"><span>            Ok ()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">updateBoQItem</span><span style="color:#f92672">(</span>boqItem<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> index <span style="color:#f92672">=</span> boqItems<span style="color:#f92672">.</span>FindIndex<span style="color:#f92672">(</span> <span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x <span style="color:#f92672">=</span> boqItem<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            boqItems<span style="color:#f92672">[</span>index<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;-</span> boqItem
+</span></span><span style="display:flex;"><span>            Ok ()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">deleteBoQItem</span><span style="color:#f92672">(</span>itemId<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> index <span style="color:#f92672">=</span> boqItems<span style="color:#f92672">.</span>FindIndex<span style="color:#f92672">(</span> <span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x <span style="color:#f92672">|&gt;</span> BoQItem.value <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> y <span style="color:#f92672">-&gt;</span> y<span style="color:#f92672">.</span>Id <span style="color:#f92672">=</span> itemId<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            boqItems<span style="color:#f92672">.</span>RemoveAt<span style="color:#f92672">(</span>index<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>            Ok ()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">loadFactorFTable</span>() <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            FactorFTable <span style="color:#f92672">[(</span>10<span style="color:#f92672">,</span>1<span style="color:#f92672">.</span>1<span style="color:#f92672">);</span> <span style="color:#f92672">(</span>100<span style="color:#f92672">,</span>1<span style="color:#f92672">.</span>5<span style="color:#f92672">);</span> <span style="color:#f92672">(</span>1000<span style="color:#f92672">,</span> 1<span style="color:#f92672">.</span>9<span style="color:#f92672">)]</span>
+</span></span></code></pre></div><p>I decide to go with class and interface instead of using record of function like ICoCoTenderApi. Since it&rsquo;s likely there will be intialization for each storage type. Having that done in the class constructor should simplify the caller code.</p>
+<p>Now, we have our ResizeStorage ready. Let&rsquo;s use it in our cocoTenderApi definition.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> cocoTenderApi <span style="color:#f92672">(</span>storage<span style="color:#f92672">:</span>IStorageApi<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>We just supply the storage api to the application api. The cocoTenderApi implementation will not know what is underlying storage. It will just use the given storage api.</p>
+<p>Replace all the storage related function to use this new api such as.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let!</span> boqItems <span style="color:#f92672">=</span> storage<span style="color:#f92672">.</span>getBoQItems()
+</span></span></code></pre></div><p>Now we need to create the actual storage class and send to the api implementation.
+Go to webApp definition</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> webApp <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Remoting.createApi ()
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.withRouteBuilder Route.builder
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.fromValue <span style="color:#f92672">(</span>cocoTenderApi <span style="color:#f92672">(</span>ResizeArrayStorage()<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.buildHttpHandler
+</span></span></code></pre></div><p>Check the result. The web application should run as usual.</p>
+<h2 id="implement-new-nosql-storage">Implement new NoSQL storage<a hidden class="anchor" aria-hidden="true" href="#implement-new-nosql-storage">#</a></h2>
+<p>Initially, I plan to use SQL database but the safe stack documentation suggests <strong>LiteSharpDB</strong> as a simpler solution.
+When I think about it, the CoCoTender application does not need integrity that much. Since all we need is just saving list of BoQ items ins and outs of the storage. So No SQL database is suffice for our application at the moment. And it&rsquo;s my first time using no sql database as well so I think it should be fun.</p>
+<p>When working with new library, I like to play with it in script file first.
+We will try to implement all StorageApi operation in script file then move it to actual project when it works.</p>
+<p>Go to scripts/scratch.fsx.</p>
+<p>Start by importing the library we need.
+See that we also reference to our CoCoTender.Domain library.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#75715e">#r</span> <span style="color:#e6db74">&#34;nuget:LiteDB.FSharp&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#r</span> <span style="color:#e6db74">&#34;nuget:FsToolkit.ErrorHandling&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#r</span> <span style="color:#e6db74">@&#34;C:\projs\CoCoTender\src\CoCoTender.Domain\bin\Debug\net6.0\CoCoTender.Domain.dll&#34;</span>
+</span></span></code></pre></div><p>Next, create database file in the script folder.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> database <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">let</span> mapper <span style="color:#f92672">=</span> FSharpBsonMapper()
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">let</span> connStr <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;Filename={__SOURCE_DIRECTORY__}</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">CoCoTender.db;mode=Exclusive&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">new</span> LiteDatabase <span style="color:#f92672">(</span>connStr<span style="color:#f92672">,</span> mapper<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>Then, implement all database operations. Coming from the SQL database, I found that the No SQL one is more like a magic. I mean if you follow all persistent requirement then suddenly all serialization id done for you. No need for schema. This maybe a good or bad thing though; depends on the application a hand.</p>
+<p>Here is the implementation. First, we will list all the boq items.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> boqitems <span style="color:#f92672">=</span> database<span style="color:#f92672">.</span>GetCollection<span style="color:#f92672">&lt;</span>BoQItem<span style="color:#f92672">&gt;</span> <span style="color:#e6db74">&#34;boqitems&#34;</span>
+</span></span><span style="display:flex;"><span>boqItems<span style="color:#f92672">.</span>FindAll () <span style="color:#f92672">|&gt;</span> List.ofSeq
+</span></span></code></pre></div><p>Next is the insert operation.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>boqitems<span style="color:#f92672">.</span>Insert boqItem
+</span></span></code></pre></div><p>This is super easy but ,like I said before, everything comes with a prices. First the Record type must have Id or id properties with value either int or Guid. Luckily, we already have that Id in our BoQItem. so this is not a problem.</p>
+<p>But there is one requirement that we cannot ignore(pun intended). The record could not be <strong>private</strong> or else LiteDB will not be able to serialize the type.</p>
+<p>This is bad since we are breaking the domain. I don&rsquo;t like this but at the cost of doing serialization code by myself. I think I am going to ignore that and go with the requirement.</p>
+<p>Here is the change from</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">private</span> BoQItem <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span></code></pre></div><p>to</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#f92672">[&lt;</span>CLIMutable<span style="color:#f92672">&gt;]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">private</span> BoQItem <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span></code></pre></div><p>Adding CLIMutable is also required for the LiteDB as well.
+Too much mumble, let&rsquo;s do with update and delete</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> id <span style="color:#f92672">=</span> BsonValue<span style="color:#f92672">(</span>Guid<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;...&#34;</span><span style="color:#f92672">))</span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> boqItem <span style="color:#f92672">=</span> boqitems<span style="color:#f92672">.</span>FindById<span style="color:#f92672">(</span>id<span style="color:#f92672">)</span> <span style="color:#75715e">// Find item by id
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> boqItem <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> boqItem <span style="color:#66d9ef">with</span> Description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Foo&#34;</span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>boqitems<span style="color:#f92672">.</span>Update<span style="color:#f92672">(</span>boqItem<span style="color:#f92672">)</span> <span style="color:#75715e">// Update 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>boqitems<span style="color:#f92672">.</span>Delete<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;...&#34;</span><span style="color:#f92672">)</span> <span style="color:#75715e">// Delete
+</span></span></span></code></pre></div><p>We also has issue with FactorF type since the type is just tuple of float which is not directly support by LiteDB. We fix the issue by creating intermediate type for FactorF called FactorFRec</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span>  <span style="color:#a6e22e">FactorFRec</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Id<span style="color:#f92672">:</span> int
+</span></span><span style="display:flex;"><span>    DirectCost<span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span>    FactorF<span style="color:#f92672">:</span> <span style="color:#66d9ef">float</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>And changes the load factor f to map from FactorFRect to tuple</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> factorFs <span style="color:#f92672">=</span> database<span style="color:#f92672">.</span>GetCollection<span style="color:#f92672">&lt;</span>FactorFRec<span style="color:#f92672">&gt;</span> <span style="color:#e6db74">&#34;boqitems&#34;</span>
+</span></span><span style="display:flex;"><span>factorFs<span style="color:#f92672">.</span>Insert <span style="color:#f92672">{</span> Id <span style="color:#f92672">=</span> 1<span style="color:#f92672">;</span> DirectCost <span style="color:#f92672">=</span> 10<span style="color:#f92672">.</span>0<span style="color:#f92672">;</span> FactorF <span style="color:#f92672">=</span> 1<span style="color:#f92672">.</span>1 <span style="color:#f92672">}</span> <span style="color:#f92672">|&gt;</span> ignore
+</span></span><span style="display:flex;"><span>factorFs<span style="color:#f92672">.</span>FindAll() <span style="color:#f92672">|&gt;</span> List.ofSeq <span style="color:#f92672">|&gt;</span> List.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>DirectCost<span style="color:#f92672">,</span>x<span style="color:#f92672">.</span>FactorF<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>I am happy with how to work with the library. Now, I will move the code to Server code now. It&rsquo;s quite simple. We just need to implement function for IStorageApi with the code we try in the script.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">LiteDBStorage</span> () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> database <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> mapper <span style="color:#f92672">=</span> FSharpBsonMapper()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> connStr <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#e6db74">&#34;Filename=CoCoTender.db;mode=Exclusive&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">new</span> LiteDatabase <span style="color:#f92672">(</span>connStr<span style="color:#f92672">,</span> mapper<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> boqItems <span style="color:#f92672">=</span> database<span style="color:#f92672">.</span>GetCollection<span style="color:#f92672">&lt;</span>BoQItem<span style="color:#f92672">&gt;</span> <span style="color:#e6db74">&#34;boqItems&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> factorFs <span style="color:#f92672">=</span> database<span style="color:#f92672">.</span>GetCollection<span style="color:#f92672">&lt;</span>FactorFRec<span style="color:#f92672">&gt;</span> <span style="color:#e6db74">&#34;factorFs&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> factorFs<span style="color:#f92672">.</span>Count() <span style="color:#f92672">=</span> 0 <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>            factorFs<span style="color:#f92672">.</span>Insert <span style="color:#f92672">{</span> Id <span style="color:#f92672">=</span> 1<span style="color:#f92672">;</span> DirectCost <span style="color:#f92672">=</span> 10<span style="color:#f92672">.</span>0<span style="color:#f92672">;</span> FactorF <span style="color:#f92672">=</span> 1<span style="color:#f92672">.</span>1 <span style="color:#f92672">}</span> <span style="color:#f92672">|&gt;</span> ignore
+</span></span><span style="display:flex;"><span>            factorFs<span style="color:#f92672">.</span>Insert <span style="color:#f92672">{</span> Id <span style="color:#f92672">=</span> 2<span style="color:#f92672">;</span> DirectCost <span style="color:#f92672">=</span> 100<span style="color:#f92672">.</span>0<span style="color:#f92672">;</span> FactorF <span style="color:#f92672">=</span> 1<span style="color:#f92672">.</span>5 <span style="color:#f92672">}</span> <span style="color:#f92672">|&gt;</span> ignore
+</span></span><span style="display:flex;"><span>            factorFs<span style="color:#f92672">.</span>Insert <span style="color:#f92672">{</span> Id <span style="color:#f92672">=</span> 3<span style="color:#f92672">;</span> DirectCost <span style="color:#f92672">=</span> 1000<span style="color:#f92672">.</span>0<span style="color:#f92672">;</span> FactorF <span style="color:#f92672">=</span> 1<span style="color:#f92672">.</span>9 <span style="color:#f92672">}</span> <span style="color:#f92672">|&gt;</span> ignore
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">interface</span> IStorageApi <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">getBoQItems</span> () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            boqItems<span style="color:#f92672">.</span>FindAll() <span style="color:#f92672">|&gt;</span> List.ofSeq <span style="color:#f92672">|&gt;</span> Ok
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">addBoQItem</span><span style="color:#f92672">(</span>boqItem<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            boqItems<span style="color:#f92672">.</span>Insert boqItem <span style="color:#f92672">|&gt;</span> ignore
+</span></span><span style="display:flex;"><span>            Ok ()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">updateBoQItem</span><span style="color:#f92672">(</span>boqItem<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> boqItems<span style="color:#f92672">.</span>Update boqItem <span style="color:#66d9ef">then</span> Ok ()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span> Error <span style="color:#e6db74">&#34;LiteDbStorage:Could not update boq item&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">deleteBoQItem</span><span style="color:#f92672">(</span>itemId<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> boqItems<span style="color:#f92672">.</span>Delete itemId <span style="color:#66d9ef">then</span> Ok ()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span> Error <span style="color:#e6db74">&#34;LiteDbStorage:Could not delete boq item&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">member</span> _.<span style="color:#a6e22e">loadFactorFTable</span> () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>            factorFs<span style="color:#f92672">.</span>FindAll() <span style="color:#f92672">|&gt;</span> List.ofSeq <span style="color:#f92672">|&gt;</span> List.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>DirectCost<span style="color:#f92672">,</span>x<span style="color:#f92672">.</span>FactorF<span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> FactorFTable
+</span></span></code></pre></div><p>Also, change the webApp initialization to use LiteDBStorage class.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Remoting.fromValue <span style="color:#f92672">(</span>cocoTenderApi <span style="color:#f92672">(</span>LiteDBStorage()<span style="color:#f92672">))</span>
+</span></span></code></pre></div><p>Now, checking the running application. Everything should work as expected.</p>
+<p>We are at the last step now. When I see a lot of storage api scattered around in the Server code, I feel unconfortable. I think this code should belong into other place. The Api layer should be just orchestration between different component.</p>
+<p>Let&rsquo;s extract the storage code to dedicated class library.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>cd src
+</span></span><span style="display:flex;"><span>dotnet <span style="color:#66d9ef">new</span> classlib <span style="color:#f92672">-</span>lang F<span style="color:#f92672">#</span> <span style="color:#f92672">-</span>o CoCoTender.Storage
+</span></span><span style="display:flex;"><span>dotnet add reference <span style="color:#f92672">../</span>CoCoTender.Domain
+</span></span><span style="display:flex;"><span>cd <span style="color:#f92672">..</span>
+</span></span><span style="display:flex;"><span>dotnet paket add LiteSharpDB.FSharp <span style="color:#f92672">-</span>p CoCoTender.Storage
+</span></span><span style="display:flex;"><span>dotnet paket add FsToolkit.ErrorHandling <span style="color:#f92672">-</span>p CoCoTender.Storage
+</span></span><span style="display:flex;"><span>dotnet sln add src<span style="color:#f92672">/</span>CoCoTender.Storage
+</span></span></code></pre></div><p>We will organize the code such that</p>
+<ul>
+<li>Common type such as IStorageApi interface will be in CoCoTender.Storage namespace</li>
+<li>Each type of storage will have it&rsquo;s own file and module. For example for LiteDB, we will create LiteDB.fs file with module CoCoTender.Storage.LiteDB.</li>
+</ul>
+<p>I think you can do that by yourself. Don&rsquo;t forget that all the new file should be include in the CoCoTender.Storage.fsproj with correct order. Common.fs should be at the top.</p>
+<p>Now, we just need to add reference to Storage library in the Server file and open the module</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>cd src<span style="color:#f92672">/</span>Server
+</span></span><span style="display:flex;"><span>dotnet add reference <span style="color:#f92672">../</span>CoCoTender.Storage
+</span></span></code></pre></div><p>That&rsquo;s it for the simple persistence layer. You can get all the finished code by cloning tag v0.4.0.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>git clone <span style="color:#f92672">-</span>b v0<span style="color:#f92672">.</span>4<span style="color:#f92672">.</span>0 https<span style="color:#f92672">:</span><span style="color:#75715e">//github.com/twuttiwat/CoCoTender 
+</span></span></span></code></pre></div><p>Good luck and see you at another post.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://twuttiwat.github.io/">TW Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

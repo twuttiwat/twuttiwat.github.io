@@ -2,10 +2,47 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://twuttiwat.github.io/posts/auth-with-jwt/</loc>
+    <lastmod>2023-01-12T21:02:25+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts/</loc>
+    <lastmod>2023-01-12T21:02:25+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/</loc>
+    <lastmod>2023-01-12T21:02:25+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts/multi-pages/</loc>
+    <lastmod>2022-12-20T14:57:37+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts/persistence-ignorance/</loc>
+    <lastmod>2022-12-11T22:40:29+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts/safe-stack/</loc>
+    <lastmod>2022-12-05T09:21:13+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts-old/</loc>
+    <lastmod>2022-11-19T11:57:43+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts-old/unit-testing-console/</loc>
+    <lastmod>2022-11-19T11:57:43+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts/unit-testing-console/</loc>
+    <lastmod>2022-11-19T11:57:43+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts-old/domain-modeling-with-fs/</loc>
+    <lastmod>2022-10-26T09:28:16+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts/domain-modeling-with-fs/</loc>
+    <lastmod>2022-10-26T09:28:16+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts-old/intro-fs-webapp-series/</loc>
+    <lastmod>2022-10-23T15:00:35+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts/intro-fs-webapp-series/</loc>
+    <lastmod>2022-10-23T15:00:35+07:00</lastmod>
+  </url><url>
     <loc>https://twuttiwat.github.io/categories/</loc>
   </url><url>
     <loc>https://twuttiwat.github.io/tags/</loc>
-  </url><url>
-    <loc>https://twuttiwat.github.io/</loc>
   </url>
 </urlset>
