@@ -1,9 +1,12 @@
 baseURL = 'https://twuttiwat.github.io/'
 title = 'TW Blog'
-paginate = 5
+paginate = 10
 theme = 'PaperMod'
 publishDir = 'docs'
 languageCode = 'en-us'
+
+[params]
+googleAnalyticsID = 'G-HKPT0KLK4M'
 
 [params.homeInfoParams]
   Title = 'Hi there 👋.'
