@@ -4,8 +4,8 @@ date = 2023-12-07T14:17:09+07:00
 draft = false
 +++
 
-{{<figure src="images/intro-cartoon.webp" width="600"
-          alt="Intro Cartoon" title="Converting Scrape Data to Api in my Dream">}}
+{{<figure src="images/intro-retro.png" width="400"
+          alt="Intro Retro" title="Converting Scrape Data to Api">}}
 
 Introduction
 -------------
