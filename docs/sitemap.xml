@@ -2,13 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://twuttiwat.github.io/posts/auth-with-jwt/</loc>
-    <lastmod>2023-01-12T21:02:25+07:00</lastmod>
+    <loc>https://twuttiwat.github.io/posts/scrape-2-api/</loc>
+    <lastmod>2023-12-07T14:17:09+07:00</lastmod>
   </url><url>
     <loc>https://twuttiwat.github.io/posts/</loc>
-    <lastmod>2023-01-12T21:02:25+07:00</lastmod>
+    <lastmod>2023-12-07T14:17:09+07:00</lastmod>
   </url><url>
     <loc>https://twuttiwat.github.io/</loc>
+    <lastmod>2023-12-07T14:17:09+07:00</lastmod>
+  </url><url>
+    <loc>https://twuttiwat.github.io/posts/auth-with-jwt/</loc>
     <lastmod>2023-01-12T21:02:25+07:00</lastmod>
   </url><url>
     <loc>https://twuttiwat.github.io/posts/multi-pages/</loc>

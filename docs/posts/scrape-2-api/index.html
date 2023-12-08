@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>From Scrape To Api | TW Blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.
+Since my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not.">
+<meta name="author" content="">
+<link rel="canonical" href="https://twuttiwat.github.io/posts/scrape-2-api/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.5cfc680b1eeaeef9efbced92d46c2a9e876b72ee14fba85846afc4cff9e6e6f8.css" integrity="sha256-XPxoCx7q7vnvvO2S1Gwqnodrcu4U&#43;6hYRq/Ez/nm5vg=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://twuttiwat.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://twuttiwat.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://twuttiwat.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://twuttiwat.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://twuttiwat.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="From Scrape To Api" />
+<meta property="og:description" content="Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.
+Since my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://twuttiwat.github.io/posts/scrape-2-api/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-12-07T14:17:09+07:00" />
+<meta property="article:modified_time" content="2023-12-07T14:17:09+07:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="From Scrape To Api"/>
+<meta name="twitter:description" content="Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.
+Since my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://twuttiwat.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "From Scrape To Api",
+      "item": "https://twuttiwat.github.io/posts/scrape-2-api/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "From Scrape To Api",
+  "name": "From Scrape To Api",
+  "description": "Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.\nSince my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not.",
+  "keywords": [
+    
+  ],
+  "articleBody": "Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.\nSince my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not.\nI love to read tutorial following first principle in that it won’t try to give the correct answer upfront. Instead, it will show problem along the way. I ,especially, like to understand what is inside the head of programmer when coding.\nThis post will follow this style.\nBackground All construction projects require price estimation before start bidding the project. Price for each material comes from Website provided by ministry of commerce. Unfortunately, the website is created in ASP era. (means ActiveX object with ODBC and Oracle). It would be very hard for any client to consume the data.\nYour mission is to convert such Web site into Api in 24 hour.\nOur starting point is from following website:\nMaterials Price List In fact, we just want following data:\nCode Description Unit Price 0101010107200000 รูปลูกบาศก์ 300 กก./ตร.ซม. และรูปทรงกระบอก 250 กก./ตร.ซม. ตราซีแพค ลบ.ม. 2,493.4 When entering following curl:\ncurl http://localhost/api/1/materials It should return all materials in json array:\n[ { \"Code\": \"0101010107200000\" \"Description\": \"รูปลูกบาศก์ 300 กก./ตร.ซม....\" \"Unit\": \"ลบ.ม.\" \"Price\": \"2493.4\" } ] Sketch Pipeline When starting any F# project, I like to sketch core pipeline to see how data flow from start to end. Implement each one by one as F# function and combine it at the end.\nRequest page from given url and save in local file system Parse file into F# Domain type Store F# type into LiteSharpDB Create Api Service with Giraffe Requesting Data We will start by browsing with materials url\nWell, if you click the link, you won’t get the price list table. Instead, you will see following:\nInitial Url has no Price List Firefox DevTools is your friend here. Press Ctrl-Shift-I, go to Network Tab, and click ‘ตกลง’ (Ok in English) in the Web page. You will see the price list so clicking on the button should do the trick. Now, look at below request: View Network Request in Materials Web ",
+  "wordCount" : "388",
+  "inLanguage": "en",
+  "datePublished": "2023-12-07T14:17:09+07:00",
+  "dateModified": "2023-12-07T14:17:09+07:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://twuttiwat.github.io/posts/scrape-2-api/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "TW Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://twuttiwat.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://twuttiwat.github.io/" accesskey="h" title="TW Blog (Alt + H)">TW Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      From Scrape To Api
+    </h1>
+    <div class="post-meta"><span title='2023-12-07 14:17:09 +0700 +07'>December 7, 2023</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h2>
+<p>One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.</p>
+<p>Since my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not.</p>
+<p>I love to read tutorial following first principle in that it won&rsquo;t try to give the correct answer upfront. Instead, it will show problem along the way. I ,especially, like to understand what is inside the head of programmer when coding.</p>
+<p>This post will follow this style.</p>
+<h2 id="background">Background<a hidden class="anchor" aria-hidden="true" href="#background">#</a></h2>
+<p>All construction projects require price estimation before start bidding the project. Price for each material comes from Website provided by ministry of commerce. Unfortunately, the website is created in ASP era. (means ActiveX object with ODBC and Oracle). It would be very hard for any client to consume the data.</p>
+<p>Your mission is to convert such Web site into Api in 24 hour.</p>
+<p>Our starting point is from following website:</p>
+<figure>
+    <img loading="lazy" src="images/start-materials-web.png"
+         alt="Start Materials Web" width="600"/> <figcaption>
+            Materials Price List
+        </figcaption>
+</figure>
+
+<p>In fact, we just want following data:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+<th>Unit</th>
+<th>Price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0101010107200000</td>
+<td>รูปลูกบาศก์ 300 กก./ตร.ซม. และรูปทรงกระบอก 250 กก./ตร.ซม. ตราซีแพค</td>
+<td>ลบ.ม.</td>
+<td>2,493.4</td>
+</tr>
+</tbody>
+</table>
+<p>When entering following curl:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl http://localhost/api/1/materials
+</span></span></code></pre></div><p>It should return all materials in json array:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>[ 
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;Code&#34;</span>: <span style="color:#e6db74">&#34;0101010107200000&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Description&#34;</span>: <span style="color:#e6db74">&#34;รูปลูกบาศก์ 300 กก./ตร.ซม....&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Unit&#34;</span>: <span style="color:#e6db74">&#34;ลบ.ม.&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Price&#34;</span>: <span style="color:#e6db74">&#34;2493.4&#34;</span>
+</span></span><span style="display:flex;"><span>    }    
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div><h2 id="sketch-pipeline">Sketch Pipeline<a hidden class="anchor" aria-hidden="true" href="#sketch-pipeline">#</a></h2>
+<p>When starting any F# project, I like to sketch core pipeline to see how data flow from start to end.
+Implement each one by one as F# function and combine it at the end.</p>
+<ol>
+<li>Request page from given url and save in local file system</li>
+<li>Parse file into F# Domain type</li>
+<li>Store F# type into LiteSharpDB</li>
+<li>Create Api Service with Giraffe</li>
+</ol>
+<h2 id="requesting-data">Requesting Data<a hidden class="anchor" aria-hidden="true" href="#requesting-data">#</a></h2>
+<p>We will start by browsing with <a href="http://www.indexpr.moc.go.th/PRICE_PRESENT/tablecsi_month_region.asp?DDMonth=11&amp;DDYear=2566&amp;DDProvince=10&amp;B1=%B5%A1%C5%A7">materials url</a></p>
+<p>Well, if you click the link, you won&rsquo;t get the price list table. Instead, you will see following:</p>
+<figure>
+    <img loading="lazy" src="images/materials-web-blank.png"
+         alt="Materials Web Blank" width="600"/> <figcaption>
+            Initial Url has no Price List
+        </figcaption>
+</figure>
+
+<p>Firefox DevTools is your friend here. Press Ctrl-Shift-I, go to Network Tab, and click &lsquo;ตกลง&rsquo; (Ok in English) in the Web page.
+You will see the price list so clicking on the button should do the trick.
+Now, look at below request:
+<figure>
+    <img loading="lazy" src="images/materials-network-request.png"
+         alt="Materials Network Request" width="600"/> <figcaption>
+            View Network Request in Materials Web
+        </figcaption>
+</figure>
+</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://twuttiwat.github.io/">TW Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
