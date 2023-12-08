@@ -1,106 +1,127 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>TW Blog</title>
     <link>https://twuttiwat.github.io/</link>
     <description>Recent content on TW Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 07 Dec 2023 14:17:09 +0700</lastBuildDate>
-    <atom:link href="https://twuttiwat.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 07 Dec 2023 14:17:09 +0700</lastBuildDate><atom:link href="https://twuttiwat.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>From Scrape To API</title>
       <link>https://twuttiwat.github.io/posts/scrape-2-api/</link>
       <pubDate>Thu, 07 Dec 2023 14:17:09 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts/scrape-2-api/</guid>
       <description>Converting Scrape Data to Api Introduction TLDR If you prefer just code reading like me, you can skip to the repo
 One of the somewhat mundane but necessary tasks in programming is to get data from externa Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.
 Since my planned advent of calendar post is not working as I plan.</description>
     </item>
+    
     <item>
       <title>Authentication With Json Web Token</title>
       <link>https://twuttiwat.github.io/posts/auth-with-jwt/</link>
       <pubDate>Thu, 12 Jan 2023 21:02:25 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts/auth-with-jwt/</guid>
       <description>Happy New Year 2023! I finally have time to write this post. And it&amp;rsquo;s the post, I am eager to write the most. Of all the resource in Safe stack, I found that authentication and authorization is the less well-known one.
 Be it no more. In this post, I will show step by step how I create authentication with Jason Web Token (JWT) in Safe stack. The next post will be authorization.</description>
     </item>
+    
     <item>
       <title>From Single to Multiple Pages in SPA</title>
       <link>https://twuttiwat.github.io/posts/multi-pages/</link>
       <pubDate>Tue, 20 Dec 2022 14:57:37 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts/multi-pages/</guid>
       <description>Introduction Supporting multiple pages is one of the obstacle I found when using safe stack. I think it might be the nature of single page application. It&amp;rsquo;s like we are trying to fight against simple server side rendering somehome. Anyway, I will try my best to write this post in step by step manners. So everyone will understand.
 There are quite a few tutorial on adding multi-page support for safe stack platform.</description>
     </item>
+    
     <item>
       <title>Persistence (Almost) Ignorance</title>
       <link>https://twuttiwat.github.io/posts/persistence-ignorance/</link>
       <pubDate>Sun, 11 Dec 2022 22:40:29 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts/persistence-ignorance/</guid>
       <description>Old School Persistance Style Welcome back to my building webapp with f# series. Last week, I was kinda exausted from writing and capturing the screenshot for the safe stack post. So this week, we will do something simple. We will not add any new functionality. We will do following things.
 Extract Persistence Layer Implement new NoSQL storage Create Storage class library Why Persistance Ignorance? If you know about Domain Driven Design already, you could skip this section.</description>
     </item>
+    
     <item>
       <title>From Domain to Web with Safe Stack</title>
       <link>https://twuttiwat.github.io/posts/safe-stack/</link>
       <pubDate>Mon, 05 Dec 2022 09:21:13 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts/safe-stack/</guid>
       <description>Hi there. Welcome back to my F# web app development series. Just to recap for new people, we are going to create construction cost tender estimation (CoCoTender) using f#. If you are interested in the domain, you can read the past posts in the series. For this post, we wil emphasize how to connect the domain to web app using safe stack. So there is no need to understand the whole domain concept.</description>
     </item>
+    
     <item>
       <title>Unit Testing and Console Application</title>
       <link>https://twuttiwat.github.io/posts-old/unit-testing-console/</link>
       <pubDate>Sat, 19 Nov 2022 11:57:43 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts-old/unit-testing-console/</guid>
       <description>Good day. Sorry, I am back after busy weeks. To bring back our past weeks, we did finish domain modeling in fsx file.
 This week we will start touching the road. We create class library from our script file, do unit testing for our library, and finally let the client test our functionality with our console application.
 So many things to do in this post, let&amp;rsquo;s start&amp;hellip;
 Class Library Since we are going to create real application this time, we should create our solution before creating any project.</description>
     </item>
+    
     <item>
       <title>Unit Testing and Console Application</title>
       <link>https://twuttiwat.github.io/posts/unit-testing-console/</link>
       <pubDate>Sat, 19 Nov 2022 11:57:43 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts/unit-testing-console/</guid>
       <description>Good day. Sorry, I am back after busy weeks. To bring back our past weeks, we did finish domain modeling in fsx file.
 This week we will start touching the road. We create class library from our script file, do unit testing for our library, and finally let the client test our functionality with our console application.
 So many things to do in this post, let&amp;rsquo;s start&amp;hellip;
 Class Library Since we are going to create real application this time, we should create our solution before creating any project.</description>
     </item>
+    
     <item>
       <title>Domain Modeling With F#</title>
       <link>https://twuttiwat.github.io/posts-old/domain-modeling-with-fs/</link>
       <pubDate>Wed, 26 Oct 2022 09:28:16 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts-old/domain-modeling-with-fs/</guid>
       <description>Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.
 Construction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.
 No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction.</description>
     </item>
+    
     <item>
       <title>Domain Modeling With F#</title>
       <link>https://twuttiwat.github.io/posts/domain-modeling-with-fs/</link>
       <pubDate>Wed, 26 Oct 2022 09:28:16 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts/domain-modeling-with-fs/</guid>
       <description>Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.
 Construction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.
 No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction.</description>
     </item>
+    
     <item>
       <title>Build Webapp with F# Series</title>
       <link>https://twuttiwat.github.io/posts-old/intro-fs-webapp-series/</link>
       <pubDate>Sun, 23 Oct 2022 15:00:35 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts-old/intro-fs-webapp-series/</guid>
       <description>Hello, there. My name is Teerawat Wuttiwat. A programmer who likes to work with functional programming.
 Background Recently, I did have a chance to build webapp using any tech stacks I prefer. Since the stack require using Microsoft SqlServer and dotnet framework. and I am bored with C# programming. For your knowledge, I did program in C# since dotnet start. Basically, it is over 20 years ago. So I decide to bite the bullet and pick F#.</description>
     </item>
+    
     <item>
       <title>Build Webapp with F# Series</title>
       <link>https://twuttiwat.github.io/posts/intro-fs-webapp-series/</link>
       <pubDate>Sun, 23 Oct 2022 15:00:35 +0700</pubDate>
+      
       <guid>https://twuttiwat.github.io/posts/intro-fs-webapp-series/</guid>
       <description>Hello, there. My name is Teerawat Wuttiwat. A programmer who likes to work with functional programming.
 Background Recently, I did have a chance to build webapp using any tech stacks I prefer. Since the stack require using Microsoft SqlServer and dotnet framework. and I am bored with C# programming. For your knowledge, I did program in C# since dotnet start. Basically, it is over 20 years ago. So I decide to bite the bullet and pick F#.</description>
     </item>
+    
   </channel>
 </rss>
