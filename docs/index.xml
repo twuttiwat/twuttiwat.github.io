@@ -8,13 +8,13 @@
     <language>en-us</language>
     <lastBuildDate>Thu, 07 Dec 2023 14:17:09 +0700</lastBuildDate><atom:link href="https://twuttiwat.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>From Scrape To Api</title>
+      <title>From Scrape To API</title>
       <link>https://twuttiwat.github.io/posts/scrape-2-api/</link>
       <pubDate>Thu, 07 Dec 2023 14:17:09 +0700</pubDate>
       
       <guid>https://twuttiwat.github.io/posts/scrape-2-api/</guid>
-      <description>Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.
-Since my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not.</description>
+      <description>Converting Scrape Data to Api in my Dream Introduction TLDR If you prefer just code reading like me, you can skip to the repo
+One of the somewhat mundane but necessary tasks in programming is to get data from externa Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.</description>
     </item>
     
     <item>

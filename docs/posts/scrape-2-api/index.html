@@ -5,10 +5,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>From Scrape To Api | TW Blog</title>
+<title>From Scrape To API | TW Blog</title>
 <meta name="keywords" content="">
-<meta name="description" content="Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.
-Since my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not.">
+<meta name="description" content="Converting Scrape Data to Api in my Dream Introduction TLDR If you prefer just code reading like me, you can skip to the repo
+One of the somewhat mundane but necessary tasks in programming is to get data from externa Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.">
 <meta name="author" content="">
 <link rel="canonical" href="https://twuttiwat.github.io/posts/scrape-2-api/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.5cfc680b1eeaeef9efbced92d46c2a9e876b72ee14fba85846afc4cff9e6e6f8.css" integrity="sha256-XPxoCx7q7vnvvO2S1Gwqnodrcu4U&#43;6hYRq/Ez/nm5vg=" rel="preload stylesheet" as="style">
@@ -57,18 +57,18 @@ Since my planned advent of calendar post is not working as I plan. I will challe
         }
 
     </style>
-</noscript><meta property="og:title" content="From Scrape To Api" />
-<meta property="og:description" content="Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.
-Since my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not." />
+</noscript><meta property="og:title" content="From Scrape To API" />
+<meta property="og:description" content="Converting Scrape Data to Api in my Dream Introduction TLDR If you prefer just code reading like me, you can skip to the repo
+One of the somewhat mundane but necessary tasks in programming is to get data from externa Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://twuttiwat.github.io/posts/scrape-2-api/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-12-07T14:17:09+07:00" />
 <meta property="article:modified_time" content="2023-12-07T14:17:09+07:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="From Scrape To Api"/>
-<meta name="twitter:description" content="Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.
-Since my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not."/>
+<meta name="twitter:title" content="From Scrape To API"/>
+<meta name="twitter:description" content="Converting Scrape Data to Api in my Dream Introduction TLDR If you prefer just code reading like me, you can skip to the repo
+One of the somewhat mundane but necessary tasks in programming is to get data from externa Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints."/>
 
 
 <script type="application/ld+json">
@@ -85,7 +85,7 @@ Since my planned advent of calendar post is not working as I plan. I will challe
     {
       "@type": "ListItem",
       "position":  2 ,
-      "name": "From Scrape To Api",
+      "name": "From Scrape To API",
       "item": "https://twuttiwat.github.io/posts/scrape-2-api/"
     }
   ]
@@ -95,14 +95,14 @@ Since my planned advent of calendar post is not working as I plan. I will challe
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "From Scrape To Api",
-  "name": "From Scrape To Api",
-  "description": "Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.\nSince my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not.",
+  "headline": "From Scrape To API",
+  "name": "From Scrape To API",
+  "description": "Converting Scrape Data to Api in my Dream Introduction TLDR If you prefer just code reading like me, you can skip to the repo\nOne of the somewhat mundane but necessary tasks in programming is to get data from externa Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.",
   "keywords": [
     
   ],
-  "articleBody": "Introduction One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.\nSince my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not.\nI love to read tutorial following first principle in that it won’t try to give the correct answer upfront. Instead, it will show problem along the way. I ,especially, like to understand what is inside the head of programmer when coding.\nThis post will follow this style.\nBackground All construction projects require price estimation before start bidding the project. Price for each material comes from Website provided by ministry of commerce. Unfortunately, the website is created in ASP era. (means ActiveX object with ODBC and Oracle). It would be very hard for any client to consume the data.\nYour mission is to convert such Web site into Api in 24 hour.\nOur starting point is from following website:\nMaterials Price List In fact, we just want following data:\nCode Description Unit Price 0101010107200000 รูปลูกบาศก์ 300 กก./ตร.ซม. และรูปทรงกระบอก 250 กก./ตร.ซม. ตราซีแพค ลบ.ม. 2,493.4 When entering following curl:\ncurl http://localhost/api/1/materials It should return all materials in json array:\n[ { \"Code\": \"0101010107200000\" \"Description\": \"รูปลูกบาศก์ 300 กก./ตร.ซม....\" \"Unit\": \"ลบ.ม.\" \"Price\": \"2493.4\" } ] Sketch Pipeline When starting any F# project, I like to sketch core pipeline to see how data flow from start to end. Implement each one by one as F# function and combine it at the end.\nRequest page from given url and save in local file system Parse file into F# Domain type Store F# type into LiteSharpDB Create Api Service with Giraffe Requesting Data We will start by browsing with materials url\nWell, if you click the link, you won’t get the price list table. Instead, you will see following:\nInitial Url has no Price List Firefox DevTools is your friend here. Press Ctrl-Shift-I, go to Network Tab, and click ‘ตกลง’ (Ok in English) in the Web page. You will see the price list so clicking on the button should do the trick. Now, look at below request: View Network Request in Materials Web ",
-  "wordCount" : "388",
+  "articleBody": " Converting Scrape Data to Api in my Dream Introduction TLDR If you prefer just code reading like me, you can skip to the repo\nOne of the somewhat mundane but necessary tasks in programming is to get data from externa Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.\nSince my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not.\nI love to read tutorial following first principle in that it won’t try to give the correct answer upfront. Instead, it will show problem along the way. I ,especially, like to understand what is inside the head of programmer when coding.\nThis post will follow this style.\nBackground All construction projects require price estimation before start bidding the project. Price for each material comes from Website provided by ministry of commerce. Unfortunately, the website is created in ASP era. (means ActiveX object with ODBC and Oracle). It would be very hard for any client to consume the data.\nYour mission is to convert such Web site into Api in one day.\nOur starting point is from following website:\nMaterials Price List In fact, we just want following data:\nCode Description Unit Price 0101010107200000 รูปลูกบาศก์ 300 กก./ตร.ซม. และรูปทรงกระบอก 250 กก./ตร.ซม. ตราซีแพค ลบ.ม. 2,493.4 When entering following curl:\ncurl https://localhost:5051/materials It should return all materials in json array:\n[ { \"Code\": \"0101010107200000\" \"Description\": \"รูปลูกบาศก์ 300 กก./ตร.ซม....\" \"Unit\": \"ลบ.ม.\" \"Price\": \"2493.4\" } ] Sketch Pipeline When starting any F# project, I like to sketch core pipeline to see how data flow from start to end. Implement each one by one as F# function and combine it at the end.\nRequest page from given url and save in local file system Parse file into F# Domain type Store F# type into SQLite + Donald Create Api Service with Falco Requesting Data We will start by browsing with materials url\nWell, if you click the link, you won’t get the price list table. Instead, you will see following:\nInitial Url has no Price List Firefox DevTools is your friend here. Press Ctrl-Shift-I, go to Network Tab, and click ‘ตกลง’ (Ok in English) in the Web page. You will see the price list so clicking on the button should do the trick. Now, look at below request:\nView Network Request in Materials Web The request require form data: DDGroupCode and Submit\nLet’s make our hand (actually keyboard) dirty. Fire up VSCode and create new file call Scratch.fsx. BTW: I literally copy HttpClient code from Daniel Thanks! Daniel.\nWe are going to use HttpClient to Post form data to Url, get the response and save it to file.\nlet url = \"http://www.indexpr.moc.go.th/PRICE_PRESENT/tablecsi_month_region.asp?DDMonth=11\u0026DDYear=2566\u0026DDProvince=10\u0026B1=%B5%A1%C5%A7\" let materialsHtml = @\"c:/temp/Scrape2Api/materials.html\" let request () = task { use file = File.OpenWrite(materialsHtml) // Post form data to material url use client = new HttpClient() let formData = [ \"DDGroupCode\", \"\"; \"Submit\", \"%B5%A1%C5%A7\" ] |\u003e Seq.map (fun (k, v) -\u003e KeyValuePair\u003cstring, string\u003e(k, v)) let content = new FormUrlEncodedContent(formData) let! response = client.PostAsync(url, content) // Save web page to local file do! response.Content.CopyToAsync(file) } |\u003e Async.AwaitTask |\u003e Async.RunSynchronously Run following code in fsx file, you should get materials.html in c:\\temp\\Scratch2Api folder. We can get raw html file now.\nParsing Page Next task is to parse web page to Material domain type:\ntype Material = { Code: string Description: string Unit: string UnitPrice: decimal } The web is encoded in Windows-874 language, we need to convert to Unicode (UTF-8) wit following funtion:\nlet toUTF8 sourceFilePath = // Read the contents of the file with the source encoding let sourceEncoding = Encoding.GetEncoding(874) // ISO-8859-1 encoding let content = File.ReadAllText(sourceFilePath, sourceEncoding) // Write the contents to a new file with the target encoding let targetEncoding = Encoding.UTF8 // UTF-8 encoding File.WriteAllText(materialsUtfHtml, content, targetEncoding) Personally, I don’t like to create new file just for encoding like this. It should be just copy input to output stream and change encoding on the fly. But this is good enough.\nWe are going to extract html document. I choose class HtmlDocument from FSharp.Data. The step to extract material row is as follow\nExtract all TR rows let htmlStream = File.OpenRead(materialsUtfHtml) let html = HtmlDocument.Load(htmlStream) // This will extract all TR elements from HTML document let trs = html.Descendants(\"tr\") Filter out only row containg price at column 4th trs |\u003e Seq.map (fun tr -\u003e tr.Descendants(\"td\") |\u003e Seq.map (fun td -\u003e td.InnerText())) |\u003e Seq.filter (fun tds -\u003e tds |\u003e Seq.length |\u003e fun len -\u003e len \u003e= 4) |\u003e Seq.filter (fun tds -\u003e match tds |\u003e Seq.item 3 |\u003e System.Decimal.TryParse with | isDecimal, _ -\u003e isDecimal) Convert to Material type type Material = { Code: string Description: string Unit: string UnitPrice: decimal } // Just set each td string into Material field let toMaterial (tds:string seq) = let getText i = tds |\u003e Seq.item i |\u003e fun x -\u003e x.Trim() { Code = getText 0 Description = getText 1 Unit = getText 2 UnitPrice = getText 3 |\u003e System.Decimal.Parse } Storing Data Phew, we are halfway through the process and I am staring to feel sleepy now. First, we need to create Material table in SQLite:\nCREATE TABLE \"material\" ( \"code\"\tTEXT, \"description\"\tTEXT, \"unit\"\tTEXT, \"unit_price\"\tNUMERIC, PRIMARY KEY(\"code\") ) I prefer to create DTO myself, I will use Donald for this project since I never use it before so why not. What I like about about Donald and DustyTables are the simplicity of them. I can start by writing raw SQL like this:\n// SQL to upsert data into material table let sql = \" INSERT INTO material (code, description, unit, unit_price) VALUES (@code, @description, @unit, @unit_price) ON CONFLICT do UPDATE SET description = @description, unit = @unit, unit_price = @unit_price\"; // Strongly typed input parameters let param = [ \"code\", sqlString firstMaterial.Code \"description\", sqlString firstMaterial.Description \"unit\", sqlString firstMaterial.Unit \"unit_price\", sqlDecimal firstMaterial.UnitPrice ] And just apply it through Donald:\nconn |\u003e Db.newCommand sql |\u003e Db.setParams param |\u003e Db.exec // unit Make Api I started to like simplicity of Donald so I decide to use Falco as well to see how it fits. I did create HelloWorldApp in Falco, adding one end point like this.\n[\u003cEntryPoint\u003e] let main args = webHost args { endpoints [ get \"/materials\" (getAllMaterials ()) ] } 0 The handler getAllMaterials will just fetch data from SQLite using Donald.\nlet getAllMaterials () = use conn = new SQLiteConnection(@\"Data Source=C:\\Scrape2Api\\material.db;Version=3;New=true;\") let sql = \"SELECT code, description, unit, unit_price FROM material\" conn |\u003e Db.newCommand sql |\u003e Db.query Material.ofDataReader |\u003e Response.ofJson Of all the component, I found that I like Falco the most. The code are so minimal.\nPutting Everything Together Finally, we are at my most favourite part. Just assemble all the piece together. All code so far (except Api), is created in Scratch.fsx file. We need to package everything into application. There are 2 applications for this project\nScraper console application which do request, parse, and store data into SQLite. Material Api will provide Rest api to list all materials information. Scraper Console Application This is versy simple just create new F# console project. Add necessary package and add following function.\nlet scrape () = request () |\u003e toUTF8 |\u003e parse |\u003e saveToDb We just pipe all function we have so far into one single scrape function. To protect the data server, we will run just once a day.\nasync { let oneDay = 1000 * 60 * 60 * 24 while true do do scrape () do! Async.Sleep oneDay } |\u003e Async.RunSynchronously Running the scraper should create material.db database in “C:\\temp\\Scrape2Api\"\nResult of Scraping Material Api Since all the function has been implemented in test project. Just move that project into solution and it’s done.\nAnd here my small moment of truth:\nMaterial Api Conclusion Whew, I really finish scrape data and convert to api in one day. The most time-consuming part is the parsing since you somehow need to know the existing logic. The rest is very simple especially creating Api with Falco. I plan to try Falco web framework in my next side project.\nHappy X’Mas!! Hope this year will be have more lambda to apply! 😄\n",
+  "wordCount" : "1376",
   "inLanguage": "en",
   "datePublished": "2023-12-07T14:17:09+07:00",
   "dateModified": "2023-12-07T14:17:09+07:00",
@@ -171,20 +171,28 @@ Since my planned advent of calendar post is not working as I plan. I will challe
   <header class="post-header">
     
     <h1 class="post-title">
-      From Scrape To Api
+      From Scrape To API
     </h1>
     <div class="post-meta"><span title='2023-12-07 14:17:09 +0700 +07'>December 7, 2023</span>
 
 </div>
   </header> 
-  <div class="post-content"><h2 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h2>
-<p>One of the somewhat mundane but necessary tasks in programming is to get data from Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.</p>
+  <div class="post-content"><figure>
+    <img loading="lazy" src="images/intro-cartoon.webp"
+         alt="Intro Cartoon" width="600"/> <figcaption>
+            Converting Scrape Data to Api in my Dream
+        </figcaption>
+</figure>
+
+<h2 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h2>
+<p><strong>TLDR</strong> If you prefer just code reading like me, you can skip to the <a href="https://github.com/twuttiwat/Scrape2Api">repo</a></p>
+<p>One of the somewhat mundane but necessary tasks in programming is to get data from externa Web sites (a.k.a Web Scraping) and store in easy to use format. These raw data when format properly can be consumed by multiple type of client through Api endpoints.</p>
 <p>Since my planned advent of calendar post is not working as I plan. I will challenge myself to see if I can really use F# proficiently or not.</p>
 <p>I love to read tutorial following first principle in that it won&rsquo;t try to give the correct answer upfront. Instead, it will show problem along the way. I ,especially, like to understand what is inside the head of programmer when coding.</p>
 <p>This post will follow this style.</p>
 <h2 id="background">Background<a hidden class="anchor" aria-hidden="true" href="#background">#</a></h2>
 <p>All construction projects require price estimation before start bidding the project. Price for each material comes from Website provided by ministry of commerce. Unfortunately, the website is created in ASP era. (means ActiveX object with ODBC and Oracle). It would be very hard for any client to consume the data.</p>
-<p>Your mission is to convert such Web site into Api in 24 hour.</p>
+<p>Your mission is to convert such Web site into Api in one day.</p>
 <p>Our starting point is from following website:</p>
 <figure>
     <img loading="lazy" src="images/start-materials-web.png"
@@ -213,7 +221,7 @@ Since my planned advent of calendar post is not working as I plan. I will challe
 </tbody>
 </table>
 <p>When entering following curl:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl http://localhost/api/1/materials
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl https://localhost:5051/materials
 </span></span></code></pre></div><p>It should return all materials in json array:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>[ 
 </span></span><span style="display:flex;"><span>    {
@@ -229,8 +237,8 @@ Implement each one by one as F# function and combine it at the end.</p>
 <ol>
 <li>Request page from given url and save in local file system</li>
 <li>Parse file into F# Domain type</li>
-<li>Store F# type into LiteSharpDB</li>
-<li>Create Api Service with Giraffe</li>
+<li>Store F# type into SQLite + Donald</li>
+<li>Create Api Service with Falco</li>
 </ol>
 <h2 id="requesting-data">Requesting Data<a hidden class="anchor" aria-hidden="true" href="#requesting-data">#</a></h2>
 <p>We will start by browsing with <a href="http://www.indexpr.moc.go.th/PRICE_PRESENT/tablecsi_month_region.asp?DDMonth=11&amp;DDYear=2566&amp;DDProvince=10&amp;B1=%B5%A1%C5%A7">materials url</a></p>
@@ -244,14 +252,200 @@ Implement each one by one as F# function and combine it at the end.</p>
 
 <p>Firefox DevTools is your friend here. Press Ctrl-Shift-I, go to Network Tab, and click &lsquo;ตกลง&rsquo; (Ok in English) in the Web page.
 You will see the price list so clicking on the button should do the trick.
-Now, look at below request:
+Now, look at below request:</p>
 <figure>
     <img loading="lazy" src="images/materials-network-request.png"
          alt="Materials Network Request" width="600"/> <figcaption>
             View Network Request in Materials Web
         </figcaption>
 </figure>
-</p>
+
+<p>The request require form data: <strong>DDGroupCode</strong> and <strong>Submit</strong></p>
+<p>Let&rsquo;s make our hand (actually keyboard) dirty. Fire up VSCode and create new file call Scratch.fsx.
+BTW: I literally copy <a href="https://dev.to/tunaxor/making-http-requests-in-f-1n0b">HttpClient code</a> from Daniel
+Thanks! Daniel.</p>
+<p>We are going to use HttpClient to Post form data to Url, get the response and save it to file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> url <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://www.indexpr.moc.go.th/PRICE_PRESENT/tablecsi_month_region.asp?DDMonth=11&amp;DDYear=2566&amp;DDProvince=10&amp;B1=%B5%A1%C5%A7&#34;</span>            
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> materialsHtml <span style="color:#f92672">=</span> <span style="color:#e6db74">@&#34;c:/temp/Scrape2Api/materials.html&#34;</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> request () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    task <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">use</span> file <span style="color:#f92672">=</span> File.OpenWrite<span style="color:#f92672">(</span>materialsHtml<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Post form data to material url
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">use</span> client <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HttpClient()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> formData <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;DDGroupCode&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">;</span> <span style="color:#e6db74">&#34;Submit&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;%B5%A1%C5%A7&#34;</span> <span style="color:#f92672">]</span> 
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">|&gt;</span> Seq.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> <span style="color:#f92672">(</span>k<span style="color:#f92672">,</span> v<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> KeyValuePair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;(</span>k<span style="color:#f92672">,</span> v<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> content <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FormUrlEncodedContent<span style="color:#f92672">(</span>formData<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let!</span> response <span style="color:#f92672">=</span> client<span style="color:#f92672">.</span>PostAsync<span style="color:#f92672">(</span>url<span style="color:#f92672">,</span> content<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Save web page to local file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">do</span><span style="color:#f92672">!</span> response<span style="color:#f92672">.</span>Content<span style="color:#f92672">.</span>CopyToAsync<span style="color:#f92672">(</span>file<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>   
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Async.AwaitTask
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Async.RunSynchronously 
+</span></span></code></pre></div><p>Run following code in fsx file, you should get materials.html in c:\temp\Scratch2Api folder.
+We can get raw html file now.</p>
+<h2 id="parsing-page">Parsing Page<a hidden class="anchor" aria-hidden="true" href="#parsing-page">#</a></h2>
+<p>Next task is to parse web page to Material domain type:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Material</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Code<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Description<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Unit<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    UnitPrice<span style="color:#f92672">:</span> <span style="color:#66d9ef">decimal</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>The web is encoded in Windows-874 language, we need to convert to Unicode (UTF-8) wit following funtion:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> toUTF8 sourceFilePath <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Read the contents of the file with the source encoding
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> sourceEncoding <span style="color:#f92672">=</span> Encoding.GetEncoding<span style="color:#f92672">(</span>874<span style="color:#f92672">)</span> <span style="color:#75715e">// ISO-8859-1 encoding    
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> content <span style="color:#f92672">=</span> File.ReadAllText<span style="color:#f92672">(</span>sourceFilePath<span style="color:#f92672">,</span> sourceEncoding<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Write the contents to a new file with the target encoding
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> targetEncoding <span style="color:#f92672">=</span> Encoding.UTF8 <span style="color:#75715e">// UTF-8 encoding
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    File.WriteAllText<span style="color:#f92672">(</span>materialsUtfHtml<span style="color:#f92672">,</span> content<span style="color:#f92672">,</span> targetEncoding<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>Personally, I don&rsquo;t like to create new file just for encoding like this. It should be just copy input to output stream and change encoding on the fly. But this is good enough.</p>
+<p>We are going to extract html document. I choose class HtmlDocument from FSharp.Data.
+The step to extract material row is as follow</p>
+<ul>
+<li>Extract all TR rows</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> htmlStream <span style="color:#f92672">=</span> File.OpenRead<span style="color:#f92672">(</span>materialsUtfHtml<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> html <span style="color:#f92672">=</span> HtmlDocument.Load<span style="color:#f92672">(</span>htmlStream<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// This will extract all TR elements from HTML document
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> trs <span style="color:#f92672">=</span> html<span style="color:#f92672">.</span>Descendants<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;tr&#34;</span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><ul>
+<li>Filter out only row containg price at column 4th</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>trs 
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|&gt;</span> Seq.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> tr <span style="color:#f92672">-&gt;</span> tr<span style="color:#f92672">.</span>Descendants<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;td&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> Seq.map <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> td <span style="color:#f92672">-&gt;</span> td<span style="color:#f92672">.</span>InnerText()<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|&gt;</span> Seq.filter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> tds <span style="color:#f92672">-&gt;</span> tds <span style="color:#f92672">|&gt;</span> Seq.length <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> len <span style="color:#f92672">-&gt;</span> len <span style="color:#f92672">&gt;=</span> 4<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|&gt;</span> Seq.filter <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> tds <span style="color:#f92672">-&gt;</span>                 
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">match</span> tds <span style="color:#f92672">|&gt;</span> Seq.item 3 <span style="color:#f92672">|&gt;</span> System.Decimal.TryParse <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">|</span> isDecimal<span style="color:#f92672">,</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> isDecimal<span style="color:#f92672">)</span>
+</span></span></code></pre></div><ul>
+<li>Convert to Material type</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Material</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    Code<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Description<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    Unit<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    UnitPrice<span style="color:#f92672">:</span> <span style="color:#66d9ef">decimal</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Just set each td string into Material field
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> toMaterial <span style="color:#f92672">(</span>tds<span style="color:#f92672">:</span><span style="color:#66d9ef">string</span> seq<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> getText i <span style="color:#f92672">=</span> tds <span style="color:#f92672">|&gt;</span> Seq.item i <span style="color:#f92672">|&gt;</span> <span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x<span style="color:#f92672">.</span>Trim()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Code <span style="color:#f92672">=</span> getText 0
+</span></span><span style="display:flex;"><span>        Description <span style="color:#f92672">=</span> getText 1
+</span></span><span style="display:flex;"><span>        Unit <span style="color:#f92672">=</span> getText 2
+</span></span><span style="display:flex;"><span>        UnitPrice <span style="color:#f92672">=</span> getText 3 <span style="color:#f92672">|&gt;</span> System.Decimal.Parse  
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="storing-data">Storing Data<a hidden class="anchor" aria-hidden="true" href="#storing-data">#</a></h2>
+<p>Phew, we are halfway through the process and I am staring to feel sleepy now.
+First, we need to create Material table in SQLite:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> <span style="color:#e6db74">&#34;material&#34;</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;code&#34;</span>	TEXT,
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;description&#34;</span>	TEXT,
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;unit&#34;</span>	TEXT,
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;unit_price&#34;</span>	NUMERIC,
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>(<span style="color:#e6db74">&#34;code&#34;</span>)
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>I prefer to create DTO myself, I will use Donald for this project since I never use it before so why not.
+What I like about about Donald and DustyTables are the simplicity of them. I can start by writing raw SQL like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// SQL to upsert data into material table
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> sql <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    INSERT INTO material (code, description, unit, unit_price)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    VALUES (@code, @description, @unit, @unit_price)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ON CONFLICT do UPDATE SET description = @description, unit = @unit, unit_price = @unit_price&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Strongly typed input parameters
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> param <span style="color:#f92672">=</span> <span style="color:#f92672">[</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;code&#34;</span><span style="color:#f92672">,</span> sqlString firstMaterial<span style="color:#f92672">.</span>Code
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;description&#34;</span><span style="color:#f92672">,</span> sqlString firstMaterial<span style="color:#f92672">.</span>Description
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;unit&#34;</span><span style="color:#f92672">,</span> sqlString firstMaterial<span style="color:#f92672">.</span>Unit
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;unit_price&#34;</span><span style="color:#f92672">,</span> sqlDecimal firstMaterial<span style="color:#f92672">.</span>UnitPrice
+</span></span><span style="display:flex;"><span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>And just apply it through Donald:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    conn
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Db.newCommand sql
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Db.setParams param
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Db.exec <span style="color:#75715e">// unit
+</span></span></span></code></pre></div><h2 id="make-api">Make Api<a hidden class="anchor" aria-hidden="true" href="#make-api">#</a></h2>
+<p>I started to like simplicity of Donald so I decide to use Falco as well to see how it fits.
+I did create HelloWorldApp in Falco, adding one end point like this.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#f92672">[&lt;</span>EntryPoint<span style="color:#f92672">&gt;]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> main args <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    webHost args <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        endpoints <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>            get <span style="color:#e6db74">&#34;/materials&#34;</span> <span style="color:#f92672">(</span>getAllMaterials ()<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    0
+</span></span></code></pre></div><p>The handler getAllMaterials will just fetch data from SQLite using Donald.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> getAllMaterials () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">use</span> conn <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> SQLiteConnection<span style="color:#f92672">(</span><span style="color:#e6db74">@&#34;Data Source=C:\Scrape2Api\material.db;Version=3;New=true;&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> sql <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;SELECT code, description, unit, unit_price FROM material&#34;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    conn
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Db.newCommand sql
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Db.query Material.ofDataReader
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> Response.ofJson
+</span></span></code></pre></div><p>Of all the component, I found that I like Falco the most. The code are so minimal.</p>
+<h2 id="putting-everything-together">Putting Everything Together<a hidden class="anchor" aria-hidden="true" href="#putting-everything-together">#</a></h2>
+<p>Finally, we are at my most favourite part. Just assemble all the piece together.
+All code so far (except Api), is created in Scratch.fsx file.
+We need to package everything into application. There are 2 applications for this project</p>
+<ol>
+<li>Scraper console application which do request, parse, and store data into SQLite.</li>
+<li>Material Api will provide Rest api to list all materials information.</li>
+</ol>
+<h2 id="scraper-console-application">Scraper Console Application<a hidden class="anchor" aria-hidden="true" href="#scraper-console-application">#</a></h2>
+<p>This is versy simple just create new F# console project. Add necessary package and add following function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> scrape () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    request ()
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> toUTF8
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> parse
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|&gt;</span> saveToDb
+</span></span></code></pre></div><p>We just pipe all function we have so far into one single <strong>scrape</strong> function. To protect the data server, we will run just once a day.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>async <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> oneDay <span style="color:#f92672">=</span> 1000 <span style="color:#f92672">*</span> 60 <span style="color:#f92672">*</span> 60 <span style="color:#f92672">*</span> 24    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> <span style="color:#66d9ef">true</span> <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">do</span> scrape ()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">do</span><span style="color:#f92672">!</span> Async.Sleep oneDay
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|&gt;</span> Async.RunSynchronously
+</span></span></code></pre></div><p>Running the scraper should create material.db database in &ldquo;C:\temp\Scrape2Api&quot;</p>
+<figure>
+    <img loading="lazy" src="images/done-scraping.png"
+         alt="Done Scraping" width="300"/> <figcaption>
+            Result of Scraping
+        </figcaption>
+</figure>
+
+<h2 id="material-api">Material Api<a hidden class="anchor" aria-hidden="true" href="#material-api">#</a></h2>
+<p>Since all the function has been implemented in test project. Just move that project into solution and it&rsquo;s done.</p>
+<p>And here my small moment of truth:</p>
+<figure>
+    <img loading="lazy" src="images/done-api.png"
+         alt="Done Api" width="600"/> <figcaption>
+            Material Api
+        </figcaption>
+</figure>
+
+<h2 id="conclusion">Conclusion<a hidden class="anchor" aria-hidden="true" href="#conclusion">#</a></h2>
+<p>Whew, I really finish scrape data and convert to api in one day. The most time-consuming part is the parsing since you somehow need to know the existing logic. The rest is very simple especially creating Api with Falco. I plan to try Falco web framework in my next side project.</p>
+<p>Happy X&rsquo;Mas!!
+Hope this year will be have more lambda to apply! 😄</p>
 
 
   </div>
