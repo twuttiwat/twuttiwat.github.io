@@ -1,44 +1,39 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts-olds on TW Blog</title>
     <link>https://twuttiwat.github.io/posts-old/</link>
     <description>Recent content in Posts-olds on TW Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 19 Nov 2022 11:57:43 +0700</lastBuildDate><atom:link href="https://twuttiwat.github.io/posts-old/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 19 Nov 2022 11:57:43 +0700</lastBuildDate>
+    <atom:link href="https://twuttiwat.github.io/posts-old/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Unit Testing and Console Application</title>
       <link>https://twuttiwat.github.io/posts-old/unit-testing-console/</link>
       <pubDate>Sat, 19 Nov 2022 11:57:43 +0700</pubDate>
-      
       <guid>https://twuttiwat.github.io/posts-old/unit-testing-console/</guid>
       <description>Good day. Sorry, I am back after busy weeks. To bring back our past weeks, we did finish domain modeling in fsx file.
 This week we will start touching the road. We create class library from our script file, do unit testing for our library, and finally let the client test our functionality with our console application.
 So many things to do in this post, let&amp;rsquo;s start&amp;hellip;
 Class Library Since we are going to create real application this time, we should create our solution before creating any project.</description>
     </item>
-    
     <item>
       <title>Domain Modeling With F#</title>
       <link>https://twuttiwat.github.io/posts-old/domain-modeling-with-fs/</link>
       <pubDate>Wed, 26 Oct 2022 09:28:16 +0700</pubDate>
-      
       <guid>https://twuttiwat.github.io/posts-old/domain-modeling-with-fs/</guid>
       <description>Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.
 Construction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.
 No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction.</description>
     </item>
-    
     <item>
       <title>Build Webapp with F# Series</title>
       <link>https://twuttiwat.github.io/posts-old/intro-fs-webapp-series/</link>
       <pubDate>Sun, 23 Oct 2022 15:00:35 +0700</pubDate>
-      
       <guid>https://twuttiwat.github.io/posts-old/intro-fs-webapp-series/</guid>
       <description>Hello, there. My name is Teerawat Wuttiwat. A programmer who likes to work with functional programming.
 Background Recently, I did have a chance to build webapp using any tech stacks I prefer. Since the stack require using Microsoft SqlServer and dotnet framework. and I am bored with C# programming. For your knowledge, I did program in C# since dotnet start. Basically, it is over 20 years ago. So I decide to bite the bullet and pick F#.</description>
     </item>
-    
   </channel>
 </rss>

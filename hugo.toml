@@ -9,7 +9,7 @@ languageCode = 'en-us'
 googleAnalyticsID = 'G-HKPT0KLK4M'
 
 [params.homeInfoParams]
-  Title = 'Hello 👋.'
+  Title = 'Hi There 👋.'
   Content = 'My name is Teerawat Wuttiwat. I am an [old software engineer](./cv.pdf "Shameless CV link")  who loves to code in F# or any functional programming languages.'
 
 [[params.socialIcons]]
