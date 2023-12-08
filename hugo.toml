@@ -6,7 +6,7 @@ publishDir = 'docs'
 languageCode = 'en-us'
 
 [params]
-googleAnalyticsID = 'G-HKPT0KLK4M'
+googleAnalyticsID = 'G-8W769DNB5L'
 
 [params.homeInfoParams]
   Title = 'Hello 👋.'
