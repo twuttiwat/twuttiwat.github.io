@@ -1,5 +1,5 @@
 +++
-title = 'From Scrape To API in 1 Day'
+title = 'From Scrape To API'
 date = 2023-12-07T14:17:09+07:00
 draft = false
 +++
