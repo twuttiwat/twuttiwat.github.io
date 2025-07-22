@@ -1,198 +1,144 @@
 <!DOCTYPE html>
-<html lang="en" dir="auto">
-
-<head>
-    
-    
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8W769DNB5L"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-8W769DNB5L');
-</script>
-    <meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
-<title>From Single to Multiple Pages in SPA | TW Blog</title>
-<meta name="keywords" content="">
+<html lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  
+    <title>From Single to Multiple Pages in SPA :: TW Blog</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Introduction Supporting multiple pages is one of the obstacle I found when using safe stack. I think it might be the nature of single page application. It&rsquo;s like we are trying to fight against simple server side rendering somehome. Anyway, I will try my best to write this post in step by step manners. So everyone will understand.
-There are quite a few tutorial on adding multi-page support for safe stack platform.">
-<meta name="author" content="Teerawat Wuttiwat">
-<link rel="canonical" href="https://twuttiwat.github.io/posts/multi-pages/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.5cfc680b1eeaeef9efbced92d46c2a9e876b72ee14fba85846afc4cff9e6e6f8.css" integrity="sha256-XPxoCx7q7vnvvO2S1Gwqnodrcu4U&#43;6hYRq/Ez/nm5vg=" rel="preload stylesheet" as="style">
-<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
-    onload="hljs.initHighlightingOnLoad();"></script>
-<link rel="icon" href="https://twuttiwat.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://twuttiwat.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://twuttiwat.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://twuttiwat.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://twuttiwat.github.io/safari-pinned-tab.svg">
-<meta name="theme-color" content="#2e2e33">
-<meta name="msapplication-TileColor" content="#2e2e33">
-<noscript>
-    <style>
-        #theme-toggle,
-        .top-link {
-            display: none;
-        }
+There are quite a few tutorial on adding multi-page support for safe stack platform. Most of them will focus on using propagate message from parent page to child pages.
+" />
+<meta name="keywords" content="" />
 
-    </style>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --theme: rgb(29, 30, 32);
-                --entry: rgb(46, 46, 51);
-                --primary: rgb(218, 218, 219);
-                --secondary: rgb(155, 156, 157);
-                --tertiary: rgb(65, 66, 68);
-                --content: rgb(196, 196, 197);
-                --hljs-bg: rgb(46, 46, 51);
-                --code-bg: rgb(55, 56, 62);
-                --border: rgb(51, 51, 51);
-            }
+  <meta name="robots" content="noodp" />
 
-            .list {
-                background: var(--theme);
-            }
+<link rel="canonical" href="http://localhost:1313/posts/multi-pages/" />
 
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
-            }
 
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
-            }
-        }
 
-    </style>
-</noscript><meta property="og:title" content="From Single to Multiple Pages in SPA" />
-<meta property="og:description" content="Introduction Supporting multiple pages is one of the obstacle I found when using safe stack. I think it might be the nature of single page application. It&rsquo;s like we are trying to fight against simple server side rendering somehome. Anyway, I will try my best to write this post in step by step manners. So everyone will understand.
-There are quite a few tutorial on adding multi-page support for safe stack platform." />
+
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/code.min.d529ea4b2fb8d34328d7d31afc5466d5f7bc2f0bc9abdd98b69385335d7baee4.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/fonts.min.5bb7ed13e1d00d8ff39ea84af26737007eb5051b157b86fc24487c94f3dc8bbe.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/footer.min.eb8dfc2c6a7eafa36cd3ba92d63e69e849e2200e0002a228d137f236b09ecd75.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/gist.min.a751e8b0abe1ba8bc53ced52a38b19d8950fe78ca29454ea8c2595cf26aad5c0.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/header.min.75c7eb0e2872d95ff48109c6647d0223a38db52e2561dd87966eb5fc7c6bdac6.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/main.min.775ac2af004d44c22a6d000fbd1d9af529642f5cef27399d0280d180af2c2e9b.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/menu.min.310d32205bdedd6f43144e3c3273c9deecd238eba5f9108db5ea96ca0cfbe377.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/pagination.min.bbb986dbce00a5ce5aca0504b7925fc1c581992a4bf57f163e5d69cc1db7d836.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/post.min.ad50c7f4d00e7975918f37fc74c6029e1959a40d66fb5b2c6564a8715e985573.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/syntax.min.e9ab635cf918bc84b901eb65c0b2caa74c9544245e3647c1af5c129896ef276e.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/terminal.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/terms.min.b81791663c3790e738e571cdbf802312390d30e4b1d8dc9d814a5b5454d0ac11.css">
+
+
+
+
+
+
+
+<link rel="shortcut icon" href="http://localhost:1313/favicon.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://twuttiwat.github.io/posts/multi-pages/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2022-12-20T14:57:37+07:00" />
-<meta property="article:modified_time" content="2022-12-20T14:57:37+07:00" />
+<meta property="og:title" content="From Single to Multiple Pages in SPA">
+<meta property="og:description" content="Introduction Supporting multiple pages is one of the obstacle I found when using safe stack. I think it might be the nature of single page application. It&rsquo;s like we are trying to fight against simple server side rendering somehome. Anyway, I will try my best to write this post in step by step manners. So everyone will understand.
+There are quite a few tutorial on adding multi-page support for safe stack platform. Most of them will focus on using propagate message from parent page to child pages.
+" />
+<meta property="og:url" content="http://localhost:1313/posts/multi-pages/" />
+<meta property="og:site_name" content="TW Blog" />
 
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="From Single to Multiple Pages in SPA"/>
-<meta name="twitter:description" content="Introduction Supporting multiple pages is one of the obstacle I found when using safe stack. I think it might be the nature of single page application. It&rsquo;s like we are trying to fight against simple server side rendering somehome. Anyway, I will try my best to write this post in step by step manners. So everyone will understand.
-There are quite a few tutorial on adding multi-page support for safe stack platform."/>
+  <meta property="og:image" content="http://localhost:1313/og-image.png">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
 
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://twuttiwat.github.io/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "From Single to Multiple Pages in SPA",
-      "item": "https://twuttiwat.github.io/posts/multi-pages/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "From Single to Multiple Pages in SPA",
-  "name": "From Single to Multiple Pages in SPA",
-  "description": "Introduction Supporting multiple pages is one of the obstacle I found when using safe stack. I think it might be the nature of single page application. It\u0026rsquo;s like we are trying to fight against simple server side rendering somehome. Anyway, I will try my best to write this post in step by step manners. So everyone will understand.\nThere are quite a few tutorial on adding multi-page support for safe stack platform.",
-  "keywords": [
-    
-  ],
-  "articleBody": "Introduction Supporting multiple pages is one of the obstacle I found when using safe stack. I think it might be the nature of single page application. It’s like we are trying to fight against simple server side rendering somehome. Anyway, I will try my best to write this post in step by step manners. So everyone will understand.\nThere are quite a few tutorial on adding multi-page support for safe stack platform. Most of them will focus on using propagate message from parent page to child pages.\nAfter trying with many routes, I decide to go with component styled based on Yobo application. Each child page will be implemented as React function component. It’s the responsibility of the Index page to render the child page component inside it’s main view function.\nC I o n n d t e e x n t The Index page will contain navigation bar (navbar) which should be shared across all pages. The Content will be content specific in that page. For example, we can have BoQ page which is a react component hosting BoQItems grid implemented in the past posts.\nWithout further ado, let’s see our plan of attack for this post:\nOur Plans Create BoQ Page and Home Page Modify Index Page to show content of Home Page Modify Home Page to show list of dummy Projects Route user from Home Page to BoQ Page when clicking on Project row Create BoQ Page and Home Page Start by creating Pages folder inside the src/Client folder and create each Page file as fsharp one. Do not forget to have the correct order. You can both create fsharp file and order it with Ionide sidebar. Here is what order should be like in Client.fsproj:\n\u003cCompile Include=\"Pages\\Home.fs\" /\u003e \u003cCompile Include=\"Pages\\BoQ.fs\" /\u003e \u003cCompile Include=\"Index.fs\" /\u003e Since both Home and BoQ are needed in Index.fs (for rendering), they must be declare above Index.fs file.\nNext, copy content of current Index.fs to BoQ.fs. You can leave the Index.fs blank at the moment. We will re-code them in the next step.\nCreate Blank Home Page One of my favourite feature of safe stack is the Hot Module Replacement (HMR). I like to always run the app while coding so I know whenever something wrong happens.\ndotnet run Next, we will create simple Index page with no Content in it. Just the blank Bulma container box.\nmodule Index open System open Elmish open Fable.Remoting.Client open Elmish.Toastr open Shared type Model = { PageName : string } type Msg = | DoNothing let init () : Model * Cmd\u003cMsg\u003e = { PageName = \"Index\" }, Cmd.none let update (msg: Msg) (model: Model) : Model * Cmd\u003cMsg\u003e = match msg with | DoNothing -\u003e model, Cmd.none open Feliz open Feliz.Bulma let navBrand = Bulma.navbarBrand.div [ Bulma.navbarItem.a [ prop.href \"https://safe-stack.github.io/\" navbarItem.isActive prop.children [ Html.img [ prop.src \"/favicon.png\" prop.alt \"Logo\" ] ] ] ] let containerBox (model: Model) (dispatch: Msg -\u003e unit) = Bulma.container [] let view (model: Model) (dispatch: Msg -\u003e unit) = Bulma.hero [ hero.isFullHeight color.isPrimary prop.style [ style.backgroundSize \"cover\" style.backgroundImageUrl \"https://unsplash.it/1200/900?random\" style.backgroundPosition \"no-repeat center center fixed\" ] prop.children [ Bulma.heroHead [ Bulma.navbar [ Bulma.container [ navBrand ] ] ] Bulma.heroBody [ Bulma.container [ containerBox model dispatch ] ] ] ] If you look at the result, you should see just blank page. Now we will create Home page and put it in the container box.\nBlank Index Page Before creating Home page, we need to install one library. Feliz.UseElmish is the package that act as a bridge between Elmish and React.\ndotnet paket add Feliz.UseElmish -p Client Go to Home.fs and paste below code.\nmodule Pages.Home open System open Elmish open Shared type Model = { PageName : string } type Msg = | DoNothing let init () : Model * Cmd\u003cMsg\u003e = let model = { PageName = \"Home\" } model, Cmd.none let update (msg: Msg) (model: Model) : Model * Cmd\u003cMsg\u003e = match msg with | DoNothing -\u003e model, Cmd.none open Feliz open Feliz.UseElmish open Feliz.Bulma let view = React.functionComponent(fun () -\u003e let (model: Model), dispatch = React.useElmish(init, update, [| |]) Bulma.title model.PageName ) The part I would like you to focus on is the view function. The view function will return React function component which will be used as the content in the Index page. The bridge between Elmish and React is on the next line. React.useElmish will receive init and update function as input and return model and dispatch.\nBy using the Feliz.UseElmish library you can introduce React component into Elmish world.\nBack to the view function, for simplicity we will just show the name of the page.\nNext go to containerBox function in Index.fs and change it to render Home page by calling view function.\nlet containerBox (model: Model) (dispatch: Msg -\u003e unit) = Pages.Home.view() If you look at the browser, you should see “Home” show in the Index page. This render of Home title comes from Home.fs\nBlank Home Page Show List of Projects Showing just the page name is not fun. Let’s try showing list of projects in the Home page. First, define ProjectDto and initialise it with some test data.\nmodule Pages.Home ... type ProjectDto = { Id : Guid Name : string EstimateCost : float } type Model = { PageName : string Projects : ProjectDto list } let init () : Model * Cmd\u003cMsg\u003e = let model = { PageName = \"Home\" Projects = [ for _ in 1..3 do {Id = Guid.NewGuid(); Name = \"Swimming Pool\"; EstimateCost = 1500.0} ] } model, Cmd.none Next, create new projectsGrid function to render list of projects from our test data. You can check how to use grid in previous safe-stack post.\nopen Feliz.AgGrid let projectsGrid model dispatch = Html.div [ prop.className ThemeClass.Balham prop.children [ Bulma.button.button [ color.isInfo prop.text \"Add\" ] AgGrid.grid [ AgGrid.rowData (model.Projects |\u003e Array.ofList) AgGrid.defaultColDef [ ColumnDef.resizable true ] AgGrid.domLayout AutoHeight AgGrid.onGridReady (fun x -\u003e x.AutoSizeAllColumns()) AgGrid.enableCellTextSelection true AgGrid.ensureDomOrder true AgGrid.columnDefs [ ColumnDef.create\u003cstring\u003e [ ColumnDef.headerName \"Name\" ColumnDef.valueGetter (fun x -\u003e x.Name) ] ColumnDef.create\u003cfloat\u003e [ ColumnDef.headerName \"Estimate Cost\" ColumnDef.valueGetter (fun x -\u003e x.EstimateCost) ColumnDef.width 75 ] ] ] ] ] Finally, let’s render the grid in view function.\nlet view = React.functionComponent(fun () -\u003e let (model: Model), dispatch = React.useElmish(init, update, [| |]) projectsGrid model dispatch ) If you look at the browser, you should see list of test projects in Home page.\nList of Projects Route from Home page to BoQ page So far so good, we can show child page (Home) inside parent page (Index). But this it rarely useful, we should be able to go between pages.\nWe are going to use Feliz.Router. Start by installing it.\ndotnet paket add Feliz.Router -p Client Feliz.Router will take cares of observing Url changes and trigger our supplied function. Start by creating new function that will render main parent page with supplied child page.\nlet viewPage (model: Model) (dispatch: Msg -\u003e unit) (pageContent:ReactElement) = Bulma.hero [ hero.isFullHeight color.isDark prop.children [ Bulma.heroHead [ Bulma.navbar [ Bulma.container [ navBrand ] ] ] Bulma.heroBody [ Bulma.container [ Bulma.title [ text.hasTextCentered prop.text \"CoCoTender\" ] pageContent ] ] ] ] Next, change the view function to use Feliz.Router\nlet view (model: Model) (dispatch: Msg -\u003e unit) = let activePage = Pages.Home.view() |\u003e viewPage model dispatch React.router [ router.children [ activePage ] ] The Router will render the ReactElement within children. This is not exciting since we will still see only Home page as the content.\nLet’s introduce Page domain into our app. What I really like about F# is the way that everthing will be solved by introducing small type suitable for the task. Like this app, we are working on page so it’s natural to define Page type for this.\nEnough of mumbling. Let’s create Router.fs in src/Client. And don’t forget to include that file in Client.fsproj. It should comes right after index.html.\nWe will define Page type in Router module.\ntype Page = | Home | BoQ Since we have only 2 pages at the moment. We will create new choice for Page when new page is created. Next, go to Index.fs. Since the view function needs to know which is the current page so we can call content view function correctly. We should define the Index model as follow:\ntype Model = { ... CurrentPage : Page } Then, go to the init and set Home to be the default page.\nlet init () = let model = { ... CurrentPage = Home } Next in the view function of Index page, find activePage based on CurrentPage in the model.\nlet activePage = match model.CurrentPage with | Home -\u003e Pages.Home.view() | BoQ -\u003e Pages.BoQ.view() |\u003e viewPage model dispatch The only things left is to update CurrentPage when url has changes. We can do that in React.router\nReact.router [ router.onUrlChanged (UrlChanged \u003e\u003e dispatch) ] When url changes (such as clicking on the hyperlink), the UrlChanged message will be dispatch with segments of Url. We need to create new Message union.\ntype Msg = | UrlChanged of string list and add the case for update function\nmatch msg with | UrlChanged segments -\u003e let currentPage = match segments with | [ ] -\u003e Home | [ \"boq\" ] -\u003e BoQ | _ -\u003e Home { model with CurrentPage = currentPage }, Cmd.none This case will check the url segments and set the related Page. The default one will always be Home. We also match “boq” to BoQ Page. For example\nIf user browse with http://localhost:8080 -\u003e Home page If user browse with http://localhost:8080/#/boq -\u003e BoQ page The rest will always go to Home page To trigger the routing, we will add Edit link in each Project row. The link will have href point to BoQ page.\nGo to Home.fs and add more column to projectsGrid\nColumnDef.create\u003cGuid\u003e [ ColumnDef.valueGetter (fun x -\u003e x.Id) ColumnDef.cellRendererFramework (fun id _ -\u003e Html.a [ prop.href (Router.format(\"boq\")) prop.text \"Edit\" ] ) ] If you click on the Edit link, it will redirect you to BoQ page. Now try to either\nOpen Edit in new tab Type the boq url directly in navigation bar In both cases, you will found that the browser will just show home page. The problem arises because the UrlChanged is not triggered when page first load. The only place you could check for initial url is in the init function.\nGo to init function and do following:\nlet initUrlCmd = Router.currentUrl() |\u003e UrlChanged |\u003e Cmd.ofMsg model, initUrlCmd This will dispatch UrlChanged message with current url from the location bar. Now if you try aboved cases, it should working now.\nThat’s it for today. You can get the finished version by cloning from my github repo:\ngit clone -b v0.5.0 https://github.com/twuttiwat/CoCoTender Thanks for reading!!!\n",
-  "wordCount" : "1785",
-  "inLanguage": "en",
-  "datePublished": "2022-12-20T14:57:37+07:00",
-  "dateModified": "2022-12-20T14:57:37+07:00",
-  "author":{
-    "@type": "Person",
-    "name": "Teerawat Wuttiwat"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://twuttiwat.github.io/posts/multi-pages/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "TW Blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://twuttiwat.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+  <meta property="article:published_time" content="2022-12-20 14:57:37 &#43;0700 &#43;07" />
+
+
+
+
+
+
+
+
+
+
+
+
 </head>
+<body>
 
-<body class="" id="top">
-<script>
-    if (localStorage.getItem("pref-theme") === "dark") {
-        document.body.classList.add('dark');
-    } else if (localStorage.getItem("pref-theme") === "light") {
-        document.body.classList.remove('dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark');
-    }
 
-</script>
+<div class="container">
 
-<header class="header">
-    <nav class="nav">
-        <div class="logo">
-            <a href="https://twuttiwat.github.io/" accesskey="h" title="TW Blog (Alt + H)">TW Blog</a>
-            <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <ul id="menu">
-        </ul>
-    </nav>
-</header>
-<main class="main">
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="http://localhost:1313/">
+  <div class="logo">
+    Terminal
+  </div>
+</a>
 
-<article class="post-single">
-  <header class="post-header">
+    </div>
     
-    <h1 class="post-title">
-      From Single to Multiple Pages in SPA
-    </h1>
-    <div class="post-meta"><span title='2022-12-20 14:57:37 +0700 +07'>December 20, 2022</span>&nbsp;·&nbsp;Teerawat Wuttiwat
+    
+  </div>
+  
+</header>
 
-</div>
-  </header> 
-  <div class="post-content"><h1 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h1>
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="http://localhost:1313/posts/multi-pages/">From Single to Multiple Pages in SPA</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2022-12-20</time><span class="post-author">Teerawat Wuttiwat</span></div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <h1 id="introduction">Introduction<a href="#introduction" class="hanchor" ariaLabel="Anchor">#</a> </h1>
 <p>Supporting multiple pages is one of the obstacle I found when using safe stack. I think it might be the nature of single page application. It&rsquo;s like we are trying to fight against simple server side rendering somehome. Anyway, I will try my best to write this post in step by step manners. So everyone will understand.</p>
 <p>There are quite a few tutorial on adding multi-page support for safe stack platform.
 Most of them will focus on using propagate message from parent page to child pages.</p>
@@ -237,14 +183,14 @@ Each child page will be implemented as React function component. It&rsquo;s the 
 </div>
 <p>The Index page will contain navigation bar (navbar) which should be shared across all pages. The Content will be content specific in that page. For example, we can have BoQ page which is a react component hosting BoQItems grid implemented in the past posts.</p>
 <p>Without further ado, let&rsquo;s see our plan of attack for this post:</p>
-<h1 id="our-plans">Our Plans<a hidden class="anchor" aria-hidden="true" href="#our-plans">#</a></h1>
+<h1 id="our-plans">Our Plans<a href="#our-plans" class="hanchor" ariaLabel="Anchor">#</a> </h1>
 <ol>
 <li>Create BoQ Page and Home Page</li>
 <li>Modify Index Page to show content of Home Page</li>
 <li>Modify Home Page to show list of dummy Projects</li>
 <li>Route user from Home Page to BoQ Page when clicking on Project row</li>
 </ol>
-<h2 id="create-boq-page-and-home-page">Create BoQ Page and Home Page<a hidden class="anchor" aria-hidden="true" href="#create-boq-page-and-home-page">#</a></h2>
+<h2 id="create-boq-page-and-home-page">Create BoQ Page and Home Page<a href="#create-boq-page-and-home-page" class="hanchor" ariaLabel="Anchor">#</a> </h2>
 <p>Start by creating Pages folder inside the src/Client folder and create each Page file as fsharp one.
 Do not forget to have the correct order. You can both create fsharp file and order it with Ionide sidebar. Here is what order should be like in Client.fsproj:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>Compile Include<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Pages</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">Home.fs&#34;</span> <span style="color:#f92672">/&gt;</span>
@@ -252,7 +198,7 @@ Do not forget to have the correct order. You can both create fsharp file and ord
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>Compile Include<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Index.fs&#34;</span> <span style="color:#f92672">/&gt;</span>
 </span></span></code></pre></div><p>Since both Home and BoQ are needed in Index.fs (for rendering), they must be declare above Index.fs file.</p>
 <p>Next, copy content of current Index.fs to BoQ.fs. You can leave the Index.fs blank at the moment. We will re-code them in the next step.</p>
-<h2 id="create-blank-home-page">Create Blank Home Page<a hidden class="anchor" aria-hidden="true" href="#create-blank-home-page">#</a></h2>
+<h2 id="create-blank-home-page">Create Blank Home Page<a href="#create-blank-home-page" class="hanchor" ariaLabel="Anchor">#</a> </h2>
 <p>One of my favourite feature of safe stack is the Hot Module Replacement (HMR). I like to always run the app while coding so I know whenever something wrong happens.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>dotnet run
 </span></span></code></pre></div><p>Next, we will create simple Index page with no Content in it. Just the blank Bulma container box.</p>
@@ -325,11 +271,10 @@ Do not forget to have the correct order. You can both create fsharp file and ord
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
 </span></span></code></pre></div><p>If you look at the result, you should see just blank page.
 Now we will create Home page and put it in the container box.</p>
-<figure>
-    <img loading="lazy" src="images/blank-index.jpg"
-         alt="Blank Index Page" width="600"/> <figcaption>
-            Blank Index Page
-        </figcaption>
+<figure><img src="/posts/multi-pages/images/blank-index.jpg"
+    alt="Blank Index Page" width="600"><figcaption>
+      <h4>Blank Index Page</h4>
+    </figcaption>
 </figure>
 
 <p>Before creating Home page, we need to install one library.
@@ -379,14 +324,13 @@ Now we will create Home page and put it in the container box.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> containerBox <span style="color:#f92672">(</span>model<span style="color:#f92672">:</span> Model<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>dispatch<span style="color:#f92672">:</span> Msg <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">unit</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>    Pages.Home.view()
 </span></span></code></pre></div><p>If you look at the browser, you should see &ldquo;Home&rdquo; show in the Index page. This render of <strong>Home</strong> title comes from Home.fs</p>
-<figure>
-    <img loading="lazy" src="images/blank-home.jpg"
-         alt="Blank Home Page" width="600"/> <figcaption>
-            Blank Home Page
-        </figcaption>
+<figure><img src="/posts/multi-pages/images/blank-home.jpg"
+    alt="Blank Home Page" width="600"><figcaption>
+      <h4>Blank Home Page</h4>
+    </figcaption>
 </figure>
 
-<h2 id="show-list-of-projects">Show List of Projects<a hidden class="anchor" aria-hidden="true" href="#show-list-of-projects">#</a></h2>
+<h2 id="show-list-of-projects">Show List of Projects<a href="#show-list-of-projects" class="hanchor" ariaLabel="Anchor">#</a> </h2>
 <p>Showing just the page name is not fun. Let&rsquo;s try showing list of projects in the Home page.
 First, define ProjectDto and initialise it with some test data.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fsharp" data-lang="fsharp"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> Pages.Home
@@ -458,14 +402,13 @@ You can check how to use grid in previous safe-stack post.</p>
 </span></span><span style="display:flex;"><span>    projectsGrid model dispatch
 </span></span><span style="display:flex;"><span><span style="color:#f92672">)</span>
 </span></span></code></pre></div><p>If you look at the browser, you should see list of test projects in Home page.</p>
-<figure>
-    <img loading="lazy" src="images/projects-grid.jpg"
-         alt="Project Grids" width="600"/> <figcaption>
-            List of Projects
-        </figcaption>
+<figure><img src="/posts/multi-pages/images/projects-grid.jpg"
+    alt="Project Grids" width="600"><figcaption>
+      <h4>List of Projects</h4>
+    </figcaption>
 </figure>
 
-<h2 id="route-from-home-page-to-boq-page">Route from Home page to BoQ page<a hidden class="anchor" aria-hidden="true" href="#route-from-home-page-to-boq-page">#</a></h2>
+<h2 id="route-from-home-page-to-boq-page">Route from Home page to BoQ page<a href="#route-from-home-page-to-boq-page" class="hanchor" ariaLabel="Anchor">#</a> </h2>
 <p>So far so good, we can show child page (Home) inside parent page (Index). But this it rarely useful, we should be able to go between pages.</p>
 <p>We are going to use Feliz.Router. Start by installing it.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>dotnet paket add Feliz.Router -p Client
@@ -579,84 +522,43 @@ You can get the finished version by cloning from my github repo:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone -b v0.5.0 https://github.com/twuttiwat/CoCoTender 
 </span></span></code></pre></div><p>Thanks for reading!!!</p>
 
+      </div></div>
+
+  
+
+  
+    
+
+  
+</article>
 
   </div>
 
-  <footer class="post-footer">
-    <ul class="post-tags">
-    </ul>
-  </footer>
-</article>
-    </main>
+  
+    <footer class="footer">
+  <div class="footer__inner">
     
-<footer class="footer">
-    <span>&copy; 2023 <a href="https://twuttiwat.github.io/">TW Blog</a></span>
-    <span>
-        Powered by
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
-        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
-    </span>
+      <div class="copyright">
+        <span>© 2025 Powered by <a href="https://gohugo.io">Hugo</a></span>
+    
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+  </div>
 </footer>
-<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
-        <path d="M12 6H0l6-6z" />
-    </svg>
-</a>
 
-<script>
-    let menu = document.getElementById('menu')
-    if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
-        menu.onscroll = function () {
-            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
-        }
-    }
 
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            var id = this.getAttribute("href").substr(1);
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
-                    behavior: "smooth"
-                });
-            } else {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
-            }
-            if (id === "top") {
-                history.replaceState(null, null, " ");
-            } else {
-                history.pushState(null, null, `#${id}`);
-            }
-        });
-    });
 
-</script>
-<script>
-    var mybutton = document.getElementById("top-link");
-    window.onscroll = function () {
-        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
-            mybutton.style.visibility = "visible";
-            mybutton.style.opacity = "1";
-        } else {
-            mybutton.style.visibility = "hidden";
-            mybutton.style.opacity = "0";
-        }
-    };
 
-</script>
-<script>
-    document.getElementById("theme-toggle").addEventListener("click", () => {
-        if (document.body.className.includes("dark")) {
-            document.body.classList.remove('dark');
-            localStorage.setItem("pref-theme", 'light');
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem("pref-theme", 'dark');
-        }
-    })
 
-</script>
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
 </body>
-
 </html>

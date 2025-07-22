@@ -1,202 +1,147 @@
 <!DOCTYPE html>
-<html lang="en" dir="auto">
-
-<head>
-    
-    
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8W769DNB5L"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-8W769DNB5L');
-</script>
-    <meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
-<title>Domain Modeling With F# | TW Blog</title>
-<meta name="keywords" content="">
+<html lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  
+    <title>Domain Modeling With F# :: TW Blog</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.
 Construction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.
-No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction.">
-<meta name="author" content="Teerawat Wuttiwat">
-<link rel="canonical" href="https://twuttiwat.github.io/posts-old/domain-modeling-with-fs/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.5cfc680b1eeaeef9efbced92d46c2a9e876b72ee14fba85846afc4cff9e6e6f8.css" integrity="sha256-XPxoCx7q7vnvvO2S1Gwqnodrcu4U&#43;6hYRq/Ez/nm5vg=" rel="preload stylesheet" as="style">
-<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
-    onload="hljs.initHighlightingOnLoad();"></script>
-<link rel="icon" href="https://twuttiwat.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://twuttiwat.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://twuttiwat.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://twuttiwat.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://twuttiwat.github.io/safari-pinned-tab.svg">
-<meta name="theme-color" content="#2e2e33">
-<meta name="msapplication-TileColor" content="#2e2e33">
-<noscript>
-    <style>
-        #theme-toggle,
-        .top-link {
-            display: none;
-        }
+No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction. This is very important since most of the owner of the building do not build the building themselves. Instead, they need to announce the project for the contractors. Each contractor need to bid in order to win the project.
+" />
+<meta name="keywords" content="" />
 
-    </style>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --theme: rgb(29, 30, 32);
-                --entry: rgb(46, 46, 51);
-                --primary: rgb(218, 218, 219);
-                --secondary: rgb(155, 156, 157);
-                --tertiary: rgb(65, 66, 68);
-                --content: rgb(196, 196, 197);
-                --hljs-bg: rgb(46, 46, 51);
-                --code-bg: rgb(55, 56, 62);
-                --border: rgb(51, 51, 51);
-            }
+  <meta name="robots" content="noodp" />
 
-            .list {
-                background: var(--theme);
-            }
+<link rel="canonical" href="http://localhost:1313/posts-old/domain-modeling-with-fs/" />
 
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
-            }
 
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
-            }
-        }
 
-    </style>
-</noscript><meta property="og:title" content="Domain Modeling With F#" />
+
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/code.min.d529ea4b2fb8d34328d7d31afc5466d5f7bc2f0bc9abdd98b69385335d7baee4.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/fonts.min.5bb7ed13e1d00d8ff39ea84af26737007eb5051b157b86fc24487c94f3dc8bbe.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/footer.min.eb8dfc2c6a7eafa36cd3ba92d63e69e849e2200e0002a228d137f236b09ecd75.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/gist.min.a751e8b0abe1ba8bc53ced52a38b19d8950fe78ca29454ea8c2595cf26aad5c0.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/header.min.75c7eb0e2872d95ff48109c6647d0223a38db52e2561dd87966eb5fc7c6bdac6.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/main.min.775ac2af004d44c22a6d000fbd1d9af529642f5cef27399d0280d180af2c2e9b.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/menu.min.310d32205bdedd6f43144e3c3273c9deecd238eba5f9108db5ea96ca0cfbe377.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/pagination.min.bbb986dbce00a5ce5aca0504b7925fc1c581992a4bf57f163e5d69cc1db7d836.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/post.min.ad50c7f4d00e7975918f37fc74c6029e1959a40d66fb5b2c6564a8715e985573.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/syntax.min.e9ab635cf918bc84b901eb65c0b2caa74c9544245e3647c1af5c129896ef276e.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/terminal.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css">
+
+  
+  <link rel="stylesheet" href="http://localhost:1313/css/terms.min.b81791663c3790e738e571cdbf802312390d30e4b1d8dc9d814a5b5454d0ac11.css">
+
+
+
+
+
+
+
+<link rel="shortcut icon" href="http://localhost:1313/favicon.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Domain Modeling With F#">
 <meta property="og:description" content="Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.
 Construction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.
-No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://twuttiwat.github.io/posts-old/domain-modeling-with-fs/" /><meta property="article:section" content="posts-old" />
-<meta property="article:published_time" content="2022-10-26T09:28:16+07:00" />
-<meta property="article:modified_time" content="2022-10-26T09:28:16+07:00" />
+No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction. This is very important since most of the owner of the building do not build the building themselves. Instead, they need to announce the project for the contractors. Each contractor need to bid in order to win the project.
+" />
+<meta property="og:url" content="http://localhost:1313/posts-old/domain-modeling-with-fs/" />
+<meta property="og:site_name" content="TW Blog" />
 
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Domain Modeling With F#"/>
-<meta name="twitter:description" content="Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.
-Construction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.
-No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction."/>
+  <meta property="og:image" content="http://localhost:1313/og-image.png">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
 
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts-olds",
-      "item": "https://twuttiwat.github.io/posts-old/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Domain Modeling With F#",
-      "item": "https://twuttiwat.github.io/posts-old/domain-modeling-with-fs/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Domain Modeling With F#",
-  "name": "Domain Modeling With F#",
-  "description": "Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.\nConstruction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.\nNo matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction.",
-  "keywords": [
-    
-  ],
-  "articleBody": "Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.\nConstruction Cost Estimation Project All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.\nNo matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction. This is very important since most of the owner of the building do not build the building themselves. Instead, they need to announce the project for the contractors. Each contractor need to bid in order to win the project.\nHence, the project owner needs to know the budget estimation of the project. So that they will know if the bidding from the contractor make sense or not. The larger the project, the more important the estimation of the project is.\nPrevent pricing scheme between contractors. in which, all contractos have a deal to propose very high estimation.\nCheck the feasibility of the project. in which, the project owner will need to check if the cost involved of the project is worthwhile or not. Usually, the owner will have their limit of budget, they might need to change blueprints in order to decrease the cost to be within the project.\nPrevent wrong doing of estimator of project owner. The estimation if done correctly will be standardized and transparent such that there are very difficult for the estimator to have bias over specific material vendor.\nGetting Requirements Without further ado, let’s start getting into the project by discussin with domain experts. To make it fun, I will make it like conversation between the experts and me. Here we go.\nI usually like to start with how are the domain experts (DE) working at the moment. Usually, most of them will have Excel or paper based in placed.\nMe: Hello. Could you please explain how are you working at the moment?\nExpert: Sure, we are working in Construction Project Estimate Department. Usually, we will get input as blueprint and spec book from architureture department. We then decode the blueprint into Bill Of Quantity (BoQ) which usually is an Excel file. We sum up the cost for each BoQ Item to get the direct cost of the project. We then look up for Factor F using the direct cost. Finally, we multiply the Factor with the direct cost to get the estimated cost of the prject.\nPhew, I think to myself that quite a lot of domain jargon which I have no idea. I highlight each jargon to clarify each of them in detail.\nMe: There are many words that I do not understand yet. Could you please clarify one by one. Let’s start with blueprint. Expert: Ok, the blueprint is what the architecture draw construction in detail to give you construction sub-contractor to build. We also use the same blueprint to calculate or in our term, decoding, to Bill of Quantity (BoQ). Me: Could you show me the example of Bill of Quantity (BoQ). Let’s keep it short by referring it as BoQ then. Expert: Yes, we usually refer that way. Here is what it looks like. BoQ of the project is the list of work that need to be done to finish the project. The work is itemized as BoQ Item. Each item will contain materials, labors, and their cost. Here is how it looks like:\nNo. Work Description Quantity Unit Material Material Unit Cost Labor Labor Unit Cost Item Cost 1 Pool Tiling 10 m^2 Big Tile 100 Do Tiling 50 1500 I remind myself that this looks like Data which can be defined using F# Record Anyway, there are more to that, we should confirm about calculation of total cost:\nMe: Can I assume that the Item Cost is the summation of Material Cost and Labor Cost.\nExpert: Yes, it is just like that. To get Material Cost, you just need to multiply Quantity with Material Unit Cost. Same goes with Labor Cost. In the case of Pool Tiling above, the Material Cost = 10 * 100 = 1000 and the Labor Cost = 10 * 50 = 500. Hence, the Item Cost is 1000 + 500 = 1500.\nMe: How about the Unit? Do we have to specify Unit for Material and Labor?\nExpert: Not needed at the moment. You just need to make sure that both Unit Cost must use the same Unit per money (Thai Baht in this case). For example, the Material Unit Cost for Pool Tiling is 100 m^2 / baht and Labor Unit Cost is 50 m^2 / bath. It is very important though that conversion is needed to make sure that Unit is correct.\nHere is our first formula - Item Cost Calculation\nItemCost = Quantity * MaterialUnitCost + Quantity * LaborUnitCost I think we are ready to create our first function now. Open up your VSCode, create new fsi, names it scratch.fsx and write down following snippet:\nlet calcItemCost qty materialUnitCost laborUnitCost = qty * materialUnitCost + qty * laborUnitCost This is very naive sketch for this function. We can do better. Let think about what errors can occur in this situation.\nUser is confused between quantity and unit cost since both are float. User is confused between material and labor unit cost. User is confused between unit of quantity and unit cost since none of them are provided. We will improve the code iteratively. Start with the first item.\nUser is confused between quantity and unit cost since both are float. We can enforce this by introducing single discriminated union type to Quantity and UnitCost and requires the types of input of calcItemCost function\ntype Quantity = Quantity of float type UnitCost = UnitCost of float let calcItemCost (Quantity qty) (UnitCost materialUnitCost) (UnitCost laborUnitCost) = qty * materialUnitCost + qty * laborUnitCost User is confused between material and labor unit cost. Again, we can use type to enforce this by introducing MaterialUnitCost and LaborUnitCost types.\ntype MaterialUnitCost = Material of UnitCost type LaborUnitCost = Labor of UnitCost let calcItemCost quantity materialUnitCost laborUnitCost = match quantity, materialUnitCost, laborUnitCost with | (Quantity qty), (Material (UnitCost materialUnitCost')), (Labor (UnitCost laborUnitCost')) -\u003e qty * materialUnitCost' + qty * laborUnitCost' As you can see, I decide to use match to extract actual values of material and labor unitcost.\nUser is confused between unit of quantity and unit cost since none of them are provided. We just need to introduce Unit for both Quantity and Material and make sure that when we calculate the item cost, it will check if both of them are the same. Here is the code.\ntype Quantity = Quantity of float*string type UnitCost = { Name: string UnitCost: float Unit: string } type MaterialUnitCost = Material of UnitCost type LaborUnitCost = Labor of UnitCost let tryCalcItemCost (Quantity (qty,qtyUnit)) (Material materialUnitCost) (Labor laborUnitCost) = if qtyUnit = materialUnitCost.Unit \u0026\u0026 qtyUnit = laborUnitCost.Unit then (qty * materialUnitCost.UnitCost + qty * laborUnitCost.UnitCost) |\u003e Some else None let testCalcItemCost = let materialUnitCost = Material { Name = \"Big Tile\"; UnitCost = 100; Unit = \"m2\" } let laborUnitCost = Labor { Name = \"Do Tiling\"; UnitCost = 50; Unit = \"m2\" } tryCalcItemCost (Quantity (10, \"m2\")) materialUnitCost laborUnitCost = Some 1500 I change the name of calcItemCost to tryCalcItemCost since we are going to return Option of float as result. When the input of calculation invalid (i.e. unit is not equal), we will return None.\nUsually, when we start to have some non-trivial function, I will create test function in the fsx file. F# protect us for most error, but sometimes Unit Testing is necessary.\ntype BoQItem = { OrderNo: int Description: string Quantity: float Unit: string Material: string MaterialUnitCost: float Labor: string LaborUnitCost: float } let calcItemCost item = (item.Quantity * item.MaterialUnitCost) + (item.Quantity * item.LaborUnitCost) /// Test /// let poolItem = { OrderNo = 1 Description = \"Pool Tiling\" Quantity = 10 Unit = \"m^2\" Material = \"Big Tile\" MaterialUnitCost = 100 Labor = \"Do Tiling\" LaborUnitCost = 50 } let testCalcItemCost = (calcItemCost poolItem) = 1500 The function is done. We will go to next task, implementing BoQItem. From the way BoQItem is represented, I think it is more appropriated to implement in Record type.\ntype BoQItem = { Description : string Quantity : Quantity MaterialUnitCost : MaterialUnitCost LaborUnitCost : LaborUnitCost TotalCost : float } The new TotalCost field should always include up-to-date Item Cost. To enforce this, we need to make sure that whenever new BoQItem is created, TotalCost will be calculated and update. This can be done by make the type private to module. Here is the code:\ntype BoQItem = private { //...Same as above } module BoQItem = let tryCalcItemCost (Quantity (qty,qtyUnit)) (Material materialUnitCost) (Labor laborUnitCost) = if qtyUnit = materialUnitCost.Unit \u0026\u0026 qtyUnit = laborUnitCost.Unit then (qty * materialUnitCost.UnitCost + qty * laborUnitCost.UnitCost) |\u003e Some else None let tryCreate desc qty materialUnitCost laborUnitCost = tryCalcItemCost qty materialUnitCost laborUnitCost |\u003e Option.map (fun cost -\u003e { Description = desc Quantity = qty MaterialUnitCost = materialUnitCost LaborUnitCost = laborUnitCost TotalCost = cost } ) Users will want to update BoQItem, we should create CRUD operation on the BoQItem type.\nlet updateDesc newDesc item = { item with Description = newDesc } let tryUpdateQty newQty item = tryCalcItemCost newQty item.MaterialUnitCost item.LaborUnitCost |\u003e Option.map (fun cost -\u003e { item with Quantity = newQty TotalCost = cost }) let tryUpdateMaterialUnitCost (Material newUnitCost) item = let newMaterialUnitCost = Material newUnitCost tryCalcItemCost item.Quantity newMaterialUnitCost item.LaborUnitCost |\u003e Option.map (fun cost -\u003e { item with MaterialUnitCost = newMaterialUnitCost TotalCost = cost }) Here, we create update function for Description, Quantity, and MaterialUnitCost. Since both Quantity and MaterialUnitCost can have some invalid result (i.e. Units are not matched.), both will return Option type. Let’s create functions for testing this CRUD operations.\nlet poolItem = let qty = Quantity (10, \"m^2\") let materialUnitCost = Material { Name = \"Big Tile\"; UnitCost = 100; Unit = \"m^2\" } let laborUnitCost = Labor { Name = \"Do Tiling\"; UnitCost = 50; Unit = \"m^2\" } tryCreate \"Pool Tile\" qty materialUnitCost laborUnitCost let testUpdateDesc = poolItem |\u003e Option.map (updateDesc \"New Pool\") |\u003e Option.map (fun x -\u003e x.Description = \"New Pool\") |\u003e Option.defaultValue false let testUpdateQty = let newQty = Quantity (20,\"m^2\") poolItem |\u003e Option.bind (tryUpdateQty newQty) |\u003e Option.map (fun x -\u003e x.TotalCost = 3000) |\u003e Option.defaultValue false let testUpdateMaterialUnitCost = let newMaterialUnitCost = Material \u003c| { Name = \"Small Tile\"; UnitCost = 50; Unit = \"m^2\"} poolItem |\u003e Option.bind (tryUpdateMaterialUnitCost newMaterialUnitCost) |\u003e Option.map (fun x -\u003e x.TotalCost = 1000) |\u003e Option.defaultValue false I found that combining lots of Option related functions together makes the code hard to read. I decide to use maybe computation expression to make the code more succint.\ntype MaybeBuilder() = member this.Bind(x, f) = match x with | None -\u003e None | Some a -\u003e f a member this.Return(x) = Some x let maybe = new MaybeBuilder() let testUpdateDesc = maybe { let! poolItem' = poolItem let updatedPoolItem = updateDesc \"New Pool\" poolItem' return updatedPoolItem.Description = \"New Pool\" } |\u003e Option.defaultValue false let testUpdateQty = maybe { let! poolItem' = poolItem let newQty = Quantity (20,\"m^2\") let! updatedPoolItem = tryUpdateQty newQty poolItem' return updatedPoolItem.TotalCost = 3000 } |\u003e Option.defaultValue false let testUpdateMaterialUnitCost = maybe { let! poolItem' = poolItem let newMaterialUnitCost = Material \u003c| { Name = \"Small Tile\"; UnitCost = 50; Unit = \"m^2\"} let! updatedPoolItem = tryUpdateMaterialUnitCost newMaterialUnitCost poolItem' return updatedPoolItem.TotalCost = 1000 } |\u003e Option.defaultValue false The number of lines might be almost the same but the meaning of codes are clearer.\nI think we are halfway through the domain modeling now. I will go sip some coffee before continuing. Also, it’s a good idea to show the result of test especially the calculation one to the client.\nOk, we finish the coffee. The next thing is to calculate the Estimate Cost of the construction project. We start by showing the calculation to the expert to confirm our understanding:\nEstimateCost = DirectCost * FactorF The main calculation is very simple. We need to go from there one bye one.\nDirectCost = Summation of BoQItem Cost This one is easy. We can write the code as follow.\ntype DirectCost = DirectCost of float let calcDirectCost items = items |\u003e List.sumBy (fun a -\u003e a |\u003e value |\u003e (fun b -\u003e b.TotalCost)) |\u003e DirectCost Note that we create new simple type for DirectCost to make it different from normal float type.\nNext is FactorF, we do not know how to get this. It’s time to talk with the Expert.\nMe: We know that FactorF is important in estimating the cost but we have no idea how to get it. Could you please shed some light?\nExpert: Easy. There is a table lookup for FactorF provided by the government. All you need to do is look up using Direct Cost of your project.\nMe: Can you show me how to lookup? Expert: Sure. Here is a sample of FactorF Table.\nDirect Cost Factor F \u003c 10 1.1 10 \u003c= x \u003c= 100 1.5 \u003e 100 1.9 If your project direct cost is less than 10 then the Factor F will be 1.1 but if is greater than 100 then it will be 1.9. Things will get more complicated when the cost is between 10 and 100. We call this as in Bound. You need to get proportion of your direct cost and multiply that to range of factor f. It’s mouthful. Let’s show the expert the formula.\nBoundFactorF = DirectCostRatio * FactorFRange + LowerBoundF DirectCostRatio = (DirectCost - LowerBoundCost) /(UpperBoundCost - LowerBoundCost) FactorFRange = UpperBoundF - LowerBoundF Let’s try out the formular for DirectCost of 55.\nFactorFRange = 1.5 - 1.1 = 0.4 DirectCostRatio = (55 - 10) / (100 - 10 ) = 0.5 BoundFactorF = 0.5 * 0.4 + 1.1 = 1.3 Let’s convert this formula to f#\nlet calcBoundF lowerBound upperBound directCost = let lowerBoundCost,lowerBoundF = lowerBound let upperBoundCost,upperBoundF = upperBound let fRange = upperBoundF - lowerBoundF let costRatio = (directCost - lowerBoundCost) / (upperBoundCost - lowerBoundCost) costRatio * fRange + lowerBoundF let testCalcBoundF = (=) (calcBoundF (10.0,1.1) (100.0,1.5) 55.0) 1.3 Next, we will take care of DirectCost which exceed either minimum or maximum bound. The FactorF table is simply defined as a list of two float tuple. The firt is cost and the second is factor f. For example, the example table can de defined as follow:\nlet exampleFTable = ( (10.0, 1.1); (100.0, 1.5); (1000, 1.9) ) |\u003e FactorFTable type FactorFTable = FactorFTable of float*float list let calcFactorF (FactorFTable fTable) (DirectCost directCost) = let findBound() = let lowerBoundIndex = fTable |\u003e List.findIndexBack (fun (cost,_) -\u003e directCost \u003e cost) let upperBoundIndex = lowerBoundIndex + 1 (fTable |\u003e List.item lowerBoundIndex), (fTable |\u003e List.item upperBoundIndex) let (minCost, minF), (maxCost, maxF) = (fTable |\u003e List.head), (fTable |\u003e List.last) if directCost \u003c minCost then minF else if directCost \u003e maxCost then maxF else findBound() |\u003e calcBoundF We have all the ingredients, let combine everything to our main function etimateCost.\nlet applyFactorF loadFactorFTable (DirectCost directCost) = let factorF = calcFactorF loadFactorFTable() directCost * factorF let roundCost = function | a when a \u003c 1000.0 -\u003e a | b -\u003e b / 1000.0 |\u003e System.Math.Truncate |\u003e (*) 1000.0 let estimateCost loadFactorFTable = calcDirectCost \u003e\u003e (applyFactorF loadFactorFTable) \u003e\u003e roundCost We have introduced 3 functions here. Function applyFactorF is like the name apply FactorF to DirectCost. Function loadFactorFTable is an input to the function so we can test the applyFactorF without really using any persistence layer. For example here is the example function\nlet testFactorFTable () = ( (10.0, 1.1); (100.0, 1.5); (1000, 1.9) ) |\u003e FactorFTable The roundCost function is just function to strip the number after thousand digit. The last function estimate cost use combination to combine all small functions together.\nWe have finish ourt first use case\n1. Estimate construction cost All the code can be clone from https://github.com/twuttiwat/CoCoTender using tag v0.1.1\nOr you can use following command\ngit clone -b v0.1.1 https://github.com/twuttiwat/CoCoTender.git Next, we will growing this use case from this simple fsharp script to full-blown webapp. Stay Tune!\n",
-  "wordCount" : "2706",
-  "inLanguage": "en",
-  "datePublished": "2022-10-26T09:28:16+07:00",
-  "dateModified": "2022-10-26T09:28:16+07:00",
-  "author":{
-    "@type": "Person",
-    "name": "Teerawat Wuttiwat"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://twuttiwat.github.io/posts-old/domain-modeling-with-fs/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "TW Blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://twuttiwat.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+  <meta property="article:published_time" content="2022-10-26 09:28:16 &#43;0700 &#43;07" />
+
+
+
+
+
+
+
+
+
+
+
+
 </head>
+<body>
 
-<body class="" id="top">
-<script>
-    if (localStorage.getItem("pref-theme") === "dark") {
-        document.body.classList.add('dark');
-    } else if (localStorage.getItem("pref-theme") === "light") {
-        document.body.classList.remove('dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark');
-    }
 
-</script>
+<div class="container">
 
-<header class="header">
-    <nav class="nav">
-        <div class="logo">
-            <a href="https://twuttiwat.github.io/" accesskey="h" title="TW Blog (Alt + H)">TW Blog</a>
-            <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <ul id="menu">
-        </ul>
-    </nav>
-</header>
-<main class="main">
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="http://localhost:1313/">
+  <div class="logo">
+    Terminal
+  </div>
+</a>
 
-<article class="post-single">
-  <header class="post-header">
+    </div>
     
-    <h1 class="post-title">
-      Domain Modeling With F#
-    </h1>
-    <div class="post-meta"><span title='2022-10-26 09:28:16 +0700 +07'>October 26, 2022</span>&nbsp;·&nbsp;Teerawat Wuttiwat
+    
+  </div>
+  
+</header>
 
-</div>
-  </header> 
-  <div class="post-content"><p>Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.</p>
-<h2 id="construction-cost-estimation-project">Construction Cost Estimation Project<a hidden class="anchor" aria-hidden="true" href="#construction-cost-estimation-project">#</a></h2>
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="http://localhost:1313/posts-old/domain-modeling-with-fs/">Domain Modeling With F#</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2022-10-26</time><span class="post-author">Teerawat Wuttiwat</span></div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>Welcome back. Today, I am going to explain the project we are going to created, discuss all the requirements with imaginary domain experts, list all the use cases, and (finally) model the domain in F# code.</p>
+<h2 id="construction-cost-estimation-project">Construction Cost Estimation Project<a href="#construction-cost-estimation-project" class="hanchor" ariaLabel="Anchor">#</a> </h2>
 <p>All the construction in the world, be it buildings, dams, roads or bridges. How small or large are they. All of them, starts with architecture blueprints.</p>
 <p>No matter how beatutiful the blueprints are, the only thing matters are how much the budget is needed for that construction.
 This is very important since most of the owner of the building do not build the building themselves. Instead, they need to announce the project for the contractors. Each contractor need to bid in order to win the project.</p>
@@ -213,7 +158,7 @@ The larger the project, the more important the estimation of the project is.</p>
 <p>Prevent wrong doing of estimator of project owner. The estimation if done correctly will be standardized and transparent such that there are very difficult for the estimator to have bias over specific material vendor.</p>
 </li>
 </ol>
-<h2 id="getting-requirements">Getting Requirements<a hidden class="anchor" aria-hidden="true" href="#getting-requirements">#</a></h2>
+<h2 id="getting-requirements">Getting Requirements<a href="#getting-requirements" class="hanchor" ariaLabel="Anchor">#</a> </h2>
 <p>Without further ado, let&rsquo;s start getting into the project by discussin with domain experts. To make it fun, I will make it like conversation between the experts and me.
 Here we go.</p>
 <p>I usually like to start with how are the domain experts (DE) working at the moment. Usually, most of them will have Excel or paper based in placed.</p>
@@ -225,32 +170,32 @@ Here we go.</p>
 <strong>Me</strong>: Could you show me the example of <strong>Bill of Quantity (BoQ)</strong>. Let&rsquo;s keep it short by referring it as BoQ then.
 Expert: Yes, we usually refer that way. Here is what it looks like. <strong>BoQ</strong> of the project is the list of work that need to be done to finish the project. The work is itemized as <strong>BoQ Item</strong>. Each item will contain <strong>materials</strong>, <strong>labors</strong>, and their <strong>cost</strong>. Here is how it looks like:</p>
 <table>
-<thead>
-<tr>
-<th>No.</th>
-<th>Work Description</th>
-<th>Quantity</th>
-<th>Unit</th>
-<th>Material</th>
-<th>Material Unit Cost</th>
-<th>Labor</th>
-<th>Labor Unit Cost</th>
-<th>Item Cost</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>Pool Tiling</td>
-<td>10</td>
-<td>m^2</td>
-<td>Big Tile</td>
-<td>100</td>
-<td>Do Tiling</td>
-<td>50</td>
-<td>1500</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>No.</th>
+          <th>Work Description</th>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Material</th>
+          <th>Material Unit Cost</th>
+          <th>Labor</th>
+          <th>Labor Unit Cost</th>
+          <th>Item Cost</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>Pool Tiling</td>
+          <td>10</td>
+          <td>m^2</td>
+          <td>Big Tile</td>
+          <td>100</td>
+          <td>Do Tiling</td>
+          <td>50</td>
+          <td>1500</td>
+      </tr>
+  </tbody>
 </table>
 <p>I remind myself that this looks like <em>Data</em> which can be defined using F# <em>Record</em>
 Anyway, there are more to that, we should confirm about calculation of total cost:</p>
@@ -490,26 +435,26 @@ We start by showing the calculation to the expert to confirm our understanding:<
 <p><strong>Me</strong>:  Can you show me how to lookup?
 <strong>Expert</strong>: Sure. Here is a sample of <strong>FactorF Table</strong>.</p>
 <table>
-<thead>
-<tr>
-<th>Direct Cost</th>
-<th>Factor F</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>&lt; 10</td>
-<td>1.1</td>
-</tr>
-<tr>
-<td>10 &lt;= x &lt;= 100</td>
-<td>1.5</td>
-</tr>
-<tr>
-<td>&gt; 100</td>
-<td>1.9</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Direct Cost</th>
+          <th>Factor F</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>&lt; 10</td>
+          <td>1.1</td>
+      </tr>
+      <tr>
+          <td>10 &lt;= x &lt;= 100</td>
+          <td>1.5</td>
+      </tr>
+      <tr>
+          <td>&gt; 100</td>
+          <td>1.9</td>
+      </tr>
+  </tbody>
 </table>
 <p>If your project direct cost is less than 10 then the Factor F will be 1.1 but if is greater than 100 then it will be 1.9.
 Things will get more complicated when the cost is between 10 and 100. We call this as in <strong>Bound</strong>. You need to get proportion of your direct cost and multiply that to range of factor f. It&rsquo;s mouthful. Let&rsquo;s show the expert the formula.</p>
@@ -578,84 +523,43 @@ BoundFactorF = 0.5 * 0.4 + 1.1 = 1.3
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone -b v0.1.1 https://github.com/twuttiwat/CoCoTender.git
 </span></span></code></pre></div><p>Next, we will growing this use case from this simple fsharp script to full-blown webapp. Stay Tune!</p>
 
+      </div></div>
+
+  
+
+  
+    
+
+  
+</article>
 
   </div>
 
-  <footer class="post-footer">
-    <ul class="post-tags">
-    </ul>
-  </footer>
-</article>
-    </main>
+  
+    <footer class="footer">
+  <div class="footer__inner">
     
-<footer class="footer">
-    <span>&copy; 2023 <a href="https://twuttiwat.github.io/">TW Blog</a></span>
-    <span>
-        Powered by
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
-        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
-    </span>
+      <div class="copyright">
+        <span>© 2025 Powered by <a href="https://gohugo.io">Hugo</a></span>
+    
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+  </div>
 </footer>
-<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
-        <path d="M12 6H0l6-6z" />
-    </svg>
-</a>
 
-<script>
-    let menu = document.getElementById('menu')
-    if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
-        menu.onscroll = function () {
-            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
-        }
-    }
 
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            var id = this.getAttribute("href").substr(1);
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
-                    behavior: "smooth"
-                });
-            } else {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
-            }
-            if (id === "top") {
-                history.replaceState(null, null, " ");
-            } else {
-                history.pushState(null, null, `#${id}`);
-            }
-        });
-    });
 
-</script>
-<script>
-    var mybutton = document.getElementById("top-link");
-    window.onscroll = function () {
-        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
-            mybutton.style.visibility = "visible";
-            mybutton.style.opacity = "1";
-        } else {
-            mybutton.style.visibility = "hidden";
-            mybutton.style.opacity = "0";
-        }
-    };
 
-</script>
-<script>
-    document.getElementById("theme-toggle").addEventListener("click", () => {
-        if (document.body.className.includes("dark")) {
-            document.body.classList.remove('dark');
-            localStorage.setItem("pref-theme", 'light');
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem("pref-theme", 'dark');
-        }
-    })
 
-</script>
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
 </body>
-
 </html>
