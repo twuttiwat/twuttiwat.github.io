@@ -23,3 +23,7 @@ googleAnalyticsID = 'G-8W769DNB5L'
 [[params.socialIcons]]
   name = "CV"
   url = "https://twuttiwat.com/cv.pdf"    
+
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
