@@ -2,7 +2,7 @@ baseURL = 'https://twuttiwat.github.io/'
 title = 'TW Blog'
 pagination.pagerSize = 10
 theme = 'Terminal'
-publishDir = 'docs'
+publishDir = 'public'
 languageCode = 'en-us'
 
 [params]
